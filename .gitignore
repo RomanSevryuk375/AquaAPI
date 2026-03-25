@@ -1,0 +1,62 @@
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+out/
+artifacts/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE / Editor
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Test results / coverage
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+!**/packages/build/
+
+# Publish output
+publish/
+
+# ASP.NET Core / local environment
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+secrets/
+
+# Certificates
+*.pfx
+*.p12
+*.pem
+*.key
+
+# Docker / containers
+**/.docker/
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
