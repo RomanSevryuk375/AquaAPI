@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Telemetry.Domain.Interfaces;
 
-namespace Telemetry.Domain.Interfaces
+public interface ITelemetryDataRepository
 {
-    internal class ITelemetryDataRepository
-    {
-    }
 }

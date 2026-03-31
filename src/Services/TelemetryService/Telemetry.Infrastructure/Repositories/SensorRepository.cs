@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Telemetry.Domain.Entities;
+using Telemetry.Domain.Interfaces;
 
-namespace Telemetry.Infrastructure.Repositories
+namespace Telemetry.Infrastructure.Repositories;
+
+public class SensorRepository(SystemDbContext context) 
+    : BaseRepository<SensorEntity>(context), ISensorRepository
 {
-    internal class SensorRepository
-    {
-    }
 }
