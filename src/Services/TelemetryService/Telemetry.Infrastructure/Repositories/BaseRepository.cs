@@ -1,0 +1,74 @@
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using Telemetry.Domain.Interfaces;
+
+namespace Telemetry.Infrastructure.Repositories;
+
+public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository<T> where T : class, IEntity
+{
+    private readonly DbSet<T> _set = dbContext.Set<T>();
+
+    public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    {
+        await _set.AddAsync(entity, cancellationToken);
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _set.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        if (entity is null)
+        {
+            return;
+        }
+
+        _set.Remove(entity);
+    }
+
+    public async Task<IEnumerable<T>> GetAllAsync(
+        Expression<Func<T, bool>>? filter,
+        int? skip,
+        int? take,
+        CancellationToken cancellationToken = default)
+    {
+        if (skip is < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(skip), "Skip cannot be negative.");
+        }
+
+        if (take is < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(take), "Take cannot be negative.");
+        }
+
+        var query = _set.AsNoTracking().AsQueryable();
+
+        if (filter is not null)
+        {
+            query = query.Where(filter);
+        }
+
+        query = query.OrderBy(x => x.Id);
+
+        if (skip.HasValue)
+        {
+            query = query.Skip(skip.Value);
+        }
+
+        if (take.HasValue)
+        {
+            query = query.Take(take.Value);
+        }
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
+    }
+
+    public void Update(T entity)
+    {
+        _set.Update(entity);
+    }
+}
