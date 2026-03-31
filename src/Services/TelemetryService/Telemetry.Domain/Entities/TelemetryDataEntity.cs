@@ -8,12 +8,14 @@ public sealed class TelemetryDataEntity : IEntity
         Guid id,
         Guid sensorId,
         double value,
+        string externalMessageId,
         DateTime recordedAt,
         DateTime createdAt)
     {
         Id = id;
         SensorId = sensorId;
         Value = value;
+        ExternalMessageId = externalMessageId;
         RecordedAt = recordedAt;
         CreatedAt = createdAt;
     }
@@ -21,6 +23,7 @@ public sealed class TelemetryDataEntity : IEntity
     public Guid Id { get; private set; }
     public Guid SensorId { get; private set; }
     public double Value { get; private set; }
+    public string ExternalMessageId { get; private set; }
     public DateTime RecordedAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -28,6 +31,7 @@ public sealed class TelemetryDataEntity : IEntity
         Guid id,
         Guid sensorId,
         double value,
+        string externalMessageId,
         DateTime recordedAt,
         DateTime createdAt)
     {
@@ -53,7 +57,7 @@ public sealed class TelemetryDataEntity : IEntity
             return (null, errors);
         }
 
-        var telemetryData = new TelemetryDataEntity(id, sensorId, value, recordedAt, createdAt);
+        var telemetryData = new TelemetryDataEntity(id, sensorId, value, externalMessageId, recordedAt, createdAt);
         return (telemetryData, errors);
     }
 }
