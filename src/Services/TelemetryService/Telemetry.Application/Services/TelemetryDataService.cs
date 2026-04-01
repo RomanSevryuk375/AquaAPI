@@ -62,20 +62,19 @@ public class TelemetryDataService(
         var sensorExists = await sensorRepository.ExistsAsync(dto.SensorId, cancellationToken);
         if (!sensorExists) throw new NotFoundException($"Sensor {dto.SensorId} not found");
 
-        var (telemetryData, _) = TelemetryDataEntity.Create(
-            default, 
+        var (telemetryData, errors) = TelemetryDataEntity.Create(
             dto.SensorId,
             dto.Value, 
             dto.ExternalMessageId, 
-            dto.RecordedAt, 
-            default);
+            dto.RecordedAt);
 
-        if(telemetryData is not null)
+        if (telemetryData is null)
         {
-            await telemetryRepository.AddAsync(telemetryData, cancellationToken);
+            throw new DomainValidationException(
+                $"Failed to create {nameof(TelemetryDataEntity)}: {string.Join(", ", errors)}");
         }
 
+        await telemetryRepository.AddAsync(telemetryData, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
-
 }
