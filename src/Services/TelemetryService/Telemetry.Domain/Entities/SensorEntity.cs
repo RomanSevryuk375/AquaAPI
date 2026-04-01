@@ -29,23 +29,20 @@ public sealed class SensorEntity : IEntity
     public string Unit { get; private set; }
     public double LastValue { get; private set; }
     public DateTime UpdatedAt { get; private set; }
-    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; private set; } 
 
     public static (SensorEntity? sensor, List<string> errors) Create(
-        Guid id,
         Guid controllerId,
         SensorTypeEnum type,
         string unit,
         double lastValue,
-        DateTime updatedAt,
-        DateTime createdAt)
+        DateTime updatedAt)
     {
-        var errors = new List<string>();
+        var id = Guid.NewGuid();
 
-        if (id == Guid.Empty)
-        {
-            errors.Add("Sensor id must not be empty.");
-        }
+        var createdAt = DateTime.UtcNow;
+
+        var errors = new List<string>();
 
         if (controllerId == Guid.Empty)
         {
@@ -57,19 +54,10 @@ public sealed class SensorEntity : IEntity
             errors.Add("Unit must not be empty.");
         }
 
-        if (updatedAt <= createdAt)
-        {
-            errors.Add("UpdatedAt must be greater than or equal to CreatedAt.");
-        }
-
         if (errors.Count > 0)
         {
             return (null, errors);
         }
-
-        id = Guid.NewGuid();
-
-        createdAt = DateTime.UtcNow;
 
         var sensor = new SensorEntity(
             id,
@@ -81,5 +69,38 @@ public sealed class SensorEntity : IEntity
             createdAt);
 
         return (sensor, errors);
+    }
+
+    public List<string>? Update(
+        Guid controllerId,
+        SensorTypeEnum type,
+        string unit,
+        double lastValue,
+        DateTime updatedAt)
+    {
+        var errors = new List<string>();
+
+        if (controllerId == Guid.Empty)
+        {
+            errors.Add("Controller id must not be empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(unit))
+        {
+            errors.Add("Unit must not be empty.");
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
+        }
+
+        ControllerId = controllerId;
+        Type = type;
+        Unit = unit;
+        LastValue = lastValue;
+        UpdatedAt = updatedAt;
+
+        return null;
     }
 }

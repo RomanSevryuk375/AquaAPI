@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Infrastructure.Repositories;
