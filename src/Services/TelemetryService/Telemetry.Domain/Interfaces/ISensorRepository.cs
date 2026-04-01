@@ -2,4 +2,5 @@
 
 public interface ISensorRepository
 {
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
 }
