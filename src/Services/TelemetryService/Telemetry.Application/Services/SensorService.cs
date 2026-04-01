@@ -1,4 +1,5 @@
 ﻿using Telemetry.Application.DTOs;
+using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Exceptions;
 using Telemetry.Domain.Interfaces;
@@ -7,10 +8,10 @@ namespace Telemetry.Application.Services;
 
 public class SensorService(
     IRepository<SensorEntity> repository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork) : ISensorService
 {
     public async Task AddSensorAsync(
-        SensorRequestDto dto, 
+        SensorRequestDto dto,
         CancellationToken cancellationToken)
     {
         var (sensor, errors) = SensorEntity.Create(
@@ -20,7 +21,7 @@ public class SensorService(
             0,
             DateTime.UtcNow);
 
-        if(sensor is null)
+        if (sensor is null)
         {
             throw new DomainValidationException(
                 $"Failed to create {nameof(SensorEntity)}: {string.Join(", ", errors)}");
@@ -35,7 +36,7 @@ public class SensorService(
         SensorRequestDto dto,
         CancellationToken cancellationToken)
     {
-        var existingSensor  = await repository.GetByIdAsync(id, cancellationToken)
+        var existingSensor = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException($"Sensor {id} not found");
 
         var errors = existingSensor.Update(

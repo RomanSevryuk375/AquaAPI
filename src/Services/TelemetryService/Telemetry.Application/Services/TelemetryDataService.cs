@@ -1,4 +1,5 @@
 ﻿using Telemetry.Application.DTOs;
+using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Exceptions;
 using Telemetry.Domain.Interfaces;
@@ -9,7 +10,7 @@ namespace Telemetry.Application.Services;
 public class TelemetryDataService(
     IRepository<TelemetryDataEntity> telemetryRepository,
     ISensorRepository sensorRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork) : ITelemetryDataService
 {
     public async Task<IEnumerable<TelemetryDataResponse>> GetAllDataAsync(
         TelemetryDataFilterDto filter,
@@ -21,7 +22,7 @@ public class TelemetryDataService(
             filter.SensorId, filter.From, filter.To);
 
         var entities = await telemetryRepository.GetAllAsync(
-            specification, 
+            specification,
             skip,
             take,
             cancellationToken);
@@ -38,10 +39,10 @@ public class TelemetryDataService(
     }
 
     public async Task<TelemetryDataResponse> GetDataByIdAsync(
-        Guid id, 
+        Guid id,
         CancellationToken cancellationToken)
     {
-        var entity = await telemetryRepository.GetByIdAsync(id, cancellationToken) 
+        var entity = await telemetryRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException($"{nameof(TelemetryDataEntity)} not found");
 
         return new TelemetryDataResponse()
@@ -52,11 +53,11 @@ public class TelemetryDataService(
             ExternalMessageId = entity.ExternalMessageId,
             RecordedAt = entity.RecordedAt,
             CreatedAt = entity.CreatedAt
-        };            
+        };
     }
 
     public async Task AddDataAsync(
-        TelemetryDataRequest dto, 
+        TelemetryDataRequest dto,
         CancellationToken cancellationToken)
     {
         var sensorExists = await sensorRepository.ExistsAsync(dto.SensorId, cancellationToken);
@@ -64,8 +65,8 @@ public class TelemetryDataService(
 
         var (telemetryData, errors) = TelemetryDataEntity.Create(
             dto.SensorId,
-            dto.Value, 
-            dto.ExternalMessageId, 
+            dto.Value,
+            dto.ExternalMessageId,
             dto.RecordedAt);
 
         if (telemetryData is null)
