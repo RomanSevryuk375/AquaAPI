@@ -25,7 +25,7 @@ public sealed class TelemetryDataEntity : IEntity
     public double Value { get; private set; }
     public string ExternalMessageId { get; private set; }
     public DateTime RecordedAt { get; private set; }
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; } 
 
     public static (TelemetryDataEntity? telemetryData, List<string> errors) Create(
         Guid id,
@@ -57,7 +57,18 @@ public sealed class TelemetryDataEntity : IEntity
             return (null, errors);
         }
 
-        var telemetryData = new TelemetryDataEntity(id, sensorId, value, externalMessageId, recordedAt, createdAt);
+        id = Guid.NewGuid();
+
+        createdAt = DateTime.UtcNow;
+
+        var telemetryData = new TelemetryDataEntity(
+            id,
+            sensorId,
+            value, 
+            externalMessageId,
+            recordedAt,
+            createdAt);
+
         return (telemetryData, errors);
     }
 }

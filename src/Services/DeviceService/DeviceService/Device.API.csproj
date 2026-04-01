@@ -8,11 +8,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Telemetry.Application\Telemetry.Application.csproj" />
-    <ProjectReference Include="..\Telemetry.Infrastructure\Telemetry.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Controllers\" />
   </ItemGroup>
 

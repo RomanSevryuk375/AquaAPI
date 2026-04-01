@@ -29,7 +29,7 @@ public sealed class SensorEntity : IEntity
     public string Unit { get; private set; }
     public double LastValue { get; private set; }
     public DateTime UpdatedAt { get; private set; }
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     public static (SensorEntity? sensor, List<string> errors) Create(
         Guid id,
@@ -66,6 +66,10 @@ public sealed class SensorEntity : IEntity
         {
             return (null, errors);
         }
+
+        id = Guid.NewGuid();
+
+        createdAt = DateTime.UtcNow;
 
         var sensor = new SensorEntity(
             id,
