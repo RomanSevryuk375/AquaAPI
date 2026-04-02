@@ -7,9 +7,11 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
 {
     private readonly DbSet<T> _set = dbContext.Set<T>();
 
-    public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         await _set.AddAsync(entity, cancellationToken);
+
+        return entity.Id;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

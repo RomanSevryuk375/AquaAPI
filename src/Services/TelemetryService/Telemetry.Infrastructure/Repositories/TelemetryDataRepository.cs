@@ -6,4 +6,5 @@ namespace Telemetry.Infrastructure.Repositories;
 public class TelemetryDataRepository(SystemDbContext context) 
     : BaseRepository<TelemetryDataEntity>(context), ITelemetryDataRepository
 {
+
 }

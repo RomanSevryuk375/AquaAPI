@@ -6,7 +6,7 @@ namespace Telemetry.Infrastructure.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ISensorRepository, SensorRepository>();
         services.AddScoped<ITelemetryDataRepository, TelemetryDataRepository>();

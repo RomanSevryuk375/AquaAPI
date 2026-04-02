@@ -8,7 +8,7 @@ using Telemetry.Domain.Specifications;
 namespace Telemetry.Application.Services;
 
 public class TelemetryDataService(
-    IRepository<TelemetryDataEntity> telemetryRepository,
+    ITelemetryDataRepository telemetryRepository,
     ISensorRepository sensorRepository,
     IUnitOfWork unitOfWork) : ITelemetryDataService
 {
@@ -56,7 +56,7 @@ public class TelemetryDataService(
         };
     }
 
-    public async Task AddDataAsync(
+    public async Task<Guid> AddDataAsync(
         TelemetryDataRequest dto,
         CancellationToken cancellationToken)
     {
@@ -75,7 +75,9 @@ public class TelemetryDataService(
                 $"Failed to create {nameof(TelemetryDataEntity)}: {string.Join(", ", errors)}");
         }
 
-        await telemetryRepository.AddAsync(telemetryData, cancellationToken);
+        var result = await telemetryRepository.AddAsync(telemetryData, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return result;
     }
 }

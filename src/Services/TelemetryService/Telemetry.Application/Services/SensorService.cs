@@ -7,10 +7,10 @@ using Telemetry.Domain.Interfaces;
 namespace Telemetry.Application.Services;
 
 public class SensorService(
-    IRepository<SensorEntity> repository,
+    ISensorRepository repository,
     IUnitOfWork unitOfWork) : ISensorService
 {
-    public async Task AddSensorAsync(
+    public async Task<Guid> AddSensorAsync(
         SensorRequestDto dto,
         CancellationToken cancellationToken)
     {
@@ -27,8 +27,10 @@ public class SensorService(
                 $"Failed to create {nameof(SensorEntity)}: {string.Join(", ", errors)}");
         }
 
-        await repository.AddAsync(sensor, cancellationToken);
+        var result = await repository.AddAsync(sensor, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return result;
     }
 
     public async Task UpdateSensorAsync(

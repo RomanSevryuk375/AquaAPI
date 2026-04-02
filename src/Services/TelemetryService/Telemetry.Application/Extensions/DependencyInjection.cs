@@ -6,7 +6,7 @@ namespace Telemetry.Application.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+    public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ISensorService, SensorService>();
         services.AddScoped<ITelemetryDataService, TelemetryDataService>();
