@@ -28,26 +28,23 @@ public sealed class TelemetryDataEntity : IEntity
     public DateTime CreatedAt { get; private set; } 
 
     public static (TelemetryDataEntity? telemetryData, List<string> errors) Create(
-        Guid id,
         Guid sensorId,
         double value,
         string externalMessageId,
-        DateTime recordedAt,
-        DateTime createdAt)
+        DateTime recordedAt)
     {
-        var errors = new List<string>();
+        var id = Guid.NewGuid();
 
-        if (id == Guid.Empty)
-        {
-            errors.Add("Telemetry data id must not be empty.");
-        }
+        var createdAt = DateTime.UtcNow;
+
+        var errors = new List<string>();
 
         if (sensorId == Guid.Empty)
         {
             errors.Add("Sensor id must not be empty.");
         }
 
-        if (recordedAt < createdAt)
+        if (recordedAt > DateTime.UtcNow.AddMinutes(1))
         {
             errors.Add("RecordedAt must be greater than or equal to CreatedAt.");
         }
@@ -56,10 +53,6 @@ public sealed class TelemetryDataEntity : IEntity
         {
             return (null, errors);
         }
-
-        id = Guid.NewGuid();
-
-        createdAt = DateTime.UtcNow;
 
         var telemetryData = new TelemetryDataEntity(
             id,
