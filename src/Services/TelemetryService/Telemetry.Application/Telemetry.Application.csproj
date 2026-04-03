@@ -4,10 +4,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.5.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\Telemetry.Domain\Telemetry.Domain.csproj" />
   </ItemGroup>
 

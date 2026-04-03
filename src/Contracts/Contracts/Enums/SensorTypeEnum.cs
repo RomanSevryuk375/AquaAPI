@@ -1,4 +1,4 @@
-namespace Telemetry.Domain.Enums;
+namespace Contracts.Enums;
 
 public enum SensorTypeEnum
 {

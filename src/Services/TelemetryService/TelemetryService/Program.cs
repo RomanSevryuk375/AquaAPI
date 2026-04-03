@@ -1,9 +1,12 @@
+using MassTransit;
 using Telemetry.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddRabbitMq(builder.Configuration);
 
 var app = builder.Build();
 

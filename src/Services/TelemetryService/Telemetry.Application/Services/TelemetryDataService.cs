@@ -1,4 +1,7 @@
-﻿using Telemetry.Application.DTOs;
+﻿using Contracts;
+using Contracts.Events;
+using MassTransit;
+using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Exceptions;
@@ -10,6 +13,7 @@ namespace Telemetry.Application.Services;
 public class TelemetryDataService(
     ITelemetryDataRepository telemetryRepository,
     ISensorRepository sensorRepository,
+    IPublishEndpoint publishEndpoint,
     IUnitOfWork unitOfWork) : ITelemetryDataService
 {
     public async Task<IEnumerable<TelemetryDataResponse>> GetAllDataAsync(
@@ -35,7 +39,7 @@ public class TelemetryDataService(
             ExternalMessageId = entity.ExternalMessageId,
             RecordedAt = entity.RecordedAt,
             CreatedAt = entity.CreatedAt
-        }).ToList(); ;
+        }).ToList();
     }
 
     public async Task<TelemetryDataResponse> GetDataByIdAsync(
@@ -77,6 +81,13 @@ public class TelemetryDataService(
 
         var result = await telemetryRepository.AddAsync(telemetryData, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await publishEndpoint.Publish(new TelemetryReceivedEvent
+            {
+                SensorId = dto.SensorId,
+                Value = dto.Value,
+                RecordedAt = dto.RecordedAt,
+            }, cancellationToken);
 
         return result;
     }

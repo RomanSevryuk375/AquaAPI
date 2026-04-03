@@ -11,6 +11,7 @@ COPY ["*.sln", "./"]
 COPY ["src/*.props", "src/"]
 COPY ["src/*.targets", "src/"]
 
+COPY ["src/Contracts/Contracts/Contracts.csproj", "src/Contracts/Contracts/"]
 COPY ["src/Services/TelemetryService/TelemetryService/Telemetry.API.csproj", "src/Services/TelemetryService/TelemetryService/"]
 COPY ["src/Services/TelemetryService/Telemetry.Application/Telemetry.Application.csproj", "src/Services/TelemetryService/Telemetry.Application/"]
 COPY ["src/Services/TelemetryService/Telemetry.Domain/Telemetry.Domain.csproj", "src/Services/TelemetryService/Telemetry.Domain/"]

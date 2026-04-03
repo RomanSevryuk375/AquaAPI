@@ -1,4 +1,4 @@
-using Telemetry.Domain.Enums;
+using Contracts.Enums;
 using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Domain.Entities;
@@ -32,17 +32,20 @@ public sealed class SensorEntity : IEntity
     public DateTime CreatedAt { get; private set; } 
 
     public static (SensorEntity? sensor, List<string> errors) Create(
+        Guid id,
         Guid controllerId,
         SensorTypeEnum type,
         string unit,
         double lastValue,
-        DateTime updatedAt)
+        DateTime updatedAt,
+        DateTime createdAt)
     {
-        var id = Guid.NewGuid();
-
-        var createdAt = DateTime.UtcNow;
-
         var errors = new List<string>();
+
+        if (id == Guid.Empty)
+        {
+            errors.Add("Id must not be empty.");
+        }
 
         if (controllerId == Guid.Empty)
         {
