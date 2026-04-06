@@ -77,9 +77,7 @@ public sealed class SensorEntity : IEntity
     public List<string>? Update(
         Guid controllerId,
         SensorTypeEnum type,
-        string unit,
-        double lastValue,
-        DateTime updatedAt)
+        string unit)
     {
         var errors = new List<string>();
 
@@ -100,10 +98,14 @@ public sealed class SensorEntity : IEntity
 
         ControllerId = controllerId;
         Type = type;
-        Unit = unit;
-        LastValue = lastValue;
-        UpdatedAt = updatedAt;
+        Unit = unit.Trim();
 
         return null;
+    }
+
+    public void UpdateLastValue(double newValue)
+    {
+        LastValue = newValue;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

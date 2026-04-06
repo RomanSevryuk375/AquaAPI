@@ -33,20 +33,21 @@ public sealed class TelemetryDataEntity : IEntity
         string externalMessageId,
         DateTime recordedAt)
     {
-        var id = Guid.NewGuid();
-
-        var createdAt = DateTime.UtcNow;
-
         var errors = new List<string>();
 
         if (sensorId == Guid.Empty)
         {
-            errors.Add("Sensor id must not be empty.");
+            errors.Add("sensorId must not be empty.");
         }
 
         if (recordedAt > DateTime.UtcNow.AddMinutes(1))
         {
-            errors.Add("RecordedAt must be greater than or equal to CreatedAt.");
+            errors.Add("recordedAt cannot be in the future.");
+        }
+
+        if (string.IsNullOrWhiteSpace(externalMessageId))
+        {
+            errors.Add("externalMessageId must not be empty.");
         }
 
         if (errors.Count > 0)
@@ -55,12 +56,12 @@ public sealed class TelemetryDataEntity : IEntity
         }
 
         var telemetryData = new TelemetryDataEntity(
-            id,
+            Guid.NewGuid(),
             sensorId,
             value, 
             externalMessageId,
             recordedAt,
-            createdAt);
+            DateTime.UtcNow);
 
         return (telemetryData, errors);
     }

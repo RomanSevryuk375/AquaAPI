@@ -1,5 +1,4 @@
-﻿using Contracts.Enums;
-using Contracts.Events;
+﻿using Contracts.Events;
 using MassTransit;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Exceptions;

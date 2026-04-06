@@ -1,7 +1,5 @@
 ﻿using Contracts.Events;
 using MassTransit;
-using System.Threading;
-using Telemetry.Domain.Exceptions;
 using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Application.EventHandlers;

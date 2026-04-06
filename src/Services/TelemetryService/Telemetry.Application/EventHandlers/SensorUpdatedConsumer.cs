@@ -1,5 +1,4 @@
-﻿using Contracts.Enums;
-using Contracts.Events;
+﻿using Contracts.Events;
 using MassTransit;
 using Telemetry.Domain.Exceptions;
 using Telemetry.Domain.Interfaces;
@@ -18,9 +17,7 @@ public class SensorUpdatedConsumer(
         var errors = existingSensor.Update(
             context.Message.ControllerId,
             context.Message.Type,
-            context.Message.Unit,
-            context.Message.LastValue,
-            context.Message.UpdatedAt);
+            context.Message.Unit);
 
         if (errors is not null && errors.Count > 0)
         {

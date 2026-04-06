@@ -2,12 +2,7 @@
 
 namespace Telemetry.Domain.Interfaces;
 
-public abstract class BaseSpecification<T>
+public abstract class BaseSpecification<T>(Expression<Func<T, bool>> criteria)
 {
-    public Expression<Func<T, bool>> Criteria { get; }
-
-    protected BaseSpecification(Expression<Func<T, bool>> criteria)
-    {
-        Criteria = criteria;
-    }
+    public Expression<Func<T, bool>> Criteria { get; } = criteria;
 }

@@ -1,6 +1,6 @@
-﻿using Contracts;
-using Contracts.Events;
+﻿using Contracts.Events;
 using MassTransit;
+using System;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
@@ -64,8 +64,8 @@ public class TelemetryDataService(
         TelemetryDataRequest dto,
         CancellationToken cancellationToken)
     {
-        var sensorExists = await sensorRepository.ExistsAsync(dto.SensorId, cancellationToken);
-        if (!sensorExists) throw new NotFoundException($"Sensor {dto.SensorId} not found");
+        var existingSensor = await sensorRepository.GetByIdAsync(dto.SensorId, cancellationToken)
+            ?? throw new NotFoundException($"Sensor {dto.SensorId} not found");
 
         var (telemetryData, errors) = TelemetryDataEntity.Create(
             dto.SensorId,
@@ -73,13 +73,16 @@ public class TelemetryDataService(
             dto.ExternalMessageId,
             dto.RecordedAt);
 
-        if (telemetryData is null)
+        if (errors.Count > 0)
         {
             throw new DomainValidationException(
                 $"Failed to create {nameof(TelemetryDataEntity)}: {string.Join(", ", errors)}");
         }
 
-        var result = await telemetryRepository.AddAsync(telemetryData, cancellationToken);
+        existingSensor.UpdateLastValue(dto.Value);
+
+        var result = await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
+        await sensorRepository.UpdateAsync(existingSensor, cancellationToken); // попробовать сделать черезе очередь в рэбите 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         await publishEndpoint.Publish(new TelemetryReceivedEvent

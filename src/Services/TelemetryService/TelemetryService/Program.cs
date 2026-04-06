@@ -1,4 +1,3 @@
-using MassTransit;
 using Telemetry.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
