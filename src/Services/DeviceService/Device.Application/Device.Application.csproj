@@ -3,4 +3,17 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Extesions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Device.Domain\Device.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

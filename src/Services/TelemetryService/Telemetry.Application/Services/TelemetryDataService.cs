@@ -1,10 +1,10 @@
-﻿using Contracts.Events;
+﻿using Contracts.Enums;
+using Contracts.Events;
+using Contracts.Exceptions;
 using MassTransit;
-using System;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
-using Telemetry.Domain.Exceptions;
 using Telemetry.Domain.Interfaces;
 using Telemetry.Domain.Specifications;
 
@@ -80,9 +80,15 @@ public class TelemetryDataService(
         }
 
         existingSensor.UpdateLastValue(dto.Value);
+        if (existingSensor.IsDataDelayed)
+        {
+            existingSensor.SetDataDelayed(false);
+            existingSensor.SetStatus(SensorStateEnum.Active);
+        }
 
         var result = await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
-        await sensorRepository.UpdateAsync(existingSensor, cancellationToken); // попробовать сделать черезе очередь в рэбите 
+
+        await sensorRepository.UpdateAsync(existingSensor, cancellationToken); 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         await publishEndpoint.Publish(new TelemetryReceivedEvent

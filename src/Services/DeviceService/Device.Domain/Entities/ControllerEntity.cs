@@ -96,4 +96,9 @@ public sealed class ControllerEntity : IEntity
     {
         IsOnline = !IsOnline;
     }
+
+    public void SetOffline()
+    {
+        IsOnline = false;
+    }
 }

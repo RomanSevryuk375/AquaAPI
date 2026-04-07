@@ -9,32 +9,39 @@ public sealed class SensorEntity : IEntity
         Guid id,
         Guid controllerId,
         SensorTypeEnum type,
+        SensorStateEnum state,
         string unit,
         double lastValue,
         DateTime updatedAt,
-        DateTime createdAt)
+        DateTime createdAt,
+        bool isDataDelayed)
     {
         Id = id;
         ControllerId = controllerId;
         Type = type;
+        State = state;
         Unit = unit;
         LastValue = lastValue;
         UpdatedAt = updatedAt;
         CreatedAt = createdAt;
+        IsDataDelayed = isDataDelayed;
     }
 
     public Guid Id { get; private set; }
     public Guid ControllerId { get; private set; }
     public SensorTypeEnum Type { get; private set; }
+    public SensorStateEnum State { get; private set; }
     public string Unit { get; private set; }
     public double LastValue { get; private set; }
     public DateTime UpdatedAt { get; private set; }
-    public DateTime CreatedAt { get; private set; } 
+    public DateTime CreatedAt { get; private set; }
+    public bool IsDataDelayed { get; private set; }
 
     public static (SensorEntity? sensor, List<string> errors) Create(
         Guid id,
         Guid controllerId,
         SensorTypeEnum type,
+        SensorStateEnum state,
         string unit,
         double lastValue,
         DateTime updatedAt,
@@ -66,10 +73,12 @@ public sealed class SensorEntity : IEntity
             id,
             controllerId,
             type,
+            state,
             unit.Trim(),
             lastValue,
             updatedAt,
-            createdAt);
+            createdAt,
+            false);
 
         return (sensor, errors);
     }
@@ -105,7 +114,28 @@ public sealed class SensorEntity : IEntity
 
     public void UpdateLastValue(double newValue)
     {
-        LastValue = newValue;
         UpdatedAt = DateTime.UtcNow;
+        LastValue = newValue;
+
+        if (IsDataDelayed || State == SensorStateEnum.NoData) 
+        {
+            IsDataDelayed = false;
+            State = SensorStateEnum.Active;
+        }
+    }
+
+    public void SetStatus(SensorStateEnum newStatus)
+    {
+        if (State == newStatus)
+        {
+            return;
+        }
+
+        State = newStatus;
+    }
+
+    public void SetDataDelayed(bool status)
+    {
+        IsDataDelayed = status;
     }
 }

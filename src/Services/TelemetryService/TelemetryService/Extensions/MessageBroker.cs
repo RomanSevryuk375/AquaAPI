@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using Telemetry.Application.EventHandlers;
+using Telemetry.Infrastructure.Messaging;
 
 namespace Telemetry.API.Extensions;
 

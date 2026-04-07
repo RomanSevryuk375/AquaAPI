@@ -4,6 +4,11 @@ namespace Telemetry.Domain.Interfaces;
 
 public interface ISensorRepository
 {
+    Task<IEnumerable<SensorEntity>> GetAllAsync(
+        BaseSpecification<SensorEntity>? specification,
+        int? skip,
+        int? take,
+        CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
     Task<Guid> AddAsync(SensorEntity entity, CancellationToken cancellationToken);
     Task UpdateAsync(SensorEntity entity, CancellationToken cancellationToken);

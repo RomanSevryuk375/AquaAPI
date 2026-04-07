@@ -10,6 +10,7 @@ public sealed class SensorEntity : IEntity
         Guid controllerId,
         string hardwarePin,
         SensorTypeEnum type,
+        SensorStateEnum state,
         string unit,
         DateTime createdAt)
     {
@@ -17,6 +18,7 @@ public sealed class SensorEntity : IEntity
         ControllerId = controllerId;
         HardwarePin = hardwarePin;
         Type = type;
+        State = state;
         Unit = unit;
         CreatedAt = createdAt;
     }
@@ -25,6 +27,7 @@ public sealed class SensorEntity : IEntity
     public Guid ControllerId { get; private set; }
     public string HardwarePin { get; private set; } = string.Empty;
     public SensorTypeEnum Type { get; private set; }
+    public SensorStateEnum State { get; private set; }
     public string Unit { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -61,6 +64,7 @@ public sealed class SensorEntity : IEntity
             controllerId,
             hardwarePin.Trim(),
             type,
+            SensorStateEnum.Nodata,
             unit.Trim(),
             DateTime.UtcNow);
 
@@ -101,5 +105,15 @@ public sealed class SensorEntity : IEntity
         Unit = unit.Trim();
 
         return null;
+    }
+
+    public void SetState(SensorStateEnum state)
+    {
+        if (State == state)
+        {
+            return;
+        }
+
+        State = state;
     }
 }

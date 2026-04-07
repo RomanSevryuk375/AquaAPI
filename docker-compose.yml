@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  telemetry-db:
+    image: postgres:18
+    container_name: telemetry-db
+    environment:
+      - POSTGRES_DB=telemetry_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5438:5432"
+    volumes:
+      - telemetry-db-data:/var/lib/postgresql
+    networks:
+      - aqua-network
+
+  device-db:
+    image: postgres:18
+    container_name: device-db
+    environment:
+      - POSTGRES_DB=device_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5439:5432"
+    volumes:
+      - device-db-data:/var/lib/postgresql
+    networks:
+      - aqua-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  
+      - "15672:15672"
+    networks:
+      - aqua-network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  telemetry-api:
+    container_name: telemetry-api
+    build:
+      context: . 
+      dockerfile: src/Services/TelemetryService/TelemetryService/Dockerfile
+    ports:
+      - "5051:8080"
+    depends_on:
+      - telemetry-db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080  
+      - ConnectionStrings__SystemDbContext=Host=telemetry-db;Database=telemetry_db;Username=postgres;Password=password
+      - RabbitMQ__Host=rabbitmq
+    networks:
+      - aqua-network
+
+networks:
+  aqua-network:
+    driver: bridge
+
+volumes:
+  telemetry-db-data:
+  device-db-data:
