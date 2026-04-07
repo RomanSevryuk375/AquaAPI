@@ -1,5 +1,5 @@
 ﻿using Contracts.Enums;
-using Contracts.Events;
+using Contracts.Events.SensorEvents;
 using MassTransit;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
@@ -36,7 +36,7 @@ public class SensorStateCheckerService(
         foreach (var sensor in sensors)
         {
             sensor.SetDataDelayed(true);
-            sensor.SetStatus(SensorStateEnum.NoData);
+            sensor.SetState(SensorStateEnum.NoData);
 
             await sensorRepository.UpdateAsync(sensor, cancellationToken);
             affectedSensors.Add(sensor);                
@@ -51,6 +51,7 @@ public class SensorStateCheckerService(
                 await publishEndpoint.Publish(new SensorNoDataEvent
                     {
                         SensorId = sensor.Id,
+                        State = sensor.State,
                         LastSeenAt = sensor.UpdatedAt,
                     }, cancellationToken);
             }

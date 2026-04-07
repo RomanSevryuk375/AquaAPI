@@ -124,7 +124,7 @@ public sealed class SensorEntity : IEntity
         }
     }
 
-    public void SetStatus(SensorStateEnum newStatus)
+    public void SetState(SensorStateEnum newStatus)
     {
         if (State == newStatus)
         {

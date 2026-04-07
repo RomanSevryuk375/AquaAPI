@@ -1,9 +1,9 @@
-﻿namespace Contracts.Events;
+﻿namespace Contracts.Events.ControllerEvents;
 
-public record SensorNoDataEvent 
+public record ControllerNotOnlineEvent
 {
     public Guid EventId { get; init; } = Guid.NewGuid();
     public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
-    public Guid SensorId { get; init; } 
+    public Guid ControllerId { get; init; }
     public DateTime LastSeenAt { get; init; }
 }

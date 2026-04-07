@@ -1,5 +1,5 @@
 ﻿using Contracts.Enums;
-using Contracts.Events;
+using Contracts.Events.SensorEvents;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
@@ -28,8 +28,8 @@ public class SensorService(
             sensorCreated.Type,
             sensorCreated.State,
             sensorCreated.Unit,
-            sensorCreated.LastValue,
-            sensorCreated.UpdatedAt,
+            0.0,
+            DateTime.UtcNow,
             sensorCreated.CreatedAt);
 
         if (sensor is null)
@@ -96,6 +96,24 @@ public class SensorService(
         {
             return;
         }
+
+        await sensorRepository.UpdateAsync(existingSensor, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SetSensorStateFromEventAsync(
+        SensorStateChangedEvent sensorStateChanged,
+        CancellationToken cancellationToken)
+    {
+        var existingSensor = await sensorRepository
+            .GetByIdAsync(sensorStateChanged.Id, cancellationToken);
+
+        if (existingSensor is null)
+        {
+            return;
+        }
+
+        existingSensor.SetState(sensorStateChanged.State);
 
         await sensorRepository.UpdateAsync(existingSensor, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

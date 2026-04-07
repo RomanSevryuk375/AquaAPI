@@ -64,7 +64,7 @@ public sealed class SensorEntity : IEntity
             controllerId,
             hardwarePin.Trim(),
             type,
-            SensorStateEnum.Nodata,
+            SensorStateEnum.NoData,
             unit.Trim(),
             DateTime.UtcNow);
 

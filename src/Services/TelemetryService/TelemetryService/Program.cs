@@ -1,4 +1,5 @@
 using Telemetry.API.Extensions;
+using Telemetry.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

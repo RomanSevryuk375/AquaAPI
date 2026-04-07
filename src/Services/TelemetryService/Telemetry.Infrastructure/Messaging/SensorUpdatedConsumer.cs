@@ -1,4 +1,4 @@
-﻿using Contracts.Events;
+﻿using Contracts.Events.SensorEvents;
 using MassTransit;
 using Telemetry.Application.Interfaces;
 

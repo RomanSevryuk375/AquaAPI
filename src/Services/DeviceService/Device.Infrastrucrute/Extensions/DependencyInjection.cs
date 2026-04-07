@@ -1,6 +1,9 @@
 ﻿using Device.Domain.Interfaces;
 using Device.Infrastructure.BackgroundJobs;
+using Device.Infrastructure.Messaging;
 using Device.Infrastructure.Repositories;
+using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 
@@ -29,13 +32,36 @@ public static class DependencyInjection
                 jobOptions.WithIdentity(jobKey));
 
             options.AddTrigger(triggerOptions => triggerOptions
-            .ForJob(jobKey)
-            .WithIdentity($"{jobKey}-trigger")
-            .WithSimpleSchedule(x => x.WithIntervalInSeconds(300).RepeatForever()));
+                .ForJob(jobKey)
+                .WithIdentity($"{jobKey}-trigger")
+                .WithSimpleSchedule(x => x.WithIntervalInSeconds(60).RepeatForever()));
         });
 
         services.AddQuartzHostedService(hostOptions     
             => hostOptions.WaitForJobsToComplete = true);
+
+        return services;
+    }
+
+    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddMassTransit(busConfigurator =>
+        {
+            busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+            busConfigurator.AddConsumer<SensorNoDataConsumer>();
+
+            busConfigurator.UsingRabbitMq((context, configurator) =>
+            {
+                configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                {
+                    h.Username(configuration["MessageBroker:UserName"]!);
+                    h.Password(configuration["MessageBroker:Password"]!);
+                });
+
+                configurator.ConfigureEndpoints(context);
+            });
+        });
 
         return services;
     }

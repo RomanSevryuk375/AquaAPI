@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Telemetry.Domain.Interfaces;
 using Telemetry.Infrastructure.BackgroundJobs;
+using Telemetry.Infrastructure.Messaging;
 using Telemetry.Infrastructure.Repositories;
 
 namespace Telemetry.Infrastructure.Extensions;
@@ -35,6 +38,32 @@ public static class DependencyInjection
 
         services.AddQuartzHostedService(hostOptions 
             => hostOptions.WaitForJobsToComplete = true);
+
+        return services;
+    }
+
+    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddMassTransit(busConfigurator =>
+        {
+            busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+            busConfigurator.AddConsumer<SensorCreatedConsumer>();
+            busConfigurator.AddConsumer<SensorUpdatedConsumer>();
+            busConfigurator.AddConsumer<SensorDeletedConsumer>();
+            busConfigurator.AddConsumer<SensorStateChangedCosumer>();
+
+            busConfigurator.UsingRabbitMq((context, configurator) =>
+            {
+                configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                {
+                    h.Username(configuration["MessageBroker:UserName"]!);
+                    h.Password(configuration["MessageBroker:Password"]!);
+                });
+
+                configurator.ConfigureEndpoints(context);
+            });
+        });
 
         return services;
     }

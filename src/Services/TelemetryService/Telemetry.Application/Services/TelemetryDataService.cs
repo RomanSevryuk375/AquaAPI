@@ -1,5 +1,4 @@
-﻿using Contracts.Enums;
-using Contracts.Events;
+﻿using Contracts.Events.TelemetryEnets;
 using Contracts.Exceptions;
 using MassTransit;
 using Telemetry.Application.DTOs;
@@ -80,11 +79,6 @@ public class TelemetryDataService(
         }
 
         existingSensor.UpdateLastValue(dto.Value);
-        if (existingSensor.IsDataDelayed)
-        {
-            existingSensor.SetDataDelayed(false);
-            existingSensor.SetStatus(SensorStateEnum.Active);
-        }
 
         var result = await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
 

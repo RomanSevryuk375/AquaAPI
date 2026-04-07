@@ -1,4 +1,5 @@
-﻿using Device.Application.DTOs.Sensor;
+﻿using Contracts.Enums;
+using Device.Application.DTOs.Sensor;
 
 namespace Device.Application.Interfaces;
 
@@ -24,5 +25,10 @@ public interface ISensorService
 
     Task DeleteSensorAsync(
         Guid id, 
+        CancellationToken cancellationToken);
+
+    Task SetSensorStateAsync(
+        Guid id,
+        SensorStateEnum state,
         CancellationToken cancellationToken);
 }

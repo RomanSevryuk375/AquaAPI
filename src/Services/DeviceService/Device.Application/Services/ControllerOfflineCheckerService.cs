@@ -1,4 +1,4 @@
-﻿using Contracts.Events;
+﻿using Contracts.Events.ControllerEvents;
 using Device.Application.Interfaces;
 using Device.Domain.Interfaces;
 using Device.Domain.Specifications;
