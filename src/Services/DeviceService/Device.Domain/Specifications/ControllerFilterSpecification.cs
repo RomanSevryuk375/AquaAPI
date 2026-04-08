@@ -1,16 +1,17 @@
 ﻿using Device.Domain.Entities;
 using Device.Domain.Interfaces;
+using Device.Domain.SpecificationParams;
 
 namespace Device.Domain.Specifications;
 
 public class ControllerFilterSpecification : BaseSpecification<ControllerEntity>
 {
-    public ControllerFilterSpecification(string? searchTerm, bool? isOnline) 
+    public ControllerFilterSpecification(ControllerFilterParams @params) 
         : base(data => 
-            (!isOnline.HasValue || data.IsOnline == isOnline.Value) &&
-            (string.IsNullOrWhiteSpace(searchTerm) 
-                || data.Name.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase) 
-                || data.MacAddress.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase)))
+            (!@params.IsOnline.HasValue || data.IsOnline == @params.IsOnline.Value) &&
+            (string.IsNullOrWhiteSpace(@params.SearchTerm)
+                || data.Name.ToLower().Contains(@params.SearchTerm.ToLower())
+                || data.MacAddress.ToLower().Contains(@params.SearchTerm.ToLower())))
     {
     }
 }

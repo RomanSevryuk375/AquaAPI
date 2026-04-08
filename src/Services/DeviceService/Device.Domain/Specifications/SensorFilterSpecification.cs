@@ -1,19 +1,16 @@
-﻿using Contracts.Enums;
-using Device.Domain.Entities;
+﻿using Device.Domain.Entities;
 using Device.Domain.Interfaces;
+using Device.Domain.SpecificationParams;
 
 namespace Device.Domain.Specifications;
 
 public class SensorFilterSpecification : BaseSpecification<SensorEntity>
 {
-    public SensorFilterSpecification(
-        Guid? controllerId, 
-        SensorTypeEnum? type, 
-        SensorStateEnum? state) 
+    public SensorFilterSpecification(SensorFilterParams @params) 
         : base(data => 
-            (!controllerId.HasValue || data.ControllerId == controllerId.Value) &&
-            (!type.HasValue || data.Type == type.Value) &&
-            (!state.HasValue || data.State == state.Value))
+            (!@params.ControllerId.HasValue || data.ControllerId == @params.ControllerId.Value) &&
+            (!@params.Type.HasValue || data.Type == @params.Type.Value) &&
+            (!@params.State.HasValue || data.State == @params.State.Value))
     {
     }
 }

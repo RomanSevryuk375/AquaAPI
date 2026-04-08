@@ -5,6 +5,7 @@ using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
+using Telemetry.Domain.SpecificationParams;
 using Telemetry.Domain.Specifications;
 
 namespace Telemetry.Application.Services;
@@ -22,7 +23,12 @@ public class TelemetryDataService(
         CancellationToken cancellationToken)
     {
         var specification = new TelemetryFilterSpecification(
-            filter.SensorId, filter.From, filter.To);
+            new TelemetryFilterParams
+            {
+                SensorId = filter.SensorId,
+                From = filter.From,
+                To = filter.To,
+            });
 
         var entities = await telemetryRepository.GetAllAsync(
             specification,

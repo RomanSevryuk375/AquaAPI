@@ -1,21 +1,17 @@
-﻿using Contracts.Enums;
-using Device.Domain.Entities;
+﻿using Device.Domain.Entities;
 using Device.Domain.Interfaces;
+using Device.Domain.SpecificationParams;
 
 namespace Device.Domain.Specifications;
 
 public class RelayFilterSpecification : BaseSpecification<RelayEntity>
 {
-    public RelayFilterSpecification(
-        Guid? controllerId, 
-        RelayPurposeEnum? purpose,
-        bool? isActive,
-        bool? isManual) : 
+    public RelayFilterSpecification(RelayFilterParams @params) : 
             base(data => 
-                (!controllerId.HasValue || data.ControllerId == controllerId.Value) &&
-                (!purpose.HasValue || data.Purpose == purpose.Value) &&
-                (!isActive.HasValue || data.IsActive == isActive.Value) &&
-                (!isManual.HasValue || data.IsManual == isManual.Value))
+                (!@params.ControllerId.HasValue || data.ControllerId == @params.ControllerId.Value) &&
+                (!@params.Purpose.HasValue || data.Purpose == @params.Purpose.Value) &&
+                (!@params.IsActive.HasValue || data.IsActive == @params.IsActive.Value) &&
+                (!@params.IsManual.HasValue || data.IsManual == @params.IsManual.Value))
     {
     }
 }
