@@ -111,7 +111,7 @@ public sealed class RelayEntity : IEntity
         IsActive = state;
     }
 
-    public void ToggleManual()
+    public void ToggleMode()
     {
         IsManual = !IsManual;
     }

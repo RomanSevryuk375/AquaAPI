@@ -5,6 +5,7 @@ using Device.Application.DTOs.Sensor;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;
 using Device.Domain.Interfaces;
+using Device.Domain.SpecificationParams;
 using Device.Domain.Specifications;
 using MassTransit;
 
@@ -72,7 +73,12 @@ public class SensorService(
         CancellationToken cancellationToken)
     {
         var specification = new SensorFilterSpecification(
-            filter.ControllerId, filter.Type, filter.State);
+            new SensorFilterParams 
+            {
+                ControllerId = filter.ControllerId,
+                Type = filter.Type,
+                State = filter.State,
+            });
 
         var sensors = await sensorRepository.GetAllAsync(
             specification,

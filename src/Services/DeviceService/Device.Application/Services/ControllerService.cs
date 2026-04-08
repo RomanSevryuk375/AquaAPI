@@ -4,6 +4,7 @@ using Device.Application.DTOs.Controller;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;
 using Device.Domain.Interfaces;
+using Device.Domain.SpecificationParams;
 using Device.Domain.Specifications;
 using MassTransit;
 
@@ -45,12 +46,16 @@ public class ControllerService(
         int? take, 
         CancellationToken cancellationToken)
     {
-        var specifiction = new ControllerFilterSpecification(
-            filter.SearchTerm,
-            filter.IsOnline);
+        
+        var specification = new ControllerFilterSpecification(
+            new ControllerFilterParams
+            {
+                SearchTerm = filter.SearchTerm,
+                IsOnline = filter.IsOnline,
+            });
 
         var controllers = await controllerRepository.GetAllAsync(
-            specifiction, 
+            specification, 
             skip, 
             take, 
             cancellationToken);
