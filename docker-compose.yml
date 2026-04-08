@@ -43,6 +43,7 @@ services:
 
   telemetry-api:
     container_name: telemetry-api
+    image: telemetry-api
     build:
       context: . 
       dockerfile: src/Services/TelemetryService/TelemetryService/Dockerfile
@@ -55,7 +56,32 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080  
       - ConnectionStrings__SystemDbContext=Host=telemetry-db;Database=telemetry_db;Username=postgres;Password=password
-      - RabbitMQ__Host=rabbitmq
+      - MessageBroker__Host=amqp://rabbitmq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+      - MT_LICENSE=community  
+    networks:
+      - aqua-network
+
+  device-api:
+    container_name: device-api
+    image: device-api 
+    build:
+      context: . 
+      dockerfile: src/Services/DeviceService/DeviceService/Dockerfile
+    ports:
+      - "5052:8080"
+    depends_on:
+      - device-db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__SystemDbContext=Host=device-db;Database=device_db;Username=postgres;Password=password
+      - MessageBroker__Host=amqp://rabbitmq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+      - MT_LICENSE=community  
     networks:
       - aqua-network
 
