@@ -6,14 +6,14 @@ public sealed class ControllerEntity : IEntity
 {
     private ControllerEntity(
         Guid id, 
-        string macAdress, 
+        string macAddress, 
         string name, 
         bool isOnline, 
         DateTime lastSeenAt, 
         DateTime createdAt)
     {
         Id = id;
-        MacAddress = macAdress;
+        MacAddress = macAddress;
         Name = name;
         IsOnline = isOnline;
         LastSeenAt = lastSeenAt;
@@ -28,13 +28,13 @@ public sealed class ControllerEntity : IEntity
     public DateTime CreatedAt { get; private set; }
 
     public static (ControllerEntity? controller, List<string>? errors) Create(
-        string macAdress,
+        string macAddress,
         string name,
         bool isOnline)
     {
         var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(macAdress))
+        if (string.IsNullOrWhiteSpace(macAddress))
         {
             errors.Add("macAdress must not be empty.");
         }
@@ -51,7 +51,7 @@ public sealed class ControllerEntity : IEntity
 
         var controller = new ControllerEntity(
             Guid.NewGuid(),
-            macAdress.Trim(),
+            macAddress.Trim(),
             name.Trim(),
             isOnline,
             DateTime.UtcNow,

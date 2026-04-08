@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Telemetry.Application.Extensions;
-using Telemetry.Infrastructure;
-using Telemetry.Infrastructure.Extensions;
+﻿using Device.Application.Extesions;
+using Device.Infrastructure;
+using Device.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 
-namespace Telemetry.API.Extensions;
+namespace Device.API.Extensions;
 
 public static class DependencyInjection
 {
@@ -23,9 +23,10 @@ public static class DependencyInjection
 
         services.AddRepositories();
         services.AddServices();
-        services.AddQuartzJob();
+        services.AddQuartzJobs();
         services.AddRabbitMq(configuration);
 
         return services;
     }
 }
+

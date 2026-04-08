@@ -140,12 +140,13 @@ public class SensorService(
     }
 
     public async Task UpdateSensorAsync(
-        SensorUpdateReuqestDto updateRequestDto, 
+        Guid id,
+        SensorUpdateRequestDto updateRequestDto, 
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
-            .GetByIdAsync(updateRequestDto.Id, cancellationToken)
-            ?? throw new NotFoundException($"Sensor {updateRequestDto.Id} not found");
+            .GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Sensor {id} not found");
 
         var errors = existingSensor.Update(
             updateRequestDto.HardwarePin,

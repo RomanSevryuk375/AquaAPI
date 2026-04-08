@@ -51,7 +51,7 @@ public static class DependencyInjection
             busConfigurator.AddConsumer<SensorCreatedConsumer>();
             busConfigurator.AddConsumer<SensorUpdatedConsumer>();
             busConfigurator.AddConsumer<SensorDeletedConsumer>();
-            busConfigurator.AddConsumer<SensorStateChangedCosumer>();
+            busConfigurator.AddConsumer<SensorStateChangedConsumer>();
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {

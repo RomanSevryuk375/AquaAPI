@@ -19,6 +19,7 @@ public interface IRelayService
         CancellationToken cancellationToken);
 
     Task UpdateRelayAsync(
+        Guid id,
         RelayUpdateRequestDto updateRequestDto,
         CancellationToken cancellationToken);
 

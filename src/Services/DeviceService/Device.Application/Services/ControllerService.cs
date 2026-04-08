@@ -124,9 +124,12 @@ public class ControllerService(
         return controller.IsOnline;
     }
 
-    public async Task UpdateControllerAsync(ControllerUpdateRequestDto updateRequestDto, CancellationToken cancellationToken)
+    public async Task UpdateControllerAsync(
+        Guid id,
+        ControllerUpdateRequestDto updateRequestDto, 
+        CancellationToken cancellationToken)
     {
-        var controller = await controllerRepository.GetByIdAsync(updateRequestDto.Id, cancellationToken)
+        var controller = await controllerRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException($"{nameof(ControllerEntity)} not found");
 
         var errors = controller.Update(

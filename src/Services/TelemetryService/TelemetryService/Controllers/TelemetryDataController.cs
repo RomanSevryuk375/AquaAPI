@@ -8,6 +8,8 @@ namespace Telemetry.API.Controllers;
 [Route("api/telemetry/v1/data")]
 public class TelemetryDataController(ITelemetryDataService service) : ControllerBase
 {
+    private const string NameGetById = "GetTelemetryDataById";
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<TelemetryDataResponse>>> GetAllDataAsync(
         [FromQuery] TelemetryDataFilterDto filter,
@@ -19,10 +21,10 @@ public class TelemetryDataController(ITelemetryDataService service) : Controller
         return Ok(result);
     }
 
-    [HttpGet("{id:guid}", Name = "GetTelemetryDataById")]
+    [HttpGet("{id:guid}", Name = NameGetById)]
     public async Task<ActionResult<TelemetryDataResponse>> GetDataById(
         Guid id,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var result = await service.GetDataByIdAsync(id, cancellationToken);
         return Ok(result);
@@ -31,14 +33,14 @@ public class TelemetryDataController(ITelemetryDataService service) : Controller
     [HttpPost]
     public async Task<ActionResult> AddTelemetryDataAsync(
         [FromBody] TelemetryDataRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var id = await service.AddDataAsync(request, cancellationToken);
 
         var createdData = await service.GetDataByIdAsync(id, cancellationToken);
 
         return CreatedAtRoute(
-            "GetTelemetryDataById",
+            NameGetById,
             new { id = id },
             createdData);
     }

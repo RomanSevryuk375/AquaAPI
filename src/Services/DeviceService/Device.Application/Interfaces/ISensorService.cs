@@ -20,7 +20,8 @@ public interface ISensorService
         CancellationToken cancellationToken);
 
     Task UpdateSensorAsync(
-        SensorUpdateReuqestDto updateRequestDto,
+        Guid id,
+        SensorUpdateRequestDto updateRequestDto,
         CancellationToken cancellationToken);
 
     Task DeleteSensorAsync(

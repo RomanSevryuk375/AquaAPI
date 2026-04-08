@@ -189,13 +189,14 @@ public class RelayService(
     }
 
     public async Task UpdateRelayAsync(
+        Guid id,
         RelayUpdateRequestDto updateRequestDto, 
         CancellationToken cancellationToken)
     {
         var existingRelay = await relayRepository
-            .GetByIdAsync(updateRequestDto.Id, cancellationToken)
+            .GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException(
-                $"{nameof(RelayEntity)} {updateRequestDto.Id} not found");
+                $"{nameof(RelayEntity)} {id} not found");
 
         var controller = await controllerRepository
             .GetByIdAsync(updateRequestDto.ControllerId, cancellationToken)

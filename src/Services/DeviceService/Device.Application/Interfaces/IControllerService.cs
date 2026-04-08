@@ -19,6 +19,7 @@ public interface IControllerService
         CancellationToken cancellationToken);
 
     Task UpdateControllerAsync(
+        Guid id,
         ControllerUpdateRequestDto updateRequestDto,
         CancellationToken cancellationToken);
 

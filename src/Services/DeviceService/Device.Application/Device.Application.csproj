@@ -4,11 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Extesions\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.0" />
+    <PackageReference Include="MassTransit" Version="8.5.9" />
   </ItemGroup>
 
   <ItemGroup>
