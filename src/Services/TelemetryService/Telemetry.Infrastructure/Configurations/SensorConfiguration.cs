@@ -18,6 +18,10 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
             .HasConversion<int>()
             .IsRequired();
 
+        builder.Property(x => x.State)
+            .HasConversion<int>()
+            .IsRequired();
+
         builder.Property(x => x.Unit)
             .HasMaxLength(10)
             .IsRequired();
@@ -28,6 +32,7 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
 
         builder.Property(x => x.UpdatedAt).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.IsDataDelayed).IsRequired();
 
         builder.HasMany<TelemetryDataEntity>()
             .WithOne()

@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Telemetry.Domain.Entities;
 
-namespace Telemetry.Domain.Interfaces
+namespace Telemetry.Domain.Interfaces;
+
+public interface ISensorRepository
 {
-    internal class ISensorRepository
-    {
-    }
+    Task<IEnumerable<SensorEntity>> GetAllAsync(
+        BaseSpecification<SensorEntity>? specification,
+        int? skip,
+        int? take,
+        CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
+    Task<Guid> AddAsync(SensorEntity entity, CancellationToken cancellationToken);
+    Task UpdateAsync(SensorEntity entity, CancellationToken cancellationToken);
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken);
+    Task<SensorEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }

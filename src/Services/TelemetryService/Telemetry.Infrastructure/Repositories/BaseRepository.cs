@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Infrastructure.Repositories;
@@ -8,9 +7,11 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
 {
     private readonly DbSet<T> _set = dbContext.Set<T>();
 
-    public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         await _set.AddAsync(entity, cancellationToken);
+
+        return entity.Id;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -25,7 +26,7 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
     }
 
     public async Task<IEnumerable<T>> GetAllAsync(
-        Expression<Func<T, bool>>? filter,
+        BaseSpecification<T>? specification,
         int? skip,
         int? take,
         CancellationToken cancellationToken = default)
@@ -42,9 +43,9 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
 
         var query = _set.AsNoTracking().AsQueryable();
 
-        if (filter is not null)
+        if (specification is not null)
         {
-            query = query.Where(filter);
+            query = query.Where(specification.Criteria);
         }
 
         query = query.OrderBy(x => x.Id);
@@ -67,8 +68,11 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
         return await _set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
     }
 
-    public void Update(T entity)
+    public async Task UpdateAsync(T entity, CancellationToken cancellationToken)
     {
-        _set.Update(entity);
+        var trackedEntity = await _set.FindAsync([entity.Id], cancellationToken)
+            ?? throw new KeyNotFoundException($"{nameof(T)} with id {entity.Id} not found.");
+
+        dbContext.Entry(trackedEntity).CurrentValues.SetValues(entity);
     }
 }

@@ -1,4 +1,4 @@
-using Telemetry.Domain.Enums;
+using Contracts.Enums;
 using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Domain.Entities;
@@ -9,32 +9,39 @@ public sealed class SensorEntity : IEntity
         Guid id,
         Guid controllerId,
         SensorTypeEnum type,
+        SensorStateEnum state,
         string unit,
         double lastValue,
         DateTime updatedAt,
-        DateTime createdAt)
+        DateTime createdAt,
+        bool isDataDelayed)
     {
         Id = id;
         ControllerId = controllerId;
         Type = type;
+        State = state;
         Unit = unit;
         LastValue = lastValue;
         UpdatedAt = updatedAt;
         CreatedAt = createdAt;
+        IsDataDelayed = isDataDelayed;
     }
 
     public Guid Id { get; private set; }
     public Guid ControllerId { get; private set; }
     public SensorTypeEnum Type { get; private set; }
+    public SensorStateEnum State { get; private set; }
     public string Unit { get; private set; }
     public double LastValue { get; private set; }
     public DateTime UpdatedAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public bool IsDataDelayed { get; private set; }
 
     public static (SensorEntity? sensor, List<string> errors) Create(
         Guid id,
         Guid controllerId,
         SensorTypeEnum type,
+        SensorStateEnum state,
         string unit,
         double lastValue,
         DateTime updatedAt,
@@ -44,7 +51,7 @@ public sealed class SensorEntity : IEntity
 
         if (id == Guid.Empty)
         {
-            errors.Add("Sensor id must not be empty.");
+            errors.Add("Id must not be empty.");
         }
 
         if (controllerId == Guid.Empty)
@@ -57,11 +64,6 @@ public sealed class SensorEntity : IEntity
             errors.Add("Unit must not be empty.");
         }
 
-        if (updatedAt <= createdAt)
-        {
-            errors.Add("UpdatedAt must be greater than or equal to CreatedAt.");
-        }
-
         if (errors.Count > 0)
         {
             return (null, errors);
@@ -71,11 +73,69 @@ public sealed class SensorEntity : IEntity
             id,
             controllerId,
             type,
+            state,
             unit.Trim(),
             lastValue,
             updatedAt,
-            createdAt);
+            createdAt,
+            false);
 
         return (sensor, errors);
+    }
+
+    public List<string>? Update(
+        Guid controllerId,
+        SensorTypeEnum type,
+        string unit)
+    {
+        var errors = new List<string>();
+
+        if (controllerId == Guid.Empty)
+        {
+            errors.Add("Controller id must not be empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(unit))
+        {
+            errors.Add("Unit must not be empty.");
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
+        }
+
+        ControllerId = controllerId;
+        Type = type;
+        Unit = unit.Trim();
+
+        return null;
+    }
+
+    public void UpdateLastValue(double newValue)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        LastValue = newValue;
+
+        if (IsDataDelayed || State == SensorStateEnum.NoData) 
+        {
+            IsDataDelayed = false;
+            State = SensorStateEnum.Active;
+        }
+    }
+
+    public void SetState(SensorStateEnum newStatus)
+    {
+        if (State == newStatus)
+        {
+            return;
+        }
+
+        State = newStatus;
+    }
+
+    public void SetDataDelayed(bool status)
+    {
+        IsDataDelayed = status;
     }
 }
