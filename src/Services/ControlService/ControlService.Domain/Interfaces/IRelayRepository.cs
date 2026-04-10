@@ -1,6 +1,6 @@
-﻿using Device.Domain.Entities;
+﻿using Control.Domain.Entities;
 
-namespace Device.Domain.Interfaces;
+namespace Control.Domain.Interfaces;
 
 public interface IRelayRepository : IRepository<RelayEntity>
 {

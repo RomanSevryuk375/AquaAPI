@@ -2,7 +2,7 @@
 
 public interface IRepository<T> where T : class, IEntity
 {
-    Task<IEnumerable<T>> GetAllAsync(
+    Task<IReadOnlyList<T>> GetAllAsync(
         BaseSpecification<T>? specification,
         int? skip,
         int? take,

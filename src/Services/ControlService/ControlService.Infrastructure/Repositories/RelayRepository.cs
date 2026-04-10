@@ -1,8 +1,8 @@
-﻿using Device.Domain.Entities;
-using Device.Domain.Interfaces;
+﻿using Control.Domain.Entities;
+using Control.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Device.Infrastructure.Repositories;
+namespace Control.Infrastructure.Repositories;
 
 public class RelayRepository(SystemDbContext dbContext)
     : BaseRepository<RelayEntity>(dbContext), IRelayRepository

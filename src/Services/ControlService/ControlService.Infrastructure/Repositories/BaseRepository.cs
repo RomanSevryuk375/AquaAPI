@@ -1,7 +1,7 @@
+﻿using Control.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Telemetry.Domain.Interfaces;
 
-namespace Telemetry.Infrastructure.Repositories;
+namespace Control.Infrastructure.Repositories;
 
 public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository<T> where T : class, IEntity
 {

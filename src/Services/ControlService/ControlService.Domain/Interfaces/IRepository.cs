@@ -1,4 +1,4 @@
-﻿namespace Device.Domain.Interfaces;
+﻿namespace Control.Domain.Interfaces;
 
 public interface IRepository<T> where T : class, IEntity
 {

@@ -1,6 +1,6 @@
-﻿using Telemetry.Domain.Entities;
+﻿using Control.Domain.Entities;
 
-namespace Telemetry.Domain.Interfaces;
+namespace Control.Domain.Interfaces;
 
 public interface ISensorRepository : IRepository<SensorEntity>
 {
