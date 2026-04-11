@@ -42,9 +42,12 @@ public class RelayService(
 
         await publisherEndpoint.Publish(new RelayCreatedEvent
         {
+            ControllerId = request.ControllerId,
             RelayId = relay.Id,
             Purpose = relay.Purpose,
             IsManual = relay.IsActive,
+            IsActive = relay.IsActive,
+            CreatedAt = relay.CreatedAt,
         }, cancellationToken);
 
         return result;
@@ -219,9 +222,12 @@ public class RelayService(
 
         await publisherEndpoint.Publish(new RelayUpdatedEvent
         {
-            RelayId = existingRelay.Id,
+            RelayId= existingRelay.Id,
+            ControllerId = existingRelay.ControllerId,
             Purpose = existingRelay.Purpose,
+            IsActive = existingRelay.IsActive,
             IsManual = existingRelay.IsManual,
+            CreatedAt = existingRelay.CreatedAt,
         }, cancellationToken);
     }
 }

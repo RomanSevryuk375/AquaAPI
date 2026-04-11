@@ -3,4 +3,13 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.5.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\ControlService.Domain\Control.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

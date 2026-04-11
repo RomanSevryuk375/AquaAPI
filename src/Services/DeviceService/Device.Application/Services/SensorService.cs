@@ -168,6 +168,7 @@ public class SensorService(
             Id = existingSensor.Id,
             ControllerId = existingSensor.ControllerId,
             Type = existingSensor.Type,
+            State = existingSensor.State,
             Unit = existingSensor.Unit,
             LastValue = 0.0,
             UpdatedAt = DateTime.UtcNow,

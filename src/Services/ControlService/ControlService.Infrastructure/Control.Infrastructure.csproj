@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ControlService.Application\Control.Application.csproj" />
     <ProjectReference Include="..\ControlService.Domain\Control.Domain.csproj" />
   </ItemGroup>
 

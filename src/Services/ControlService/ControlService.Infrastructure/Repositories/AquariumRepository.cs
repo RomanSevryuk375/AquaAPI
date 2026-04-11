@@ -13,4 +13,12 @@ public class AquariumRepository(SystemDbContext dbContext)
             .AsNoTracking()
             .AnyAsync(x => x.Id == id, cancellationToken);
     }
+
+    public async Task<AquariumEntity?> GetByControllerIdAsync(
+        Guid controllerId, CancellationToken cancellationToken)
+    {
+        return await Context.Aquariums
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ControllerId == controllerId, cancellationToken);
+    }
 }

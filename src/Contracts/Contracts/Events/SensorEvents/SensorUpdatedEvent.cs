@@ -9,6 +9,7 @@ public class SensorUpdatedEvent
     public Guid Id { get; init; }
     public Guid ControllerId { get; init; }
     public SensorTypeEnum Type { get; init; }
+    public SensorStateEnum State { get; init; }
     public string Unit { get; init; } = string.Empty;
     public double LastValue { get; init; }
     public DateTime UpdatedAt { get; init; }
