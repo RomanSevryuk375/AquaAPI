@@ -1,5 +1,4 @@
-﻿using Contracts.Events.RelayEvents;
-using Control.Application.Interfaces;
+﻿using Control.Application.Interfaces;
 using MassTransit;
 
 namespace Control.Infrastructure.Messaging.Relay;
