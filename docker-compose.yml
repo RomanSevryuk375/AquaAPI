@@ -75,14 +75,32 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+  api-gateway:
+    container_name: api-gateway
+    image: api-gateway
+    build:
+      context: .
+      dockerfile: src\Gateway\ApiGateway\Dockerfile
+    ports:
+      - "5055:8080"
+    depends_on:
+      telemetry-api:
+        condition: service_healthy
+      device-api:
+        condition: service_healthy
+      control-api:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - aqua-network
+
   telemetry-api:
     container_name: telemetry-api
     image: telemetry-api
     build:
       context: . 
       dockerfile: src/Services/TelemetryService/TelemetryService/Dockerfile
-    ports:
-      - "5051:8080"
     depends_on:
       telemetry-db:
         condition: service_healthy
@@ -110,8 +128,6 @@ services:
     build:
       context: . 
       dockerfile: src/Services/DeviceService/DeviceService/Dockerfile
-    ports:
-      - "5052:8080"
     depends_on:
       device-db:
         condition: service_healthy
@@ -138,9 +154,7 @@ services:
     image: control-api
     build:
       context: . 
-      dockerfile: src/Services/ControlService/Control.API/Dockerfile
-    ports:
-      - "5053:8080"
+      dockerfile: src/Services/ControlService/ControlService/Dockerfile
     depends_on:
       control-db:
         condition: service_healthy

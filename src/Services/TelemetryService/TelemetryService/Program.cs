@@ -18,14 +18,12 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
-
+app.MapHealthChecks("/health");
 app.MapControllers();
 
 app.Run();
