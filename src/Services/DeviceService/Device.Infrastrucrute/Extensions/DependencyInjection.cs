@@ -50,6 +50,7 @@ public static class DependencyInjection
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
             busConfigurator.AddConsumer<SensorNoDataConsumer>();
+            busConfigurator.AddConsumer<RelayChangeStateConsumer>();
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {

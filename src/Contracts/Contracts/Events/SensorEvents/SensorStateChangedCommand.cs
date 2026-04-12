@@ -2,7 +2,7 @@
 
 namespace Contracts.Events.SensorEvents;
 
-public class SensorStateChangedEvent
+public class SensorStateChangedCommand
 {
     public Guid EventId { get; init; } = Guid.NewGuid();
     public DateTime OccurredOn { get; init; } = DateTime.UtcNow;

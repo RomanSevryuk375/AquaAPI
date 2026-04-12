@@ -6,6 +6,7 @@ namespace Device.Infrastructure.Repositories;
 public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository<T> where T : class, IEntity
 {
     private readonly DbSet<T> _set = dbContext.Set<T>();
+    protected SystemDbContext Context => dbContext;
 
     public async Task<Guid> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
@@ -25,7 +26,7 @@ public abstract class BaseRepository<T>(SystemDbContext dbContext) : IRepository
         _set.Remove(entity);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(
+    public async Task<IReadOnlyList<T>> GetAllAsync(
         BaseSpecification<T>? specification,
         int? skip,
         int? take,

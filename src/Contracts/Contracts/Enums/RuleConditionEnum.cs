@@ -3,8 +3,8 @@
 public enum RuleConditionEnum
 {
     Equal = 1,
-    Larger = 2,
+    Greater = 2,
     Less = 3,
-    LargerOrEqual = 4,
+    GreaterOrEqual = 4,
     LessOrEqual = 5
 }

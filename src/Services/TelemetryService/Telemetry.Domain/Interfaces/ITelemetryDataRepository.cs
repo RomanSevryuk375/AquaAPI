@@ -4,7 +4,7 @@ namespace Telemetry.Domain.Interfaces;
 
 public interface ITelemetryDataRepository
 {
-    Task<IEnumerable<TelemetryDataEntity>> GetAllAsync(
+    Task<IReadOnlyList<TelemetryDataEntity>> GetAllAsync(
         BaseSpecification<TelemetryDataEntity>? specification,
         int? skip,
         int? take,

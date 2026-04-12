@@ -12,6 +12,11 @@ services:
       - "5438:5432"
     volumes:
       - telemetry-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d telemetry_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - aqua-network
 
@@ -26,6 +31,11 @@ services:
       - "5439:5432"
     volumes:
       - device-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d device_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - aqua-network
 
@@ -35,6 +45,11 @@ services:
     ports:
       - "5672:5672"  
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - aqua-network
     environment:
@@ -50,8 +65,10 @@ services:
     ports:
       - "5051:8080"
     depends_on:
-      - telemetry-db
-      - rabbitmq
+      telemetry-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080  
@@ -60,6 +77,11 @@ services:
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - MT_LICENSE=community  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     networks:
       - aqua-network
 
@@ -72,8 +94,10 @@ services:
     ports:
       - "5052:8080"
     depends_on:
-      - device-db
-      - rabbitmq
+      device-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -82,6 +106,11 @@ services:
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - MT_LICENSE=community  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     networks:
       - aqua-network
 

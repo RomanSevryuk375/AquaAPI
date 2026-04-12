@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Device.Infrastructure.Repositories;
 
-public class RelayRepository(SystemDbContext context)
-    : BaseRepository<RelayEntity>(context), IRelayRepository
+public class RelayRepository(SystemDbContext dbContext)
+    : BaseRepository<RelayEntity>(dbContext), IRelayRepository
 {
-    public async Task<bool> Exists(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await context.Relays
+        return await Context.Relays
             .AsNoTracking()
             .AnyAsync(x => x.Id == id, cancellationToken);
     }

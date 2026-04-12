@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Device.Infrastructure.Repositories;
 
-public class SensorRepository(SystemDbContext context)
-    : BaseRepository<SensorEntity>(context), ISensorRepository
+public class SensorRepository(SystemDbContext dbContext)
+    : BaseRepository<SensorEntity>(dbContext), ISensorRepository
 {
-    public async Task<bool> Exists(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await context.Sensors
+        return await Context.Sensors
             .AsNoTracking()
             .AnyAsync(x => x.Id == id, cancellationToken);
     }

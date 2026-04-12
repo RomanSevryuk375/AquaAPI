@@ -1,6 +1,5 @@
 ﻿using Contracts.Enums;
 using Control.Domain.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Control.Domain.Entities;
 
