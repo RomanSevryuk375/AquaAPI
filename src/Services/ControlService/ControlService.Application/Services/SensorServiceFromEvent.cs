@@ -110,7 +110,7 @@ public class SensorServiceFromEvent(
 
         foreach (var rule in affectedRules)
         {
-            await publishEndpoint.Publish(new RelayStateChangedCommand
+            await publishEndpoint.Publish(new ChangeRelayStateCommand
             {
                 RelayId = rule.RelayId,
                 IsActive = false,

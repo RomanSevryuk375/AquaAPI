@@ -1,6 +1,6 @@
 ﻿namespace Contracts.Events.RelayEvents;
 
-public record RelayStateChangedCommand
+public record ChangeRelayStateCommand
 {
     public Guid EventId { get; init; } = Guid.NewGuid();
     public DateTime OccurredOn { get; init; } = DateTime.UtcNow;

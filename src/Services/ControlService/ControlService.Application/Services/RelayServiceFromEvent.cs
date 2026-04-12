@@ -29,7 +29,7 @@ public class RelayServiceFromEvent(
     }
 
     public async Task ChangedStateFromEventAsync(
-        RelayStateChangedCommand relayState, 
+        ChangeRelayStateCommand relayState, 
         CancellationToken cancellationToken)
     {
         var existingRelay = await relayRepository
