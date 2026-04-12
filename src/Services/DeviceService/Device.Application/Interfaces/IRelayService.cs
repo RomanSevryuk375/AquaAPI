@@ -1,4 +1,5 @@
-﻿using Device.Application.DTOs.Relay;
+﻿using Contracts.Events.RelayEvents;
+using Device.Application.DTOs.Relay;
 
 namespace Device.Application.Interfaces;
 
@@ -38,5 +39,9 @@ public interface IRelayService
     Task<bool> SetRelayStateAsync(
         Guid id, 
         bool state, 
+        CancellationToken cancellationToken);
+
+    Task SetRelayStateFromCommandAsync(
+        ChangeRelayStateCommand command,
         CancellationToken cancellationToken);
 }

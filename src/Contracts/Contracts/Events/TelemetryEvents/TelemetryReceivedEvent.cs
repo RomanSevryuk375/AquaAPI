@@ -1,4 +1,4 @@
-﻿namespace Contracts.Events.TelemetryEnets;
+﻿namespace Contracts.Events.TelemetryEvents;
 
 public record TelemetryReceivedEvent
 {

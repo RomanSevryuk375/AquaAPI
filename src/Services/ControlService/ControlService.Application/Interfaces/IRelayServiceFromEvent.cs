@@ -17,7 +17,7 @@ public interface IRelayServiceFromEvent
         CancellationToken cancellationToken);
 
     Task ChangedStateFromEventAsync(
-        RelayStateChangedCommand relayState,
+        ChangeRelayStateCommand relayState,
         CancellationToken cancellationToken);
 
     Task ChangedModeFromEventAsync(

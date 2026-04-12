@@ -1,15 +1,15 @@
 ﻿using Contracts.Events.RelayEvents;
-using Control.Application.Interfaces;
+using Device.Application.Interfaces;
 using MassTransit;
 
-namespace Control.Infrastructure.Messaging.Relay;
+namespace Device.Infrastructure.Messaging;
 
-public class RelayStateChangedComandConsumer(IRelayServiceFromEvent service)
+public class RelayChangeStateConsumer(IRelayService service) 
     : IConsumer<ChangeRelayStateCommand>
 {
     public async Task Consume(ConsumeContext<ChangeRelayStateCommand> context)
     {
-        await service.ChangedStateFromEventAsync(
+        await service.SetRelayStateFromCommandAsync(
             context.Message, context.CancellationToken);
     }
 }

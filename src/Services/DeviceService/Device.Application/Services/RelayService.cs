@@ -138,13 +138,31 @@ public class RelayService(
         await relayRepository.UpdateAsync(existingRelay, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await publisherEndpoint.Publish(new RelayStateChangedEvent
+        await publisherEndpoint.Publish(new ChangeRelayStateCommand
         {
             RelayId = existingRelay.Id,
             IsActive = existingRelay.IsActive,
         }, cancellationToken);
 
         return existingRelay.IsActive;
+    }
+
+    public async Task SetRelayStateFromCommandAsync(
+        ChangeRelayStateCommand command,
+        CancellationToken cancellationToken)
+    {
+        var relay = await relayRepository
+            .GetByIdAsync(command.RelayId, cancellationToken);
+
+        if (relay is null || relay.IsManual)
+        {
+            return;
+        }
+
+        relay.SetState(command.IsActive);
+
+        await relayRepository.UpdateAsync(relay, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> ToggleRelayModeAsync(
@@ -160,7 +178,7 @@ public class RelayService(
         await relayRepository.UpdateAsync(existingRelay, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await publisherEndpoint.Publish(new RelayModeChangedEvent
+        await publisherEndpoint.Publish(new ChangeRelayModeCommand
         {
             RelayId = existingRelay.Id,
             IsManual = existingRelay.IsManual,
@@ -182,7 +200,7 @@ public class RelayService(
         await relayRepository.UpdateAsync(existingRelay, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await publisherEndpoint.Publish(new RelayStateChangedEvent
+        await publisherEndpoint.Publish(new ChangeRelayStateCommand
         {
             RelayId = existingRelay.Id,
             IsActive = existingRelay.IsActive,
