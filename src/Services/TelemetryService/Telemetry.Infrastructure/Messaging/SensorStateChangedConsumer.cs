@@ -5,9 +5,9 @@ using Telemetry.Application.Interfaces;
 namespace Telemetry.Infrastructure.Messaging;
 
 public class SensorStateChangedConsumer(
-    ISensorService sensorService) : IConsumer<SensorStateChangedEvent>
+    ISensorService sensorService) : IConsumer<SensorStateChangedCommand>
 {
-    public async Task Consume(ConsumeContext<SensorStateChangedEvent> context)
+    public async Task Consume(ConsumeContext<SensorStateChangedCommand> context)
     {
         await sensorService
             .SetSensorStateFromEventAsync(

@@ -11,7 +11,7 @@ public class RelayServiceFromEvent(
     IUnitOfWork unitOfWork) : IRelayServiceFromEvent
 {
     public async Task ChangedModeFromEventAsync(
-        RelayModeChangedCommand relayMode, 
+        ChangeRelayModeCommand relayMode, 
         CancellationToken cancellationToken)
     {
         var existingRelay = await relayRepository

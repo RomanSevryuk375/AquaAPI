@@ -4,7 +4,7 @@ namespace Control.Application.Interfaces;
 
 public interface IAquariumService
 {
-    Task<Guid> CreateAquqariumAsync(
+    Task<Guid> CreateAquariumAsync(
         AquariumRequestDto request, 
         CancellationToken cancellationToken);
 

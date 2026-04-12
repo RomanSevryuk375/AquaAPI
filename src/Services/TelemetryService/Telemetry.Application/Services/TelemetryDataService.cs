@@ -1,4 +1,4 @@
-﻿using Contracts.Events.TelemetryEnets;
+﻿using Contracts.Events.TelemetryEvents;
 using Contracts.Exceptions;
 using MassTransit;
 using Telemetry.Application.DTOs;

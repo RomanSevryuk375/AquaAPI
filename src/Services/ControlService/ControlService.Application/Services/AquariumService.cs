@@ -57,7 +57,7 @@ public class AquariumService(
         };
     }
 
-    public async Task<Guid> CreateAquqariumAsync(
+    public async Task<Guid> CreateAquariumAsync(
         AquariumRequestDto request,
         CancellationToken cancellationToken)
     {
