@@ -72,6 +72,14 @@ public class TelemetryDataService(
         var existingSensor = await sensorRepository.GetByIdAsync(dto.SensorId, cancellationToken)
             ?? throw new NotFoundException($"Sensor {dto.SensorId} not found");
 
+        var existingTelemetry = await telemetryRepository
+            .GetByExternalMessageIdAsync(dto.ExternalMessageId, cancellationToken);
+
+        if (existingTelemetry is not null)
+        {
+            return existingTelemetry.Id;
+        }
+
         var (telemetryData, errors) = TelemetryDataEntity.Create(
             dto.SensorId,
             dto.Value,
