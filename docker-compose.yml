@@ -43,7 +43,7 @@ services:
       image: postgres:18
       container_name: control-db
       environment:
-        - POSTGRES_DB=control-db
+        - POSTGRES_DB=control_db
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=password
       ports:
@@ -62,7 +62,7 @@ services:
       image: postgres:18
       container_name: identity-db
       environment:
-        - POSTGRES_DB=identity-db
+        - POSTGRES_DB=identity_db
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=password
       ports:
