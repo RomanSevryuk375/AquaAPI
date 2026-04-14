@@ -58,6 +58,25 @@ services:
       networks:
         - aqua-network
 
+  identity-db:
+      image: postgres:18
+      container_name: identity-db
+      environment:
+        - POSTGRES_DB=identity-db
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password
+      ports:
+        - "5441:5432"
+      volumes:
+        - identity-db-data:/var/lib/postgresql
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d identity_db"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      networks:
+        - aqua-network
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq
@@ -90,8 +109,15 @@ services:
         condition: service_healthy
       control-api:
         condition: service_healthy
+      identity-api:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
     networks:
       - aqua-network
 
@@ -176,6 +202,31 @@ services:
     networks:
       - aqua-network
 
+  identity-api:
+    container_name: identity-api
+    image: identity-api
+    build:
+      context: .
+      dockerfile: src/Services/IdentityService/IdentityService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__IdentityDbContext=Host=identity-db;Database=identity_db;Username=postgres;Password=password
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
+    depends_on:
+      identity-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - aqua-network
+
 networks:
   aqua-network:
     driver: bridge
@@ -184,3 +235,4 @@ volumes:
   telemetry-db-data:
   device-db-data:
   control-db-data:
+  identity-db-data:
