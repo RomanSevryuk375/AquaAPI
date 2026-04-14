@@ -1,3 +1,4 @@
+using Contracts.Middlewares;
 using IdentityService.API.Extensions;
 using IdentityService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("IdentityDbContext")!);
 
 var app = builder.Build();
+
+app.UseGlobalExceptionHandler();
 
 using (var scope = app.Services.CreateScope())
 {

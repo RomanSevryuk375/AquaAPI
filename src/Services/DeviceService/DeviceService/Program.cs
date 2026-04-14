@@ -1,3 +1,4 @@
+using Contracts.Middlewares;
 using Device.API.Extensions;
 using Device.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ builder.Services.AddHealthChecks()
     .AddRabbitMQ(new Uri(builder.Configuration["MessageBroker:Host"]!));
 
 var app = builder.Build();
+
+app.UseGlobalExceptionHandler();
 
 using (var scope = app.Services.CreateScope())
 {
