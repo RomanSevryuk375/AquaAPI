@@ -57,7 +57,7 @@ public class AquariumService(
         };
     }
 
-    public async Task<Guid> CreateAquqariumAsync(
+    public async Task<Guid> CreateAquariumAsync(
         AquariumRequestDto request,
         CancellationToken cancellationToken)
     {
@@ -68,7 +68,7 @@ public class AquariumService(
         if (aquarium is null)
         {
             throw new DomainValidationException(
-                $"Failed to create {nameof(AquariumEntity)}: {string.Join(", ", errors!)}");
+                $"Failed to create {nameof(AquariumEntity)}: {string.Join(", ", errors)}");
         }
 
         var result = await aquariumRepository.AddAsync(aquarium, cancellationToken);

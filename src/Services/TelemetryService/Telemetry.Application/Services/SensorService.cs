@@ -102,7 +102,7 @@ public class SensorService(
     }
 
     public async Task SetSensorStateFromEventAsync(
-        SensorStateChangedEvent sensorStateChanged,
+        SensorStateChangedCommand sensorStateChanged,
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository

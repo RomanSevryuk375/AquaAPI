@@ -17,6 +17,6 @@ public interface ISensorService
         CancellationToken cancellationToken);
 
     Task SetSensorStateFromEventAsync(
-        SensorStateChangedEvent sensorStateChanged,
+        SensorStateChangedCommand sensorStateChanged,
         CancellationToken cancellationToken);
 }

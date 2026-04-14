@@ -132,7 +132,7 @@ public class SensorService(
         await sensorRepository.UpdateAsync(existingSensor, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await publishEndpoint.Publish(new SensorStateChangedEvent
+        await publishEndpoint.Publish(new SensorStateChangedCommand
         {
             Id = existingSensor.Id,
             State = existingSensor.State,

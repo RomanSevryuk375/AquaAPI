@@ -22,6 +22,8 @@ public static class DependencyInjection
         services.AddScoped<ISensorRepository, SensorRepository>();
         services.AddScoped<IVacationModeRepository, VacationModeRepository>();
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         return services;
     }
 
@@ -29,6 +31,7 @@ public static class DependencyInjection
     {
         services.AddMassTransit(busConfigurator =>
         {
+            busConfigurator.AddDelayedMessageScheduler();
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
             busConfigurator.AddConsumer<RelayCreatedEventConsumer>();
@@ -47,6 +50,8 @@ public static class DependencyInjection
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
+                configurator.UseDelayedMessageScheduler();
+
                 configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
                 {
                     h.Username(configuration["MessageBroker:UserName"]!);
