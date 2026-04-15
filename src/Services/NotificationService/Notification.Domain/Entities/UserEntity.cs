@@ -8,7 +8,7 @@ public class UserEntity : IEntity
     private UserEntity(
         Guid id,
         string email,
-        string phonenumber,
+        string phoneNumber,
         bool emailEnable,
         bool tgEnable,
         long? telegramChatId,
@@ -17,7 +17,7 @@ public class UserEntity : IEntity
     {
         Id = id;
         Email = email;
-        PhoneNumber = phonenumber;
+        PhoneNumber = phoneNumber;
         EmailEnable = emailEnable;
         TgEnable = tgEnable;
         TelegramChatId = telegramChatId;
