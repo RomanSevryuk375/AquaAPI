@@ -22,7 +22,7 @@ public class ControllerOfflineCheckerService(
             null,
             cancellationToken);
 
-        if (controllers.Any())
+        if (!controllers.Any())
         {
             return;
         }

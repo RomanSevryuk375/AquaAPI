@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="../../../Contracts/Contracts/Contracts.csproj" />
   <Project Path="../Notification.Application/Notification.Application.csproj" Id="7c966259-f5a5-4c6a-804e-2ab7945d4472" />
   <Project Path="../Notification.Domain/Notification.Domain.csproj" Id="37fe3279-b0d5-4e11-9e07-7693f0d692e5" />
   <Project Path="../Notification.Infrastructure/Notification.Infrastructure.csproj" Id="9a2921bf-59d5-4a5e-bce9-64bc7e69605e" />
