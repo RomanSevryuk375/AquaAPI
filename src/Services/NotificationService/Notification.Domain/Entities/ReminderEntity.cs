@@ -28,6 +28,7 @@ public class ReminderEntity : IEntity
     public string TaskName { get; private set; } = string.Empty;
     public int IntervalDays { get; private set; }
     public DateTime? LastDoneAt { get; private set; }
+    public DateTime? LastNotifiedAt { get; private set; }
     public DateTime NextDueAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -74,6 +75,11 @@ public class ReminderEntity : IEntity
             DateTime.UtcNow);
 
         return (reminder, errors);
+    }
+
+    public void MarkAsNotified()
+    {
+        LastNotifiedAt = DateTime.UtcNow;
     }
 
     public void CompleteTask()

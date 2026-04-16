@@ -1,15 +1,18 @@
-﻿using Contracts.Exceptions;
+﻿using Contracts.Events.Aquariums;
+using Contracts.Exceptions;
 using Control.Application.DTOs.Aquarium;
 using Control.Application.Interfaces;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using Control.Domain.SpecificationParams;
 using Control.Domain.Specifications;
+using MassTransit;
 
 namespace Control.Application.Services;
 
 public class AquariumService(
     IAquariumRepository aquariumRepository,
+    IPublishEndpoint publishEndpoint,
     IUnitOfWork unitOfWork) : IAquariumService
 {
     public async Task<IReadOnlyList<AquariumResponseDto>> GetAllAquariumsAsync(
@@ -74,6 +77,14 @@ public class AquariumService(
         var result = await aquariumRepository.AddAsync(aquarium, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
+        await publishEndpoint.Publish(new AquariumCreatedEvend
+        {
+            AquriumId = aquarium.Id,
+            Name = aquarium.Name,
+            ControllerId = aquarium.ControllerId,
+            CreatedAt = aquarium.CreatedAt,
+        }, cancellationToken);
+
         return result;
     }
 
@@ -90,6 +101,14 @@ public class AquariumService(
 
         await aquariumRepository.UpdateAsync(aquarium, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await publishEndpoint.Publish(new AquarimUdatedEvent
+        {
+            AquriumId = aquarium.Id,
+            Name = aquarium.Name,
+            ControllerId = aquarium.ControllerId,
+            CreatedAt = aquarium.CreatedAt,
+        }, cancellationToken);
     }
 
     public async Task DeleteAquariumAsync(
@@ -98,5 +117,10 @@ public class AquariumService(
     {
         await aquariumRepository.DeleteAsync(id, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await publishEndpoint.Publish(new AquariumDeletedEvent
+        {
+            AquriumId = id,
+        }, cancellationToken);
     }
 }

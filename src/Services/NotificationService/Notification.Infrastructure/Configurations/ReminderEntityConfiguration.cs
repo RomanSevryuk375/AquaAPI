@@ -27,6 +27,8 @@ public class ReminderEntityConfiguration
         builder.Property(x => x.NextDueAt).IsRequired();
         builder.HasIndex(x => x.NextDueAt);
 
+        builder.Property(x => x.LastNotifiedAt).IsRequired(false);
+        builder.Property(x => x.LastDoneAt).IsRequired(false);
         builder.Property(x => x.CreatedAt).IsRequired();
     }
 }
