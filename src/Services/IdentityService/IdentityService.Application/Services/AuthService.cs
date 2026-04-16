@@ -1,17 +1,22 @@
 ﻿using Contracts.Enums;
+using Contracts.Events.UserEvents;
 using Contracts.Exceptions;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.Application.Services;
 
 public class AuthService(
     UserManager<UserEntity> userManager,
+    IPublishEndpoint publishEndpoint,
     IJwtProvider jwtProvider) : IAuthService
 {
-    public async Task<string> RegisterUserAsync(RegisterUserRequestDto registerDto)
+    public async Task<string> RegisterUserAsync(
+        RegisterUserRequestDto registerDto, 
+        CancellationToken cancellationToken)
     {
         var existingUser = await userManager.FindByEmailAsync(registerDto.Email);
         if (existingUser is not null)
@@ -22,6 +27,7 @@ public class AuthService(
         var (user, errors) = UserEntity.Create(
             registerDto.Name,
             registerDto.Email,
+            registerDto.PhoneNumber,
             Guid.Parse(SubscriptionEnum.Free));
 
         if (user is null)
@@ -39,6 +45,14 @@ public class AuthService(
                 $"Failed to register user {user.Id}: {string
                 .Join(", ", result.Errors.Select(x => x.Description))}");
         }
+
+        await publishEndpoint.Publish(new UserCreatedEvent
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            PhoneNumber = user.PhoneNumber!,
+            CreatedAt = user.CreatedAt,
+        }, cancellationToken);
 
         var token = jwtProvider.GenerateToken(user);
 

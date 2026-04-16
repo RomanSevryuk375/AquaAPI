@@ -5,5 +5,7 @@ namespace IdentityService.Application.Interfaces;
 public interface IAuthService
 {
     Task<string> CheckLoginAsync(LoginUserRequestDto loginUser);
-    Task<string> RegisterUserAsync(RegisterUserRequestDto registerDto);
+    Task<string> RegisterUserAsync(
+        RegisterUserRequestDto registerDto,
+        CancellationToken cancellationToken);
 }
