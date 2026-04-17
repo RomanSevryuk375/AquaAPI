@@ -12,6 +12,7 @@ public class NotificationRepository(SystemDbContext dbContext)
         return await Context.Notifications
             .AsNoTracking()
             .Where(x => x.IsPublished == false)
+            .Where(x => x.RetryCount < 5)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
     }

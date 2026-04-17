@@ -54,13 +54,23 @@ public static class DependencyInjection
         {
             var reminderJobKey = new JobKey(nameof(RemienderProcessorJob));
 
+            var unpublishedNoticeJobKey = new JobKey(nameof(UnpublishedNoticeProcessorJob));
+
             options.AddJob<RemienderProcessorJob>(jobOptions =>
                 jobOptions.WithIdentity(reminderJobKey));
+
+            options.AddJob<UnpublishedNoticeProcessorJob>(jobOptions =>
+                jobOptions.WithIdentity(unpublishedNoticeJobKey));
 
             options.AddTrigger(triggerOptions => triggerOptions
                 .ForJob(reminderJobKey)
                 .WithIdentity($"{reminderJobKey}-trigger")
                 .WithSimpleSchedule(x => x.WithIntervalInHours(24).RepeatForever()));
+
+            options.AddTrigger(triggerOptions => triggerOptions
+                .ForJob(unpublishedNoticeJobKey)
+                .WithIdentity($"{unpublishedNoticeJobKey}-trigger")
+                .WithSimpleSchedule(x => x.WithIntervalInSeconds(30).RepeatForever()));
         });
 
         return services;

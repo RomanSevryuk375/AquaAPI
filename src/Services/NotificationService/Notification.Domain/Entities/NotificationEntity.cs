@@ -35,6 +35,9 @@ public class NotificationEntity : IEntity
     public DateTime CreatedAt { get; private set; }
     public bool IsPublished { get; private set; }
     public DateTime? PublishedAt { get; private set; }
+    public int RetryCount { get; private set; }
+    public string? FailureReason { get; private set; }
+
 
     public static (NotificationEntity? notification, List<string> errors) Create(
         Guid userId, 
@@ -75,6 +78,13 @@ public class NotificationEntity : IEntity
             null);
 
         return (notification, errors);
+    }
+
+    public void MarkAsFailure(string exception)
+    {
+        IsPublished = false;
+        RetryCount++;
+        FailureReason = exception;
     }
 
     public void MarkAsRead()
