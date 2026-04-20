@@ -8,9 +8,10 @@ namespace Notification.Application.Services;
 public class ReminderProcessor(
     IReminderRepository reminderRepository,
     INotificationRepository notificationRepository,
+    NotificationSender notificationSender,
     IUnitOfWork unitOfWork) : IReminderProcessor
 {
-    public async Task ProcessAsync(CancellationToken cancellationToken)
+    public async Task CheckAsync(CancellationToken cancellationToken)
     {
         var pendingReminders = await reminderRepository
             .GetPendingRemindersAsync(DateTime.UtcNow, cancellationToken);
@@ -37,6 +38,8 @@ public class ReminderProcessor(
             {
                 continue;
             }
+
+            await notificationSender.ProcessSingleNotificationAsync(notification, cancellationToken);
 
             reminder.MarkAsNotified();
 

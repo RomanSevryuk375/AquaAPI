@@ -1,13 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Options;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
+using Notification.Infrastructure.Extensions;
 
 namespace Notification.Infrastructure.Providers;
 
 public class TgProvider(
     HttpClient httpClient,
-    IConfiguration configuration) : INotificationProvider
+    IOptions<TelegramOptions> options) : INotificationProvider
 {
+    private readonly TelegramOptions _settings = options.Value;
     public bool IsEnabled(UserEntity user)
     {
         if (user.TgEnable && user.TelegramChatId.HasValue)
@@ -19,12 +21,15 @@ public class TgProvider(
     }
 
     public async Task<(bool Success, string Error)> SendAsync(
-        UserEntity user, string message, CancellationToken cancellationToken)
+        UserEntity user, 
+        string message, 
+        CancellationToken cancellationToken)
     {
-        var token = configuration["Telegram:BotToken"];
+        var token = _settings.BotToken;
         var chatId = user.TelegramChatId!.Value.ToString();
 
-        var url = $"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatId}&text={Uri.EscapeDataString(message)}";
+        var url = $"https://api.telegram.org/bot{token}/sendMessage" +
+                  $"?chat_id={chatId}&text={Uri.EscapeDataString(message)}";
 
         try
         {

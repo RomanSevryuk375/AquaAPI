@@ -1,9 +1,11 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Notification.Domain.Interfaces;
 using Notification.Infrastructure.BackgroundJob;
 using Notification.Infrastructure.Messaging;
+using Notification.Infrastructure.Providers;
 using Notification.Infrastructure.Repositories;
 using Quartz;
 
@@ -11,8 +13,14 @@ namespace Notification.Infrastructure.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<TelegramOptions>(configuration.GetSection(TelegramOptions.SectionName));
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+
+        services.AddHttpClient<INotificationProvider, TgProvider>();
+        services.AddSingleton<INotificationProvider, EmailProvider>();
+
         services.AddScoped<IAquariumRepository, AquariumRepository>();
         services.AddScoped<IMaintenanceLogRepository, MaintenanceLogRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
@@ -21,8 +29,11 @@ public static class DependencyInjection
 
         return services;
     }
+
     public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
@@ -35,10 +46,12 @@ public static class DependencyInjection
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
-                configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                var options = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value; 
+
+                configurator.Host(new Uri(options.Host), h =>
                 {
-                    h.Username(configuration["MessageBroker:UserName"]!);
-                    h.Password(configuration["MessageBroker:Password"]!);
+                    h.Username(options.UserName);
+                    h.Password(options.Password);
                 });
 
                 configurator.ConfigureEndpoints(context);
@@ -52,11 +65,11 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            var reminderJobKey = new JobKey(nameof(RemienderProcessorJob));
+            var reminderJobKey = new JobKey(nameof(ReminderCheckerJob));
 
             var unpublishedNoticeJobKey = new JobKey(nameof(UnpublishedNoticeProcessorJob));
 
-            options.AddJob<RemienderProcessorJob>(jobOptions =>
+            options.AddJob<ReminderCheckerJob>(jobOptions =>
                 jobOptions.WithIdentity(reminderJobKey));
 
             options.AddJob<UnpublishedNoticeProcessorJob>(jobOptions =>
