@@ -1,12 +1,16 @@
-﻿using Notification.Domain.Entities;
+﻿using MassTransit.Configuration;
+using Microsoft.Extensions.Options;
+using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
+using Notification.Infrastructure.Extensions;
 using System.Net;
 using System.Net.Mail;
 
 namespace Notification.Infrastructure.Providers;
 
-public class EmailProvider : INotificationProvider
+public class EmailProvider(IOptions<EmailOptions> options) : INotificationProvider
 {
+    private readonly EmailOptions _settings = options.Value;
     public bool IsEnabled(UserEntity user)
     {
         if (user.EmailEnable)
@@ -17,21 +21,24 @@ public class EmailProvider : INotificationProvider
         return false;
     }
 
-    public async Task<(bool Success, string Error)> SendAsync(UserEntity user, string message, CancellationToken cancellationToken)
+    public async Task<(bool Success, string Error)> SendAsync(
+        UserEntity user, 
+        string message, 
+        CancellationToken cancellationToken)
     {
         try
         {
             var email = user.Email;
 
-            using var client = new SmtpClient("", 2525)
+            using var client = new SmtpClient(_settings.Host, _settings.Port)
             {
-                Credentials = new NetworkCredential("user", "pass"),
+                Credentials = new NetworkCredential(_settings.UserName, _settings.Password),
                 EnableSsl = true
             };
 
-            var mailMessage = new MailMessage("", email)
+            var mailMessage = new MailMessage(_settings.FromEmail, user.Email)
             {
-                Subject = "",
+                Subject = "AquaAPI Notification",
                 Body = message
             };
 

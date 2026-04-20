@@ -52,11 +52,11 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            var reminderJobKey = new JobKey(nameof(RemienderProcessorJob));
+            var reminderJobKey = new JobKey(nameof(RemienderCheckerJob));
 
             var unpublishedNoticeJobKey = new JobKey(nameof(UnpublishedNoticeProcessorJob));
 
-            options.AddJob<RemienderProcessorJob>(jobOptions =>
+            options.AddJob<RemienderCheckerJob>(jobOptions =>
                 jobOptions.WithIdentity(reminderJobKey));
 
             options.AddJob<UnpublishedNoticeProcessorJob>(jobOptions =>

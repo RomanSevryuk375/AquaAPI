@@ -3,11 +3,11 @@ using Quartz;
 
 namespace Notification.Infrastructure.BackgroundJob;
 
-public class RemienderProcessorJob(
+public class RemienderCheckerJob(
     IReminderProcessor processor) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        await processor.ProcessAsync(context.CancellationToken);
+        await processor.CheckAsync(context.CancellationToken);
     }
 }

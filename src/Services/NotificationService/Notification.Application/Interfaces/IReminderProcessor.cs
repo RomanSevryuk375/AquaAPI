@@ -2,5 +2,5 @@
 
 public interface IReminderProcessor
 {
-    Task ProcessAsync(CancellationToken cancellationToken);
+    Task CheckAsync(CancellationToken cancellationToken);
 }
