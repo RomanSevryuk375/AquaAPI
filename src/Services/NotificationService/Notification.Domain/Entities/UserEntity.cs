@@ -12,8 +12,8 @@ public class UserEntity : IEntity
         bool emailEnable,
         bool tgEnable,
         long? telegramChatId,
-        bool enable,
-        DateTime creayedAt)
+        bool isNotifyEnable,
+        DateTime createdAt)
     {
         Id = id;
         Email = email;
@@ -21,8 +21,8 @@ public class UserEntity : IEntity
         EmailEnable = emailEnable;
         TgEnable = tgEnable;
         TelegramChatId = telegramChatId;
-        IsNotifyEnable = enable;
-        CreatedAt = creayedAt;
+        IsNotifyEnable = isNotifyEnable;
+        CreatedAt = createdAt;
     }
 
     public Guid Id { get; private set; }
