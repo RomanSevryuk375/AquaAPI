@@ -61,7 +61,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddQuartzJob(this IServiceCollection services)
+    public static IServiceCollection AddQuartzJobs(this IServiceCollection services)
     {
         services.AddQuartz(options =>
         {
