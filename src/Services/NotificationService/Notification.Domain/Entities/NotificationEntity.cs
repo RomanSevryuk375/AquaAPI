@@ -11,19 +11,24 @@ public class NotificationEntity : IEntity
         Guid aquariumId, 
         NotificationLevelEnum level, 
         string message, 
+        bool isRead,
         DateTime createdAt,
         bool isPublished,
-        DateTime? publishedAt)
+        DateTime? publishedAt,
+        int retryCount,
+        string? failureReason)
     {
         Id = id;
         UserId = userId;
         AquariumId = aquariumId;
         Level = level;
         Message = message;
-        IsRead = false;
+        IsRead = isRead;
         CreatedAt = createdAt;
         IsPublished = isPublished;
         PublishedAt = publishedAt;
+        RetryCount = retryCount;
+        FailureReason = failureReason;
     }
 
     public Guid Id { get; private set; }
@@ -73,8 +78,11 @@ public class NotificationEntity : IEntity
             aquariumId,
             level,
             message,
+            false,
             DateTime.UtcNow,
             false,
+            null,
+            0,
             null);
 
         return (notification, errors);

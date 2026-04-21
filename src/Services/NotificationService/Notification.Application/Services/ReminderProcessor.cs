@@ -8,7 +8,7 @@ namespace Notification.Application.Services;
 public class ReminderProcessor(
     IReminderRepository reminderRepository,
     INotificationRepository notificationRepository,
-    NotificationSender notificationSender,
+    INotificationSender notificationSender,
     IUnitOfWork unitOfWork) : IReminderProcessor
 {
     public async Task CheckAsync(CancellationToken cancellationToken)

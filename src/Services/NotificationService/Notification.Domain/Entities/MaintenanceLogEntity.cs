@@ -9,9 +9,9 @@ public class MaintenanceLogEntity : IEntity
         Guid userId, 
         Guid aquariumId, 
         DateTime actionDate, 
-        double? ph, 
-        double? kh, 
-        double? no3, 
+        double? phLevel, 
+        double? khLevel, 
+        double? no3Level, 
         string notes, 
         DateTime createdAt)
     {
@@ -19,9 +19,9 @@ public class MaintenanceLogEntity : IEntity
         UserId = userId;
         AquariumId = aquariumId;
         ActionDate = actionDate;
-        PhLevel = ph;
-        KhLevel = kh;
-        No3Level = no3;
+        PhLevel = phLevel;
+        KhLevel = khLevel;
+        No3Level = no3Level;
         Notes = notes;
         CreatedAt = createdAt;
     }
