@@ -54,12 +54,12 @@ public class SensorsController(
             createdData);
     }
 
-    [HttpPost("telmetry")]
-    public async Task<ActionResult> ReciveTelemetyAsync(
-        [FromBody] TelemetryDataRequest request,
-        CancellationToken cancellationToken = default)
+    [HttpPost("telemetry")] 
+    public async Task<ActionResult> ReceiveBatchTelemetryAsync(
+    [FromBody] TelemetryBatchRequest request,
+    CancellationToken cancellationToken)
     {
-        await sensorService.ReciveTelemetyAsync(request, cancellationToken);
+        await sensorService.ProcessTelemetryBatchAsync(request, cancellationToken);
 
         return Accepted();
     }

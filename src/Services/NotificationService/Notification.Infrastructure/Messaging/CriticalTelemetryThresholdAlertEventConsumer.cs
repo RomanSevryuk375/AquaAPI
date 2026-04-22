@@ -10,6 +10,6 @@ internal class CriticalTelemetryThresholdAlertEventConsumer(
     public async Task Consume(ConsumeContext<CriticalTelemetryThresholdAlertEvent> context)
     {
         await alertSender.SendTelemetryAlertAsync(
-            context.Message, context.CancellationToken)
+            context.Message, context.CancellationToken);
     }
 }

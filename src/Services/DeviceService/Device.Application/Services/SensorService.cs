@@ -178,28 +178,31 @@ public class SensorService(
         }, cancellationToken);
     }
 
-    public async Task ReciveTelemetyAsync(
-        TelemetryDataRequest request,
+    public async Task ProcessTelemetryBatchAsync(
+        TelemetryBatchRequest request,
         CancellationToken cancellationToken)
     {
         var existingController = await controllerRepository
-            .GetByMacAddress(request.MacAdress, cancellationToken)
-            ?? throw new NotFoundException($"Controller {request.MacAdress} not found");
+            .GetByMacAddress(request.MacAddress, cancellationToken)
+            ?? throw new NotFoundException($"Controller {request.MacAddress} not found");
 
-        var existingSensor = await sensorRepository
-            .GetByIdAsync(request.SensorId, cancellationToken)
-            ?? throw new NotFoundException($"Sensor {request.SensorId} not found");
-
-        if (existingController is not null && 
-            existingSensor is not null &&
-            existingSensor.ControllerId == existingController.Id)
+        foreach (var item in request.Items)
         {
+            var existingSensor = await sensorRepository.GetByIdAsync(item.SensorId, cancellationToken);
+
+            if (existingController is null ||
+                existingSensor is null ||
+                existingSensor.ControllerId != existingController.Id)
+            {
+                continue;
+            }
+
             await publishEndpoint.Publish(new TelemetryReportedFromHardwareEvent
             {
-                SensorId = request.SensorId,
-                Value = request.Value,
-                ExternalMessageId = request.ExternalMessageId,
-                RecordedAt = request.RecordedAt,
+                SensorId = item.SensorId,
+                Value = item.Value,
+                ExternalMessageId = item.ExternalMessageId,
+                RecordedAt = item.RecordedAt,
             }, cancellationToken);
         }
     }
