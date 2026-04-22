@@ -7,9 +7,14 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+# 1. Копируем глобальные файлы настроек
 COPY ["*.slnx", "*.sln", "./"]
-COPY ["src/*.props", "src/*.targets", "src/"]
+COPY ["src/Directory.Build.props", "src/"]
 
+# 2. КРИТИЧНО: Копируем контракты, так как гейтвей на них ссылается (для JWT моделей и т.д.)
+COPY ["src/Contracts/Contracts/Contracts.csproj", "src/Contracts/Contracts/"]
+
+# 3. Копируем сам проект гейтвея
 COPY ["src/Gateway/ApiGateway/ApiGateway.csproj", "src/Gateway/ApiGateway/"]
 
 RUN dotnet restore "src/Gateway/ApiGateway/ApiGateway.csproj"
