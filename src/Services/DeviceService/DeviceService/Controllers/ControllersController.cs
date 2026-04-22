@@ -51,6 +51,8 @@ public class ControllersController(
             createdData);
     }
 
+
+
     [HttpPost("{id:guid}/ping")]
     public async Task<ActionResult<ControllerPingResponseDto>> PingControllerAsync(
         [FromRoute] Guid id,
