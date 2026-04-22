@@ -53,6 +53,8 @@ public static class DependencyInjection
             busConfigurator.AddConsumer<SensorDeletedConsumer>();
             busConfigurator.AddConsumer<SensorStateChangedConsumer>();
 
+            busConfigurator.AddConsumer<TelemetryReportedFromHardwareConsumer>();
+
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
                 configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>

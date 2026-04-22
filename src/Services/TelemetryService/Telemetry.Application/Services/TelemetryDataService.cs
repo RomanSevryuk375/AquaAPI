@@ -65,34 +65,38 @@ public class TelemetryDataService(
         };
     }
 
-    public async Task<Guid> AddDataAsync(
-        TelemetryDataRequest dto,
+    public async Task AddDataAsync(
+        TelemetryReportedFromHardwareEvent telemetry,
         CancellationToken cancellationToken)
     {
-        var existingSensor = await sensorRepository.GetByIdAsync(dto.SensorId, cancellationToken)
-            ?? throw new NotFoundException($"Sensor {dto.SensorId} not found");
+        var existingSensor = await sensorRepository
+            .GetByIdAsync(telemetry.SensorId, cancellationToken);
+
+        if (existingSensor is null)
+        {
+            return;
+        }
 
         var existingTelemetry = await telemetryRepository
-            .GetByExternalMessageIdAsync(dto.ExternalMessageId, cancellationToken);
+            .GetByExternalMessageIdAsync(telemetry.ExternalMessageId, cancellationToken);
 
         if (existingTelemetry is not null)
         {
-            return existingTelemetry.Id;
+            return;
         }
 
         var (telemetryData, errors) = TelemetryDataEntity.Create(
-            dto.SensorId,
-            dto.Value,
-            dto.ExternalMessageId,
-            dto.RecordedAt);
+            telemetry.SensorId,
+            telemetry.Value,
+            telemetry.ExternalMessageId,
+            telemetry.RecordedAt);
 
         if (errors.Count > 0)
         {
-            throw new DomainValidationException(
-                $"Failed to create {nameof(TelemetryDataEntity)}: {string.Join(", ", errors)}");
+            return;
         }
 
-        existingSensor.UpdateLastValue(dto.Value);
+        existingSensor.UpdateLastValue(telemetry.Value);
 
         var result = await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
 
@@ -101,11 +105,11 @@ public class TelemetryDataService(
 
         await publishEndpoint.Publish(new TelemetryReceivedEvent
             {
-                SensorId = dto.SensorId,
-                Value = dto.Value,
-                RecordedAt = dto.RecordedAt,
+                SensorId = telemetry.SensorId,
+                Value = telemetry.Value,
+                RecordedAt = telemetry.RecordedAt,
             }, cancellationToken);
 
-        return result;
+        return;
     }
 }

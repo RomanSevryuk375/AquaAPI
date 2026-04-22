@@ -1,7 +1,9 @@
 ﻿using Contracts.Enums;
 using Contracts.Events.SensorEvents;
+using Contracts.Events.TelemetryEvents;
 using Contracts.Exceptions;
 using Device.Application.DTOs.Sensor;
+using Device.Application.DTOs.Telemetry;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;
 using Device.Domain.Interfaces;
@@ -174,5 +176,31 @@ public class SensorService(
             UpdatedAt = DateTime.UtcNow,
             CreatedAt = existingSensor.CreatedAt
         }, cancellationToken);
+    }
+
+    public async Task ReciveTelemetyAsync(
+        TelemetryDataRequest request,
+        CancellationToken cancellationToken)
+    {
+        var existingController = await controllerRepository
+            .GetByMacAddress(request.MacAdress, cancellationToken)
+            ?? throw new NotFoundException($"Controller {request.MacAdress} not found");
+
+        var existingSensor = await sensorRepository
+            .GetByIdAsync(request.SensorId, cancellationToken)
+            ?? throw new NotFoundException($"Sensor {request.SensorId} not found");
+
+        if (existingController is not null && 
+            existingSensor is not null &&
+            existingSensor.ControllerId == existingController.Id)
+        {
+            await publishEndpoint.Publish(new TelemetryReportedFromHardwareEvent
+            {
+                SensorId = request.SensorId,
+                Value = request.Value,
+                ExternalMessageId = request.ExternalMessageId,
+                RecordedAt = request.RecordedAt,
+            }, cancellationToken);
+        }
     }
 }

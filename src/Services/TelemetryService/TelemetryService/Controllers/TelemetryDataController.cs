@@ -29,19 +29,4 @@ public class TelemetryDataController(ITelemetryDataService service) : Controller
         var result = await service.GetDataByIdAsync(id, cancellationToken);
         return Ok(result);
     }
-
-    [HttpPost]
-    public async Task<ActionResult> AddTelemetryDataAsync(
-        [FromBody] TelemetryDataRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var id = await service.AddDataAsync(request, cancellationToken);
-
-        var createdData = await service.GetDataByIdAsync(id, cancellationToken);
-
-        return CreatedAtRoute(
-            NameGetById,
-            new { id = id },
-            createdData);
-    }
 }
