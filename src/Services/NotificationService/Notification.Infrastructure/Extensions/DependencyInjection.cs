@@ -46,6 +46,12 @@ public static class DependencyInjection
 
             busConfigurator.AddConsumer<UserCreatedEventConsumer>();
 
+            busConfigurator.AddConsumer<CriticalTelemetryThresholdAlertEventConsumer>();
+
+            busConfigurator.AddConsumer<SensorNoDataAlertEventConsumer>();
+
+            busConfigurator.AddConsumer<ControllerNotOnlineEventConsumer>();
+
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
                 var options = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value; 

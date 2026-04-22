@@ -116,7 +116,13 @@ public class SensorServiceFromEvent(
                 IsActive = false,
             }, cancellationToken);
 
-            //TODO notify user about that 
+            await publishEndpoint.Publish(new SensorNoDataAlertEvent
+            {
+                //UserId = 
+                AquariumId = rule.AquariumId,
+                SensorId = existingSensor.Id,
+                LastSeenAt = DateTime.UtcNow,
+            }, cancellationToken);
         }
     }
 

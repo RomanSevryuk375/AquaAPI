@@ -36,11 +36,11 @@ public class TelemetryServiceFromEvent(
                 continue;
             }
 
-            var evalute = RuleEvaluatorFactory.Create(rule.Condition);
+            var evaluator = RuleEvaluatorFactory.Create(rule.Condition);
 
-            var isMet = evalute.Evaluate(telemetry.Value, rule.Threshold, rule.Hysteresis);
+            var isMet = evaluator.Evaluate(telemetry.Value, rule.Threshold, rule.Hysteresis);
 
-            if (isMet == null)
+            if (isMet is null)
             {
                 continue;
             }
@@ -48,6 +48,20 @@ public class TelemetryServiceFromEvent(
             bool targetState = isMet.Value
                 ? rule.Action == RuleActionEnum.SwitchOn
                 : rule.Action == RuleActionEnum.SwitchOff;
+
+            if (isMet is true && Math.Abs(telemetry.Value - rule.Threshold) > 5.0)
+            {
+                await publishEndpoint.Publish(new CriticalTelemetryThresholdAlertEvent
+                {
+                    //UserId = 
+                    AquariumId = rule.AquariumId,
+                    SensorId = telemetry.SensorId,
+                    Value = telemetry.Value,
+                    RecordedAt = telemetry.RecordedAt,
+                    RelayId = rule.RelayId,
+                    RelayState = targetState
+                }, cancellationToken);
+            }
 
             if (relay.IsActive == targetState)
             {

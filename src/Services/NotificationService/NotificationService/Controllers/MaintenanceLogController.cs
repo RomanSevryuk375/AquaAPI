@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Notification.Application.DTOs.MaintenanceLog;
 using Notification.Application.Interfaces;
-using System.Security.Claims;
 
 namespace Notification.API.Controllers;
 

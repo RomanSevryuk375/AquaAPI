@@ -9,11 +9,14 @@ public static class DependencyInjection
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<IAquariumServiceFromEvent, AquariumServiceFromEvent>();
+        services.AddScoped<IControllerAlertSender, ControllerAlertSender>();
         services.AddScoped<IMaintenanceLogService, MaintenanceLogService>();
         services.AddScoped<INotificationSender, NotificationSender>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IReminderProcessor, ReminderProcessor>();
         services.AddScoped<IReminderService, ReminderService>();
+        services.AddScoped<ISensorAlertSender, SensorAlertSender>();
+        services.AddScoped<ITelemetryAlertSender, TelemetryAlertSender>();
         services.AddScoped<IUnpublishedNoticeProcessor, UnpublishedNoticeProcessor>();
         services.AddScoped<IUserServiceFromEvent, UserServiceFromEvent>();
 
