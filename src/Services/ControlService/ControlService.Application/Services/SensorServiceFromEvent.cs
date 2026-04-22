@@ -13,6 +13,7 @@ public class SensorServiceFromEvent(
     IAutomationRuleRepository ruleRepository,
     IAquariumRepository aquariumRepository,
     IPublishEndpoint publishEndpoint,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : ISensorServiceFromEvent
 {
     public async Task ChangedStateFromEventAsync(
@@ -118,7 +119,7 @@ public class SensorServiceFromEvent(
 
             await publishEndpoint.Publish(new SensorNoDataAlertEvent
             {
-                //UserId = 
+                UserId = userContext.UserId,
                 AquariumId = rule.AquariumId,
                 SensorId = existingSensor.Id,
                 LastSeenAt = DateTime.UtcNow,

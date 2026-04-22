@@ -1,4 +1,4 @@
-﻿namespace Contracts.Events.Aquariums;
+﻿namespace Contracts.Events.AquariumEvents;
 
 public class AquariumCreatedEvend
 {

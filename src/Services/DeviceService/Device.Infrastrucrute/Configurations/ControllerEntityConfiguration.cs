@@ -12,9 +12,13 @@ public class ControllerEntityConfiguration : IEntityTypeConfiguration<Controller
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.UserId).IsRequired();
+        builder.HasIndex(x => x.UserId);
+
         builder.Property(x => x.MacAddress)
             .HasMaxLength(17)
             .IsRequired();
+        builder.HasIndex(x => x.MacAddress).IsUnique();
 
         builder.Property(x => x.Name)
             .HasMaxLength(128)
@@ -33,7 +37,5 @@ public class ControllerEntityConfiguration : IEntityTypeConfiguration<Controller
             .WithOne()
             .HasForeignKey(r => r.ControllerId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(x => x.MacAddress).IsUnique();
     }
 }

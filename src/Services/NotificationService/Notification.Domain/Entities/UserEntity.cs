@@ -12,7 +12,7 @@ public class UserEntity : IEntity
         bool emailEnable,
         bool tgEnable,
         long? telegramChatId,
-        bool isNotifyEnable,
+        bool isNotifyEnabled,
         DateTime createdAt)
     {
         Id = id;
@@ -21,7 +21,7 @@ public class UserEntity : IEntity
         EmailEnable = emailEnable;
         TgEnable = tgEnable;
         TelegramChatId = telegramChatId;
-        IsNotifyEnable = isNotifyEnable;
+        IsNotifyEnabled = isNotifyEnabled;
         CreatedAt = createdAt;
     }
 
@@ -31,7 +31,7 @@ public class UserEntity : IEntity
     public bool EmailEnable { get; private set; }
     public bool TgEnable { get; private set; }
     public long? TelegramChatId { get; private set; }
-    public bool IsNotifyEnable { get; private set; }
+    public bool IsNotifyEnabled { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
     public static (UserEntity? user, List<string> errors) Create(

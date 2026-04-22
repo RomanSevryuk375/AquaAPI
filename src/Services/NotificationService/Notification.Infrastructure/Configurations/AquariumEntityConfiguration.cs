@@ -21,5 +21,20 @@ public class AquariumEntityConfiguration
             .IsRequired();
 
         builder.Property(x => x.CreatedAt).IsRequired();
+
+        builder.HasMany<NotificationEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.AquariumId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<ReminderEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.AquariumId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<MaintenanceLogEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.AquariumId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

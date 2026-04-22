@@ -20,7 +20,7 @@ public class NotificationSender(
         bool overallSuccess = false;
         var errors = new List<string>();
 
-        if (user == null || !user.IsNotifyEnable)
+        if (user == null || !user.IsNotifyEnabled)
         {
             return;
         }

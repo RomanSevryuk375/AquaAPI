@@ -5,7 +5,8 @@ namespace Device.Domain.Entities;
 public sealed class ControllerEntity : IEntity
 {
     private ControllerEntity(
-        Guid id, 
+        Guid id,
+        Guid userId, 
         string macAddress, 
         string name, 
         bool isOnline, 
@@ -13,6 +14,7 @@ public sealed class ControllerEntity : IEntity
         DateTime createdAt)
     {
         Id = id;
+        UserId = userId;
         MacAddress = macAddress;
         Name = name;
         IsOnline = isOnline;
@@ -21,6 +23,7 @@ public sealed class ControllerEntity : IEntity
     }
 
     public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
     public string MacAddress { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public bool IsOnline { get; private set; }
@@ -28,11 +31,17 @@ public sealed class ControllerEntity : IEntity
     public DateTime CreatedAt { get; private set; }
 
     public static (ControllerEntity? controller, List<string>? errors) Create(
+        Guid userId,
         string macAddress,
         string name,
         bool isOnline)
     {
         var errors = new List<string>();
+
+        if (userId == Guid.Empty)
+        {
+            errors.Add("userId must not be empty.");
+        }
 
         if (string.IsNullOrWhiteSpace(macAddress))
         {
@@ -51,6 +60,7 @@ public sealed class ControllerEntity : IEntity
 
         var controller = new ControllerEntity(
             Guid.NewGuid(),
+            userId,
             macAddress.Trim(),
             name.Trim(),
             isOnline,

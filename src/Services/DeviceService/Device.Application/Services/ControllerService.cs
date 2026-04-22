@@ -13,11 +13,15 @@ namespace Device.Application.Services;
 public class ControllerService(
     IControllerRepository controllerRepository,
     IPublishEndpoint publishEndpoint,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : IControllerService
 {
     public async Task<Guid> AddControllerAsync(ControllerRequestDto request, CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId; 
+
         var (controller, errors) = ControllerEntity.Create(
+            userId,
             request.MacAddress,
             request.Name,
             request.IsOnline);
@@ -116,6 +120,7 @@ public class ControllerService(
         {
             await publishEndpoint.Publish(new ControllerNotOnlineEvent 
             { 
+                UserId = controller.Id,
                 ControllerId = controller.Id,
                 LastSeenAt = controller.LastSeenAt,
             }, cancellationToken);

@@ -1,4 +1,4 @@
-﻿using Contracts.Events.Aquariums;
+﻿using Contracts.Events.AquariumEvents;
 using Contracts.Exceptions;
 using Control.Application.DTOs.Aquarium;
 using Control.Application.Interfaces;
@@ -13,6 +13,7 @@ namespace Control.Application.Services;
 public class AquariumService(
     IAquariumRepository aquariumRepository,
     IPublishEndpoint publishEndpoint,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : IAquariumService
 {
     public async Task<IReadOnlyList<AquariumResponseDto>> GetAllAquariumsAsync(
@@ -65,6 +66,7 @@ public class AquariumService(
         CancellationToken cancellationToken)
     {
         var (aquarium, errors) = AquariumEntity.Create(
+            userContext.UserId,
             request.Name,
             request.ControllerId);
 
@@ -80,6 +82,7 @@ public class AquariumService(
         await publishEndpoint.Publish(new AquariumCreatedEvend
         {
             AquriumId = aquarium.Id,
+            UserId = userContext.UserId,
             Name = aquarium.Name,
             ControllerId = aquarium.ControllerId,
             CreatedAt = aquarium.CreatedAt,
@@ -105,6 +108,7 @@ public class AquariumService(
         await publishEndpoint.Publish(new AquarimUdatedEvent
         {
             AquriumId = aquarium.Id,
+            UserId = userContext.UserId,
             Name = aquarium.Name,
             ControllerId = aquarium.ControllerId,
             CreatedAt = aquarium.CreatedAt,

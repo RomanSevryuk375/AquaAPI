@@ -16,7 +16,8 @@ public class UserEntityConfiguration
         builder.Property(x => x.Email)
             .HasMaxLength(128)
             .IsRequired();
-        builder.HasIndex(x => x.Email);
+        builder.HasIndex(x => x.Email)
+            .IsUnique();
 
         builder.Property(x => x.PhoneNumber)
             .HasMaxLength(64)
@@ -25,7 +26,27 @@ public class UserEntityConfiguration
         builder.Property(x => x.EmailEnable).IsRequired();
         builder.Property(x => x.TgEnable).IsRequired();
         builder.Property(x => x.TelegramChatId).IsRequired(false);
-        builder.Property(x => x.IsNotifyEnable).IsRequired();
+        builder.Property(x => x.IsNotifyEnabled).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
+
+        builder.HasMany<AquariumEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<NotificationEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<ReminderEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<MaintenanceLogEntity>()
+            .WithOne()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

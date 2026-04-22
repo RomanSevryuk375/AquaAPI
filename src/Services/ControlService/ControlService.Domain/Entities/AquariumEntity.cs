@@ -6,6 +6,7 @@ public class AquariumEntity : IEntity
 {
     private AquariumEntity(
         Guid id, 
+        Guid userId,
         string name, 
         Guid controllerId, 
         DateTime createdAt)
@@ -17,15 +18,22 @@ public class AquariumEntity : IEntity
     }
 
     public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
     public string Name { get; private set; } = string.Empty;
     public Guid ControllerId { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
     public static (AquariumEntity? aquarium, List<string> errors) Create(
+        Guid userId,
         string name,
         Guid controllerId)
     {
         var errors = new List<string>();
+
+        if (userId == Guid.Empty)
+        {
+            errors.Add("userId must not be empty.");
+        }
 
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -44,6 +52,7 @@ public class AquariumEntity : IEntity
 
         var aquarium = new AquariumEntity(
             Guid.NewGuid(),
+            userId,
             name.Trim(),
             controllerId,
             DateTime.UtcNow);

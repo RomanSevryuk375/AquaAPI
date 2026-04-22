@@ -11,6 +11,7 @@ namespace Control.Application.Services;
 public class TelemetryServiceFromEvent(
     IAutomationRuleRepository ruleRepository,
     IRelayRepository relayRepository,
+    IUserContext userContext,
     IUnitOfWork unitOfWork,
     IPublishEndpoint publishEndpoint) : ITelemetryServiceFromEvent
 {
@@ -53,7 +54,7 @@ public class TelemetryServiceFromEvent(
             {
                 await publishEndpoint.Publish(new CriticalTelemetryThresholdAlertEvent
                 {
-                    //UserId = 
+                    UserId = userContext.UserId,
                     AquariumId = rule.AquariumId,
                     SensorId = telemetry.SensorId,
                     Value = telemetry.Value,
