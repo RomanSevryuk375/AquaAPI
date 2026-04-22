@@ -1,6 +1,5 @@
 ﻿using Contracts.Enums;
 using Device.Application.DTOs.Sensor;
-using Device.Application.DTOs.Telemetry;
 
 namespace Device.Application.Interfaces;
 
@@ -34,7 +33,7 @@ public interface ISensorService
         SensorStateEnum state,
         CancellationToken cancellationToken);
 
-    Task ReciveTelemetyAsync(
+    Task ProcessTelemetryBatchAsync(
         TelemetryDataRequest request,
         CancellationToken cancellationToken);
 }
