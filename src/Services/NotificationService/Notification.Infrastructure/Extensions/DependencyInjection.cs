@@ -88,6 +88,9 @@ public static class DependencyInjection
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(30).RepeatForever()));
         });
 
+        services.AddQuartzHostedService(hostOptions
+            => hostOptions.WaitForJobsToComplete = true);
+
         return services;
     }
 }

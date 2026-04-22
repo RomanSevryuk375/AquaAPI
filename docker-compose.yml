@@ -267,10 +267,10 @@ services:
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - TelegramOptions__BotToken=YOUR_REAL_TOKEN_HERE
-      - EmailOptions__Host=smtp.mailtrap.io
-      - EmailOptions__UserName=user
-      - EmailOptions__Password=pass
+      - TelegramOptions__BotToken=test
+      - EmailOptions__Host=test
+      - EmailOptions__UserName=test
+      - EmailOptions__Password=test
       - MT_LICENSE=community
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
