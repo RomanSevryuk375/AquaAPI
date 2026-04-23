@@ -20,7 +20,7 @@ public class SensorService(
     IPublishEndpoint publishEndpoint) : ISensorService
 {
     public async Task<Guid> AddSensorAsync(
-        SensorRequestDto request, 
+        SensorRequestDto request,
         CancellationToken cancellationToken)
     {
         var existingController = await controllerRepository
@@ -56,7 +56,7 @@ public class SensorService(
     }
 
     public async Task DeleteSensorAsync(
-        Guid id, 
+        Guid id,
         CancellationToken cancellationToken)
     {
         await sensorRepository.DeleteAsync(id, cancellationToken);
@@ -71,11 +71,11 @@ public class SensorService(
     public async Task<IReadOnlyList<SensorResponseDto>> GetAllSensorsAsync(
         SensorFilterDto filter,
         int? skip,
-        int? take, 
+        int? take,
         CancellationToken cancellationToken)
     {
         var specification = new SensorFilterSpecification(
-            new SensorFilterParams 
+            new SensorFilterParams
             {
                 ControllerId = filter.ControllerId,
                 Type = filter.Type,
@@ -101,7 +101,7 @@ public class SensorService(
     }
 
     public async Task<SensorResponseDto> GetSensorByIdAsync(
-        Guid id, 
+        Guid id,
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
@@ -121,8 +121,8 @@ public class SensorService(
     }
 
     public async Task SetSensorStateAsync(
-        Guid id, 
-        SensorStateEnum state, 
+        Guid id,
+        SensorStateEnum state,
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
@@ -143,7 +143,7 @@ public class SensorService(
 
     public async Task UpdateSensorAsync(
         Guid id,
-        SensorUpdateRequestDto updateRequestDto, 
+        SensorUpdateRequestDto updateRequestDto,
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
@@ -178,22 +178,42 @@ public class SensorService(
         }, cancellationToken);
     }
 
-    public async Task ProcessTelemetryBatchAsync(
+    public async Task<TelemetryResponse> ProcessTelemetryBatchAsync(
         TelemetryBatchRequest request,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.MacAddress))
+        {
+            throw new DomainValidationException(
+                $"Controller MacAddress must not be empty or white space.");
+        }
+
         var existingController = await controllerRepository
             .GetByMacAddress(request.MacAddress, cancellationToken)
             ?? throw new NotFoundException($"Controller {request.MacAddress} not found");
 
+        var existingSensors = await sensorRepository
+            .GetAllSensorsAsync(existingController.Id, cancellationToken);
+
+        var acceptedCount = 0;
+        var validationErrors = new List<string>();
+        var skippedCount = 0;
+
         foreach (var item in request.Items)
         {
-            var existingSensor = await sensorRepository.GetByIdAsync(item.SensorId, cancellationToken);
+            var sensor = existingSensors.First(x => x.Id == item.SensorId);
 
-            if (existingController is null ||
-                existingSensor is null ||
-                existingSensor.ControllerId != existingController.Id)
+            if (item.RecordedAt > DateTime.UtcNow.AddMinutes(5))
             {
+                validationErrors.Add($"RecordedAt can not be in future. (Sensor {item.SensorId})");
+                skippedCount++;
+                continue;
+            }
+
+            if (sensor is null)
+            {
+                validationErrors.Add($"Sensor {item.SensorId} not found. (Sensor {item.SensorId})");
+                skippedCount++;
                 continue;
             }
 
@@ -204,6 +224,15 @@ public class SensorService(
                 ExternalMessageId = item.ExternalMessageId,
                 RecordedAt = item.RecordedAt,
             }, cancellationToken);
+
+            acceptedCount++;
         }
+
+        return new TelemetryResponse
+        {
+            AcceptedCount = acceptedCount,
+            ValidationErrors = validationErrors,
+            SkippedCount = skippedCount
+        };
     }
 }

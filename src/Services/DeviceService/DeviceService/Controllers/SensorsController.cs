@@ -59,9 +59,14 @@ public class SensorsController(
     [FromBody] TelemetryBatchRequest request,
     CancellationToken cancellationToken)
     {
-        await sensorService.ProcessTelemetryBatchAsync(request, cancellationToken);
+        var result = await sensorService.ProcessTelemetryBatchAsync(request, cancellationToken);
 
-        return Accepted();
+        return Accepted(new
+        {
+            result.AcceptedCount,
+            result.ValidationErrors,
+            result.SkippedCount
+        });
     }
 
     [HttpPut("{id:guid}")]

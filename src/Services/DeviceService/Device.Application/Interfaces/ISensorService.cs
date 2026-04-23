@@ -34,7 +34,7 @@ public interface ISensorService
         SensorStateEnum state,
         CancellationToken cancellationToken);
 
-    Task ProcessTelemetryBatchAsync(
+    Task<TelemetryResponse> ProcessTelemetryBatchAsync(
         TelemetryBatchRequest request,
         CancellationToken cancellationToken);
 }
