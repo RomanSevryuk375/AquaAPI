@@ -4,12 +4,14 @@ using Contracts.Events.TelemetryEvents;
 using Contracts.Exceptions;
 using Device.Application.DTOs.Sensor;
 using Device.Application.DTOs.Telemetry;
+using Device.Application.Extesions;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;
 using Device.Domain.Interfaces;
 using Device.Domain.SpecificationParams;
 using Device.Domain.Specifications;
 using MassTransit;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Device.Application.Services;
 
@@ -17,7 +19,8 @@ public class SensorService(
     ISensorRepository sensorRepository,
     IControllerRepository controllerRepository,
     IUnitOfWork unitOfWork,
-    IPublishEndpoint publishEndpoint) : ISensorService
+    IPublishEndpoint publishEndpoint,
+    IMyHasher myHasher) : ISensorService
 {
     public async Task<Guid> AddSensorAsync(
         SensorRequestDto request,
@@ -180,6 +183,7 @@ public class SensorService(
 
     public async Task<TelemetryResponse> ProcessTelemetryBatchAsync(
         TelemetryBatchRequest request,
+        string deviceToken,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.MacAddress))
@@ -192,6 +196,14 @@ public class SensorService(
             .GetByMacAddress(request.MacAddress, cancellationToken)
             ?? throw new NotFoundException($"Controller {request.MacAddress} not found");
 
+        var verify = myHasher
+            .Verify(deviceToken, existingController.DeviceTokenHash);
+
+        if (!verify)
+        {
+            throw new InvalidCredentialsException("DeviceToken is not verified.");
+        }
+
         var existingSensors = await sensorRepository
             .GetAllSensorsAsync(existingController.Id, cancellationToken);
 
@@ -201,7 +213,7 @@ public class SensorService(
 
         foreach (var item in request.Items)
         {
-            var sensor = existingSensors.First(x => x.Id == item.SensorId);
+            var sensor = existingSensors.FirstOrDefault(x => x.Id == item.SensorId);
 
             if (item.RecordedAt > DateTime.UtcNow.AddMinutes(5))
             {

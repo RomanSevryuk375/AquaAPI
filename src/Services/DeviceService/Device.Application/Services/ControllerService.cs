@@ -14,15 +14,20 @@ public class ControllerService(
     IControllerRepository controllerRepository,
     IPublishEndpoint publishEndpoint,
     IUserContext userContext,
-    IUnitOfWork unitOfWork) : IControllerService
+    IUnitOfWork unitOfWork,
+    IMyHasher myHasher) : IControllerService
 {
-    public async Task<Guid> AddControllerAsync(ControllerRequestDto request, CancellationToken cancellationToken)
+    public async Task<ControllerRegistredResponseDto> AddControllerAsync(ControllerRequestDto request, CancellationToken cancellationToken)
     {
         var userId = userContext.UserId; 
+
+        var deviceToken = Guid.NewGuid().ToString();
+
 
         var (controller, errors) = ControllerEntity.Create(
             userId,
             request.MacAddress,
+            myHasher.Generate(deviceToken),
             request.Name,
             request.IsOnline);
 
@@ -35,7 +40,11 @@ public class ControllerService(
         var result = await controllerRepository.AddAsync(controller!, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return result;
+        return new ControllerRegistredResponseDto
+        {
+            ControllerId = result,
+            DeviceToken = deviceToken
+        };
     }
 
     public async Task DeleteControllerAsync(Guid id, CancellationToken cancellationToken)
@@ -93,10 +102,18 @@ public class ControllerService(
         };
     }
 
-    public async Task<ControllerPingResponseDto> PingControllerAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ControllerPingResponseDto> PingControllerAsync(Guid id, string deviceToken, CancellationToken cancellationToken)
     {
         var controller = await controllerRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException($"{nameof(ControllerEntity)} not found");
+
+        var verify = myHasher
+            .Verify(deviceToken, controller.DeviceTokenHash);
+
+        if (!verify)
+        {
+            throw new InvalidCredentialsException("DeviceToken is not verified.");
+        }
 
         controller.RecordPing();
 

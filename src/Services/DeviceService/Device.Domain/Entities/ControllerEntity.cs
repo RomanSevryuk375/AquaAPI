@@ -8,6 +8,7 @@ public sealed class ControllerEntity : IEntity
         Guid id,
         Guid userId, 
         string macAddress, 
+        string deviceTokenHash,
         string name, 
         bool isOnline, 
         DateTime lastSeenAt, 
@@ -16,6 +17,7 @@ public sealed class ControllerEntity : IEntity
         Id = id;
         UserId = userId;
         MacAddress = macAddress;
+        DeviceTokenHash = deviceTokenHash;
         Name = name;
         IsOnline = isOnline;
         LastSeenAt = lastSeenAt;
@@ -25,6 +27,7 @@ public sealed class ControllerEntity : IEntity
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
     public string MacAddress { get; private set; } = string.Empty;
+    public string DeviceTokenHash { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public bool IsOnline { get; private set; }
     public DateTime LastSeenAt { get; private set; }
@@ -33,6 +36,7 @@ public sealed class ControllerEntity : IEntity
     public static (ControllerEntity? controller, List<string>? errors) Create(
         Guid userId,
         string macAddress,
+        string deviceTokenHash,
         string name,
         bool isOnline)
     {
@@ -46,6 +50,11 @@ public sealed class ControllerEntity : IEntity
         if (string.IsNullOrWhiteSpace(macAddress))
         {
             errors.Add("macAdress must not be empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(deviceTokenHash))
+        {
+            errors.Add("deviceTokenHash must not be empty.");
         }
 
         if (string.IsNullOrWhiteSpace(name))
@@ -62,6 +71,7 @@ public sealed class ControllerEntity : IEntity
             Guid.NewGuid(),
             userId,
             macAddress.Trim(),
+            deviceTokenHash.Trim(),
             name.Trim(),
             isOnline,
             DateTime.UtcNow,

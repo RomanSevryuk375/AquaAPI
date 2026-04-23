@@ -20,6 +20,9 @@ public class ControllerEntityConfiguration : IEntityTypeConfiguration<Controller
             .IsRequired();
         builder.HasIndex(x => x.MacAddress).IsUnique();
 
+        builder.Property(x => x.DeviceTokenHash).IsRequired();
+        builder.HasIndex(x => x.DeviceTokenHash).IsUnique();
+
         builder.Property(x => x.Name)
             .HasMaxLength(128)
             .IsRequired();

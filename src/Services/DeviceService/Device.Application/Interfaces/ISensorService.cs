@@ -36,5 +36,6 @@ public interface ISensorService
 
     Task<TelemetryResponse> ProcessTelemetryBatchAsync(
         TelemetryBatchRequest request,
+        string deviceToken,
         CancellationToken cancellationToken);
 }

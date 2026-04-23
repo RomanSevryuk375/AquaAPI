@@ -57,9 +57,11 @@ public class SensorsController(
     [HttpPost("telemetry")] 
     public async Task<ActionResult> ReceiveBatchTelemetryAsync(
     [FromBody] TelemetryBatchRequest request,
+    [FromHeader(Name = "X-Device-Token")] string deviceToken,
     CancellationToken cancellationToken)
     {
-        var result = await sensorService.ProcessTelemetryBatchAsync(request, cancellationToken);
+        var result = await sensorService
+            .ProcessTelemetryBatchAsync(request, deviceToken, cancellationToken);
 
         return Accepted(new
         {

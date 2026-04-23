@@ -13,4 +13,11 @@ public class ControllerRepository(SystemDbContext dbContext)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.MacAddress == macAddress, cancellationToken);
     }
+
+    public async Task<ControllerEntity?> GetByDeviceTokenAsync(string deviceTokenHash, CancellationToken cancellationToken)
+    {
+        return await Context.Controllers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.DeviceTokenHash == deviceTokenHash, cancellationToken);
+    }
 }
