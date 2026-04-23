@@ -137,7 +137,7 @@ public class ControllerService(
         {
             await publishEndpoint.Publish(new ControllerNotOnlineEvent 
             { 
-                UserId = controller.Id,
+                UserId = controller.UserId,
                 ControllerId = controller.Id,
                 LastSeenAt = controller.LastSeenAt,
             }, cancellationToken);

@@ -11,7 +11,7 @@ namespace Control.Application.Services;
 public class TelemetryServiceFromEvent(
     IAutomationRuleRepository ruleRepository,
     IRelayRepository relayRepository,
-    IUserContext userContext,
+    IAquariumRepository aquariumRepository,
     IUnitOfWork unitOfWork,
     IPublishEndpoint publishEndpoint) : ITelemetryServiceFromEvent
 {
@@ -37,6 +37,14 @@ public class TelemetryServiceFromEvent(
                 continue;
             }
 
+            var aquarium = await aquariumRepository
+                .GetByIdAsync(relay.AquariumId, cancellationToken);
+
+            if (aquarium is null)
+            {
+                continue;
+            }
+
             var evaluator = RuleEvaluatorFactory.Create(rule.Condition);
 
             var isMet = evaluator.Evaluate(telemetry.Value, rule.Threshold, rule.Hysteresis);
@@ -54,7 +62,7 @@ public class TelemetryServiceFromEvent(
             {
                 await publishEndpoint.Publish(new CriticalTelemetryThresholdAlertEvent
                 {
-                    UserId = userContext.UserId,
+                    UserId = aquarium.UserId,
                     AquariumId = rule.AquariumId,
                     SensorId = telemetry.SensorId,
                     Value = telemetry.Value,
