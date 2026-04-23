@@ -9,6 +9,7 @@ public class AquariumFilterSpecification : BaseSpecification<AquariumEntity>
     public AquariumFilterSpecification(AquariumFilterParams @params) 
         : base(data => 
             (!@params.ControllerId.HasValue || data.ControllerId == @params.ControllerId.Value) &&
+            (!@params.UserId.HasValue || data.UserId == @params.UserId.Value) &&
             (string.IsNullOrWhiteSpace(@params.Name)
                 || data.Name.ToLower().Contains(@params.Name.ToLower())))
     {

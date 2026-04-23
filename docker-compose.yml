@@ -43,7 +43,7 @@ services:
       image: postgres:18
       container_name: control-db
       environment:
-        - POSTGRES_DB=control-db
+        - POSTGRES_DB=control_db
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=password
       ports:
@@ -62,7 +62,7 @@ services:
       image: postgres:18
       container_name: identity-db
       environment:
-        - POSTGRES_DB=identity-db
+        - POSTGRES_DB=identity_db
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=password
       ports:
@@ -71,6 +71,25 @@ services:
         - identity-db-data:/var/lib/postgresql
       healthcheck:
         test: ["CMD-SHELL", "pg_isready -U postgres -d identity_db"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      networks:
+        - aqua-network
+
+  notification-db:
+      image: postgres:18
+      container_name: notification-db
+      environment:
+        - POSTGRES_DB=notification_db
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password
+      ports:
+        - "5442:5432"
+      volumes:
+        - notification-db-data:/var/lib/postgresql
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d notification_db"]
         interval: 5s
         timeout: 5s
         retries: 5
@@ -110,6 +129,8 @@ services:
       control-api:
         condition: service_healthy
       identity-api:
+        condition: service_healthy
+      notification-api:
         condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -227,6 +248,38 @@ services:
     networks:
       - aqua-network
 
+  notification-api:
+    container_name: notification-api
+    build:
+      context: .
+      dockerfile: src\Services\NotificationService\NotificationService\Dockerfile
+    depends_on:
+      notification-db: 
+        condition: service_healthy 
+      rabbitmq: 
+        condition: service_healthy 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 
+      - ConnectionStrings__SystemDbContext=Host=notification-db;Database=notification_db;Username=postgres;Password=password
+      - RabbitMqOptions__Host=amqp://rabbitmq:5672
+      - RabbitMqOptions__UserName=guest
+      - RabbitMqOptions__Password=guest
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - TelegramOptions__BotToken=test
+      - EmailOptions__Host=test
+      - EmailOptions__UserName=test
+      - EmailOptions__Password=test
+      - MT_LICENSE=community
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - aqua-network
+
 networks:
   aqua-network:
     driver: bridge
@@ -236,3 +289,4 @@ volumes:
   device-db-data:
   control-db-data:
   identity-db-data:
+  notification-db-data:

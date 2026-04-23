@@ -1,15 +1,17 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+USER $APP_UID
+WORKDIR /app
+EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["*.sln", "./"]
-COPY ["src/*.props", "src/"]
-COPY ["src/*.targets", "src/"]
+COPY ["*.slnx", "*.sln", "./"]
+COPY ["src/*.props", "src/*.targets", "src/"]
 
 COPY ["src/Contracts/Contracts/Contracts.csproj", "src/Contracts/Contracts/"]
 COPY ["src/Services/DeviceService/DeviceService/Device.API.csproj", "src/Services/DeviceService/DeviceService/"]
@@ -22,16 +24,9 @@ RUN dotnet restore "src/Services/DeviceService/DeviceService/Device.API.csproj"
 COPY . .
 
 WORKDIR "src/Services/DeviceService/DeviceService"
-RUN dotnet build "Device.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "Device.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
-USER root
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-USER $APP_UID
-COPY --from=publish /app/publish .
+COPY --from=build  /app/publish .
 ENTRYPOINT ["dotnet", "Device.API.dll"]

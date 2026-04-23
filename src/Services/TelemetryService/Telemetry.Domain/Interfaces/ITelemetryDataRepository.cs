@@ -11,5 +11,6 @@ public interface ITelemetryDataRepository
         CancellationToken cancellationToken = default);
 
     Task<TelemetryDataEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<TelemetryDataEntity?> GetByExternalMessageIdAsync(string externalMessageId, CancellationToken cancellationToken = default);
     Task<Guid> AddAsync(TelemetryDataEntity entity, CancellationToken cancellationToken = default);
 }

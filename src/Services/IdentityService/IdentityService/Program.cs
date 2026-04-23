@@ -1,3 +1,4 @@
+using Contracts.Middlewares;
 using IdentityService.API.Extensions;
 using IdentityService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
+app.UseGlobalExceptionHandler();
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
@@ -23,7 +26,9 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapHealthChecks("/health");
 app.MapControllers();
 

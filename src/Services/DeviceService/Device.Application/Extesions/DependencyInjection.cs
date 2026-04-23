@@ -13,6 +13,8 @@ public static class DependencyInjection
         services.AddScoped<IRelayService, RelayService>();
         services.AddScoped<ISensorService, SensorService>();
 
+        services.AddSingleton<IMyHasher, MyHasher>();
+
         return services;
     }
 }

@@ -1,4 +1,5 @@
 using ApiGateway;
+using Contracts.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseGlobalExceptionHandler();
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -21,6 +24,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger-docs/device/swagger/v1/swagger.json", "Device API");
     options.SwaggerEndpoint("/swagger-docs/control/swagger/v1/swagger.json", "Control API");
     options.SwaggerEndpoint("/swagger-docs/identity/swagger/v1/swagger.json", "Identity API");
+    options.SwaggerEndpoint("/swagger-docs/notification/swagger/v1/swagger.json", "Notification API");
 });
 
 app.UseAuthentication(); 

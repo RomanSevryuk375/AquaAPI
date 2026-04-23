@@ -41,22 +41,30 @@ public class ControllersController(
         [FromBody] ControllerRequestDto request,
         CancellationToken cancellationToken = default)
     {
-        var id = await controllerService.AddControllerAsync(request, cancellationToken);
+        var response = await controllerService
+            .AddControllerAsync(request, cancellationToken);
 
-        var createdData = await controllerService.GetControllerByIdAsync(id, cancellationToken);
+        var createdData = await controllerService
+            .GetControllerByIdAsync(response.ControllerId, cancellationToken);
 
         return CreatedAtRoute(
             NameGetById,
-            new { id = id },
+            new 
+            { 
+                response.ControllerId,
+                response.DeviceToken,
+            },
             createdData);
     }
 
     [HttpPost("{id:guid}/ping")]
     public async Task<ActionResult<ControllerPingResponseDto>> PingControllerAsync(
         [FromRoute] Guid id,
+        [FromHeader(Name = "X-Device-Token")] string deviceToken,
         CancellationToken cancellationToken = default)
     {
-        var result = await controllerService.PingControllerAsync(id, cancellationToken);
+        var result = await controllerService
+            .PingControllerAsync(id, deviceToken, cancellationToken);
 
         return Ok(result);
     }

@@ -12,6 +12,9 @@ public class AquariumEntityConfiguration : IEntityTypeConfiguration<AquariumEnti
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.UserId).IsRequired();
+        builder.HasIndex(x => x.UserId);
+
         builder.Property(x => x.Name)
             .HasMaxLength(128)
             .IsRequired();

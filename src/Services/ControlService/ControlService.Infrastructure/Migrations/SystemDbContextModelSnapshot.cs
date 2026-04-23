@@ -43,12 +43,19 @@ namespace Control.Infrastructure.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("name");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_aquariums");
 
                     b.HasIndex("ControllerId")
                         .IsUnique()
                         .HasDatabaseName("ix_aquariums_controller_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_aquariums_user_id");
 
                     b.ToTable("aquariums", (string)null);
                 });

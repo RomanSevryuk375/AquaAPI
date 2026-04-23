@@ -1,3 +1,4 @@
+using Contracts.Middlewares;
 using Control.API.Extensions;
 using Control.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
+app.UseGlobalExceptionHandler();
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<SystemDbContext>();
@@ -24,7 +27,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapHealthChecks("/health");
 app.MapControllers();
 

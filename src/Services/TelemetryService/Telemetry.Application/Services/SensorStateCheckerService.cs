@@ -11,13 +11,13 @@ namespace Telemetry.Application.Services;
 public class SensorStateCheckerService(
     ISensorRepository sensorRepository,
     IPublishEndpoint publishEndpoint,
-    IUnitOfWork unitOfWork) 
+    IUnitOfWork unitOfWork)
     : ISensorStateCheckerService
 {
     public async Task CheckStateAndNotify(CancellationToken cancellationToken)
     {
         var offlineThreshold = DateTime.UtcNow.AddMinutes(-5);
-        var specification = 
+        var specification =
             new SensorIsDelayedSpecification(offlineThreshold);
 
         var sensors = await sensorRepository.GetAllAsync(
@@ -39,7 +39,7 @@ public class SensorStateCheckerService(
             sensor.SetState(SensorStateEnum.NoData);
 
             await sensorRepository.UpdateAsync(sensor, cancellationToken);
-            affectedSensors.Add(sensor);                
+            affectedSensors.Add(sensor);
         }
 
         if (affectedSensors.Count != 0)
@@ -49,11 +49,11 @@ public class SensorStateCheckerService(
             foreach (var sensor in affectedSensors)
             {
                 await publishEndpoint.Publish(new SensorNoDataEvent
-                    {
-                        SensorId = sensor.Id,
-                        State = sensor.State,
-                        LastSeenAt = sensor.UpdatedAt,
-                    }, cancellationToken);
+                {
+                    SensorId = sensor.Id,
+                    State = sensor.State,
+                    LastSeenAt = sensor.UpdatedAt,
+                }, cancellationToken);
             }
         }
     }

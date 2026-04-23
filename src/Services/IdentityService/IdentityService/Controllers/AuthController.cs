@@ -13,15 +13,14 @@ public class AuthController(IAuthService authService) : ControllerBase
         [FromBody] RegisterUserRequestDto request,
         CancellationToken cancellationToken)
     {
-        var token = await authService.RegisterUserAsync(request);
+        var token = await authService
+            .RegisterUserAsync(request, cancellationToken);
 
         return Ok(token);
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<string>> LoginAsync(
-        [FromBody] LoginUserRequestDto request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<string>> LoginAsync([FromBody] LoginUserRequestDto request)
     {
         var token = await authService.CheckLoginAsync(request);
 

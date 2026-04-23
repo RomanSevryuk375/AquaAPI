@@ -24,6 +24,8 @@ public static class DependencyInjection
                 .UseSnakeCaseNamingConvention();
         });
 
+        services.AddRabbitMq(configuration);
+
         services.AddIdentity<UserEntity, IdentityRole<Guid>>(options =>
         {
             options.Password.RequiredLength = 8;

@@ -11,6 +11,7 @@ namespace Control.Application.Services;
 public class TelemetryServiceFromEvent(
     IAutomationRuleRepository ruleRepository,
     IRelayRepository relayRepository,
+    IAquariumRepository aquariumRepository,
     IUnitOfWork unitOfWork,
     IPublishEndpoint publishEndpoint) : ITelemetryServiceFromEvent
 {
@@ -36,11 +37,19 @@ public class TelemetryServiceFromEvent(
                 continue;
             }
 
-            var evalute = RuleEvaluatorFactory.Create(rule.Condition);
+            var aquarium = await aquariumRepository
+                .GetByIdAsync(relay.AquariumId, cancellationToken);
 
-            var isMet = evalute.Evaluate(telemetry.Value, rule.Threshold, rule.Hysteresis);
+            if (aquarium is null)
+            {
+                continue;
+            }
 
-            if (isMet == null)
+            var evaluator = RuleEvaluatorFactory.Create(rule.Condition);
+
+            var isMet = evaluator.Evaluate(telemetry.Value, rule.Threshold, rule.Hysteresis);
+
+            if (isMet is null)
             {
                 continue;
             }
@@ -48,6 +57,20 @@ public class TelemetryServiceFromEvent(
             bool targetState = isMet.Value
                 ? rule.Action == RuleActionEnum.SwitchOn
                 : rule.Action == RuleActionEnum.SwitchOff;
+
+            if (isMet is true && Math.Abs(telemetry.Value - rule.Threshold) > 5.0)
+            {
+                await publishEndpoint.Publish(new CriticalTelemetryThresholdAlertEvent
+                {
+                    UserId = aquarium.UserId,
+                    AquariumId = rule.AquariumId,
+                    SensorId = telemetry.SensorId,
+                    Value = telemetry.Value,
+                    RecordedAt = telemetry.RecordedAt,
+                    RelayId = rule.RelayId,
+                    RelayState = targetState
+                }, cancellationToken);
+            }
 
             if (relay.IsActive == targetState)
             {

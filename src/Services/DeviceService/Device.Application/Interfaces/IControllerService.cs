@@ -14,7 +14,7 @@ public interface IControllerService
         Guid id,
         CancellationToken cancellationToken);
 
-    Task<Guid> AddControllerAsync(
+    Task<ControllerRegistredResponseDto> AddControllerAsync(
         ControllerRequestDto request, 
         CancellationToken cancellationToken);
 
@@ -28,7 +28,8 @@ public interface IControllerService
         CancellationToken cancellationToken);
 
     Task<ControllerPingResponseDto> PingControllerAsync(
-        Guid id, 
+        Guid id,
+        string deviceToken,
         CancellationToken cancellationToken);
 
     Task<bool> ToggleControllerStateAsync(

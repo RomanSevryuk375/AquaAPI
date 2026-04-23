@@ -22,7 +22,7 @@ public class ControllerOfflineCheckerService(
             null,
             cancellationToken);
 
-        if (controllers.Any())
+        if (!controllers.Any())
         {
             return;
         }
@@ -39,6 +39,7 @@ public class ControllerOfflineCheckerService(
         {
             await publishEndpoint.Publish(new ControllerNotOnlineEvent
             {
+                UserId = controller.UserId,
                 ControllerId = controller.Id,
                 LastSeenAt = controller.LastSeenAt,
             }, cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using Contracts.Enums;
 using Device.Application.DTOs.Sensor;
+using Device.Application.DTOs.Telemetry;
 using Device.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,23 @@ public class SensorsController(
             NameGetById,
             new { id = id },
             createdData);
+    }
+
+    [HttpPost("telemetry")] 
+    public async Task<ActionResult> ReceiveBatchTelemetryAsync(
+    [FromBody] TelemetryBatchRequest request,
+    [FromHeader(Name = "X-Device-Token")] string deviceToken,
+    CancellationToken cancellationToken)
+    {
+        var result = await sensorService
+            .ProcessTelemetryBatchAsync(request, deviceToken, cancellationToken);
+
+        return Accepted(new
+        {
+            result.AcceptedCount,
+            result.ValidationErrors,
+            result.SkippedCount
+        });
     }
 
     [HttpPut("{id:guid}")]
