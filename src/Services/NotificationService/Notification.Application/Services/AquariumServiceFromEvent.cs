@@ -1,4 +1,4 @@
-﻿using Contracts.Events.Aquariums;
+﻿using Contracts.Events.AquariumEvents;
 using Contracts.Exceptions;
 using Notification.Application.Interfaces;
 using Notification.Domain.Entities;

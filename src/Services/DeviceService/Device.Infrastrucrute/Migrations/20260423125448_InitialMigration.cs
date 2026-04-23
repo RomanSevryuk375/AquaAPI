@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Device.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +16,9 @@ namespace Device.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     mac_address = table.Column<string>(type: "character varying(17)", maxLength: 17, nullable: false),
+                    device_token_hash = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     is_online = table.Column<bool>(type: "boolean", nullable: false),
                     last_seen_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -73,10 +76,21 @@ namespace Device.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ix_controllers_device_token_hash",
+                table: "controllers",
+                column: "device_token_hash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_controllers_mac_address",
                 table: "controllers",
                 column: "mac_address",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_controllers_user_id",
+                table: "controllers",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_relays_controller_id_hardware_pin",

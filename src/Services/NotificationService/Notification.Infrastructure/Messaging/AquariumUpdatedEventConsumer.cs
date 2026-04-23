@@ -1,4 +1,4 @@
-﻿using Contracts.Events.Aquariums;
+﻿using Contracts.Events.AquariumEvents;
 using MassTransit;
 using Notification.Application.Interfaces;
 

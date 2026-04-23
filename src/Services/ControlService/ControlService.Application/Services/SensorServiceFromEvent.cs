@@ -13,7 +13,6 @@ public class SensorServiceFromEvent(
     IAutomationRuleRepository ruleRepository,
     IAquariumRepository aquariumRepository,
     IPublishEndpoint publishEndpoint,
-    IUserContext userContext,
     IUnitOfWork unitOfWork) : ISensorServiceFromEvent
 {
     public async Task ChangedStateFromEventAsync(
@@ -96,6 +95,14 @@ public class SensorServiceFromEvent(
             return;
         }
 
+        var existingAquarium = await aquariumRepository.GetByIdAsync(
+            existingSensor.AquariumId, cancellationToken);
+
+        if (existingAquarium is null)
+        {
+            return;
+        }
+
         existingSensor.SetState(SensorStateEnum.Faulty);
 
         await sensorRepository.UpdateAsync(existingSensor, cancellationToken);
@@ -119,7 +126,7 @@ public class SensorServiceFromEvent(
 
             await publishEndpoint.Publish(new SensorNoDataAlertEvent
             {
-                UserId = userContext.UserId,
+                UserId = existingAquarium.UserId,
                 AquariumId = rule.AquariumId,
                 SensorId = existingSensor.Id,
                 LastSeenAt = DateTime.UtcNow,

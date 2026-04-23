@@ -33,6 +33,11 @@ namespace Device.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("DeviceTokenHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("device_token_hash");
+
                     b.Property<bool>("IsOnline")
                         .HasColumnType("boolean")
                         .HasColumnName("is_online");
@@ -59,6 +64,10 @@ namespace Device.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_controllers");
+
+                    b.HasIndex("DeviceTokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("ix_controllers_device_token_hash");
 
                     b.HasIndex("MacAddress")
                         .IsUnique()

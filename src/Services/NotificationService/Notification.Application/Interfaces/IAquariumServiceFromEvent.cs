@@ -1,4 +1,4 @@
-﻿using Contracts.Events.Aquariums;
+﻿using Contracts.Events.AquariumEvents;
 
 namespace Notification.Application.Interfaces;
 
