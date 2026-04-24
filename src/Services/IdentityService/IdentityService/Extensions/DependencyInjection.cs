@@ -3,6 +3,7 @@ using IdentityService.Application.Extensions;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
+using IdentityService.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddServices();
+        services.AddRepositories();
 
         return services;
     }

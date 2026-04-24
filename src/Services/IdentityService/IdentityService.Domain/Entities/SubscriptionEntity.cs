@@ -10,15 +10,13 @@ public class SubscriptionEntity : IEntity
         string name, 
         decimal price, 
         int durationDays, 
-        int maxAquariums, 
-        bool canUseAnalytics)
+        List<string> pernissions)
     {
         Id = id;
         Name = name;
         Price = price;
         DurationDays = durationDays;
-        MaxAquariums = maxAquariums;
-        CanUseAnalytics = canUseAnalytics;
+        Permissions = pernissions;
         CreatedAt = DateTime.UtcNow;
     }
 
@@ -26,17 +24,15 @@ public class SubscriptionEntity : IEntity
     public string Name { get; private set; }
     public decimal Price { get; private set; }
     public int DurationDays { get; private set; }
-    public int MaxAquariums { get; private set; }
-    public bool CanUseAnalytics { get; private set; }
+    public List<string> Permissions { get; private set; } = [];
     public DateTime CreatedAt { get; private set; }
 
     public static SubscriptionEntity Create(
         Guid id, 
         string name, 
         decimal price, 
-        int durationDays, 
-        int maxAquariums, 
-        bool canUseAnalytics)
+        int durationDays,
+        List<string> pernissions)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -48,7 +44,6 @@ public class SubscriptionEntity : IEntity
             name, 
             price, 
             durationDays, 
-            maxAquariums, 
-            canUseAnalytics);
+            pernissions);
     }
 }

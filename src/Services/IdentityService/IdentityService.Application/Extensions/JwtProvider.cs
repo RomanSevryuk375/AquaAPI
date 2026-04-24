@@ -1,4 +1,5 @@
-﻿using Contracts.JwtToken;
+﻿using Contracts.Authorization;
+using Contracts.JwtToken;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
 using Microsoft.Extensions.Options;
@@ -13,9 +14,18 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
     private readonly JwtOptions _options = options.Value;
 
-    public string GenerateToken(UserEntity user)
+    public string GenerateToken(UserEntity user, List<string> permissions)
     {
-        Claim[] claims = [ new (ClaimTypes.NameIdentifier, user.Id.ToString()) ];
+        var claims = new List<Claim>
+        {
+            new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (CustomClaims.SubscriptionLevel, user.SubscriptionId.ToString())
+        };
+
+        foreach (var permission in permissions)
+        {
+            claims.Add(new Claim(CustomClaims.Permissions, permission));
+        }
 
         var singinCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),

@@ -20,9 +20,12 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<string>> LoginAsync([FromBody] LoginUserRequestDto request)
+    public async Task<ActionResult<string>> LoginAsync(
+        [FromBody] LoginUserRequestDto request,
+        CancellationToken cancellationToken)
     {
-        var token = await authService.CheckLoginAsync(request);
+        var token = await authService
+            .CheckLoginAsync(request, cancellationToken);
 
         return Ok(token);
     }
