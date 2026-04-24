@@ -9,6 +9,7 @@ public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : IdentityDbContext<UserEntity, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<SubscriptionEntity> Subscriptions { get; set; }
+    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

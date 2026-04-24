@@ -13,11 +13,14 @@ namespace IdentityService.Application.Services;
 public class AuthService(
     UserManager<UserEntity> userManager,
     ISubscriptionRepository subscriptionRepository,
+    IRefreshTokenRepository refreshTokenRepository,
     IPublishEndpoint publishEndpoint,
-    IJwtProvider jwtProvider) : IAuthService
+    IJwtProvider jwtProvider,
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IAuthService
 {
-    public async Task<string> RegisterUserAsync(
-        RegisterUserRequestDto registerDto, 
+    public async Task<LoginResponseDto> RegisterUserAsync(
+        RegisterUserRequestDto registerDto,
         CancellationToken cancellationToken)
     {
         var existingUser = await userManager.FindByEmailAsync(registerDto.Email);
@@ -27,7 +30,9 @@ public class AuthService(
             throw new EmailIsBusyException($"{registerDto.Email} is busy.");
         }
 
-        var subscription = await subscriptionRepository.GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
+        var subscription = await subscriptionRepository
+            .GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
+
         var permissions = subscription?.Permissions ?? [];
 
         var (user, errors) = UserEntity.Create(
@@ -60,17 +65,35 @@ public class AuthService(
             CreatedAt = user.CreatedAt,
         }, cancellationToken);
 
-        var token = jwtProvider.GenerateToken(user, permissions);
+        var accessToken = jwtProvider.GenerateToken(user, permissions);
 
-        return token;
+        var refreshTokenEntity = RefreshTokenEntity
+            .Create(user.Id, jwtProvider.GenerateRefreshToken());
+
+        var refreshToken = await refreshTokenRepository
+            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new LoginResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+        };
     }
 
-    public async Task<string> CheckLoginAsync(LoginUserRequestDto loginUser, CancellationToken cancellationToken)
+    public async Task<LoginResponseDto> LoginAsync(
+        LoginUserRequestDto loginUser,
+        CancellationToken cancellationToken)
     {
-        var existingUser = await userManager.FindByEmailAsync(loginUser.Email)
-            ?? throw new NotFoundException($"{nameof(UserEntity)} with email {loginUser.Email} not found");
+        var existingUser = await userManager
+            .FindByEmailAsync(loginUser.Email)
+            ?? throw new NotFoundException($"{nameof(UserEntity)} " +
+                             $"with email {loginUser.Email} not found");
 
-        var subscription = await subscriptionRepository.GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
+        var subscription = await subscriptionRepository
+            .GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
+
         var permissions = subscription?.Permissions ?? [];
 
         bool isPasswordCorrect = await userManager
@@ -81,8 +104,77 @@ public class AuthService(
             throw new InvalidCredentialsException("Invalid password.");
         }
 
-        var token = jwtProvider.GenerateToken(existingUser, permissions);
+        var accessToken = jwtProvider
+            .GenerateToken(existingUser, permissions);
 
-        return token;
+        var refreshTokenEntity = RefreshTokenEntity
+            .Create(existingUser.Id, jwtProvider.GenerateRefreshToken());
+
+        var refreshToken = await refreshTokenRepository
+            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new LoginResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+        };
+    }
+
+    public async Task<LoginResponseDto> LoginWithRefreshTokenAsync(
+        string refreshToken,
+        CancellationToken cancellationToken)
+    {
+        var usedToken = await refreshTokenRepository
+            .GetByTokenStringAsync(refreshToken, cancellationToken);
+
+        if (usedToken is null ||
+            usedToken.IsUsed ||
+            usedToken.IsRevoked ||
+            usedToken.ExpiredAt < DateTime.UtcNow)
+        {
+            throw new InvalidCredentialsException("Invalid or expired refresh token.");
+        }
+
+        usedToken.MarkAsUsed();
+
+        await refreshTokenRepository
+            .UpdateTokenAsync(usedToken, cancellationToken);
+
+        var existingUser = await userManager
+            .FindByIdAsync(usedToken.UserId.ToString())
+            ?? throw new NotFoundException($"{nameof(UserEntity)} " +
+                            $"with id {usedToken.Id} not found");
+
+        var subscription = await subscriptionRepository
+            .GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
+
+        var permissions = subscription?.Permissions ?? [];
+
+        var accessToken = jwtProvider
+            .GenerateToken(existingUser, permissions);
+
+        var refreshTokenEntity = RefreshTokenEntity
+            .Create(existingUser.Id, jwtProvider.GenerateRefreshToken());
+
+        var newRefreshToken = await refreshTokenRepository
+            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new LoginResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+        };
+    }
+
+    public async Task LogoutAsync(CancellationToken cancellationToken)
+    {
+        await refreshTokenRepository
+            .DeleteTokensByUserIdAsync(userContext.UserId, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Contracts.Options;
-using IdentityService.Application.Extensions;
-using IdentityService.Application.Interfaces;
+﻿using IdentityService.Application.Extensions;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using IdentityService.Infrastructure.Extensions;

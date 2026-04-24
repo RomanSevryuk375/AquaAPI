@@ -13,6 +13,7 @@ public static class DependencyInjection
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         var connectionString = configuration.GetConnectionString(nameof(IdentityDbContext));
 
@@ -22,6 +23,10 @@ public static class DependencyInjection
         });
 
         services.AddHealthChecks().AddNpgSql(connectionString!);
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

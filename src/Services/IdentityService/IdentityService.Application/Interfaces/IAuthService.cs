@@ -4,11 +4,17 @@ namespace IdentityService.Application.Interfaces;
 
 public interface IAuthService
 {
-    Task<string> CheckLoginAsync(
-        LoginUserRequestDto loginUser,
+    Task<LoginResponseDto> LoginAsync(
+        LoginUserRequestDto loginUser, 
         CancellationToken cancellationToken);
 
-    Task<string> RegisterUserAsync(
-        RegisterUserRequestDto registerDto,
+    Task<LoginResponseDto> LoginWithRefreshTokenAsync(
+        string refreshToken, 
+        CancellationToken cancellationToken);
+
+    Task LogoutAsync(CancellationToken cancellationToken);
+
+    Task<LoginResponseDto> RegisterUserAsync(
+        RegisterUserRequestDto registerDto, 
         CancellationToken cancellationToken);
 }
