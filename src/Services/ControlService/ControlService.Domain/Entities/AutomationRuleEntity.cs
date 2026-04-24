@@ -1,5 +1,5 @@
-﻿using Contracts.Enums;
-using Control.Domain.Interfaces;
+﻿using Contracts.Abstractions;
+using Contracts.Enums;
 
 namespace Control.Domain.Entities;
 

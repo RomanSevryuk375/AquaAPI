@@ -1,4 +1,4 @@
-﻿using IdentityService.Domain.Interfaces;
+﻿using Contracts.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 

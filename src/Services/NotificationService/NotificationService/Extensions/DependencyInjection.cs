@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contracts.Authorization;
 using Notification.Application.Extensions;
-using Notification.Infrastructure;
 using Notification.Infrastructure.Extensions;
 
 namespace Notification.API.Extensions;
@@ -12,19 +11,15 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-
         services.AddControllers();
 
-        services.AddDbContext<SystemDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString(nameof(SystemDbContext)))
-                .UseSnakeCaseNamingConvention();
-        });
+        services.AddServices();
 
         services.AddRepositories(configuration);
-        services.AddServices();
         services.AddQuartzJobs();
         services.AddRabbitMq(configuration);
+
+        services.AddAquaAuthorizationPolicies();
 
         return services;
     }

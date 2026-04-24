@@ -1,4 +1,4 @@
-namespace Telemetry.Domain.Interfaces;
+﻿namespace Contracts.Abstractions;
 
 public interface IEntity
 {

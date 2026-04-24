@@ -4,14 +4,12 @@ using Contracts.Events.TelemetryEvents;
 using Contracts.Exceptions;
 using Device.Application.DTOs.Sensor;
 using Device.Application.DTOs.Telemetry;
-using Device.Application.Extesions;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;
 using Device.Domain.Interfaces;
 using Device.Domain.SpecificationParams;
 using Device.Domain.Specifications;
 using MassTransit;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Device.Application.Services;
 

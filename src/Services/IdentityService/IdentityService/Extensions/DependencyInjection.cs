@@ -1,11 +1,10 @@
-﻿using Contracts.JwtToken;
+﻿using Contracts.Options;
 using IdentityService.Application.Extensions;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using IdentityService.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.API.Extensions;
 
@@ -19,13 +18,7 @@ public static class DependencyInjection
 
         services.AddControllers();
 
-        services.AddDbContext<IdentityDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString(nameof(IdentityDbContext)))
-                .UseSnakeCaseNamingConvention();
-        });
-
-        services.AddRabbitMq(configuration);
+        services.AddServices(configuration);
 
         services.AddIdentity<UserEntity, IdentityRole<Guid>>(options =>
         {
@@ -37,11 +30,8 @@ public static class DependencyInjection
         .AddEntityFrameworkStores<IdentityDbContext>() 
         .AddDefaultTokenProviders();
 
-        services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
-        services.AddScoped<IJwtProvider, JwtProvider>();
-
-        services.AddServices();
-        services.AddRepositories();
+        services.AddRabbitMq(configuration);
+        services.AddRepositories(configuration);
 
         return services;
     }

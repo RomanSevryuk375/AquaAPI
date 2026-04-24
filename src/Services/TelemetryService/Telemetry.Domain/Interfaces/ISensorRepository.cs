@@ -1,4 +1,5 @@
-﻿using Telemetry.Domain.Entities;
+﻿using Contracts.Abstractions;
+using Telemetry.Domain.Entities;
 
 namespace Telemetry.Domain.Interfaces;
 

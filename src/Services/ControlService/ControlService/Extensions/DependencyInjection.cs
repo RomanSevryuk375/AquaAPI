@@ -1,7 +1,6 @@
-﻿using Control.Application.Extensions;
-using Control.Infrastructure;
+﻿using Contracts.Authorization;
+using Control.Application.Extensions;
 using Control.Infrastructure.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Control.API.Extensions;
 
@@ -15,16 +14,12 @@ public static class DependencyInjection
 
         services.AddControllers();
 
-        services.AddDbContext<SystemDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString(nameof(SystemDbContext)))
-                .UseSnakeCaseNamingConvention();
-        });
-
-        services.AddRepositories();
         services.AddServices();
+        services.AddRepositories(configuration);
         services.AddQuartzJobs();
         services.AddRabbitMq(configuration);
+
+        services.AddAquaAuthorizationPolicies();
 
         return services;
     }

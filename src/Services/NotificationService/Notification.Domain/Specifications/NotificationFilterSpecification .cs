@@ -1,4 +1,5 @@
-﻿using Notification.Domain.Entities;
+﻿using Contracts.Abstractions;
+using Notification.Domain.Entities;
 using Notification.Domain.SpecificationParams;
 
 namespace Notification.Domain.Specifications;

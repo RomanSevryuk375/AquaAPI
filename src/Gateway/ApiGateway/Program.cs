@@ -1,4 +1,5 @@
 using ApiGateway;
+using Contracts.Authorization;
 using Contracts.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApiAuthentication(builder.Configuration);
+builder.Services.AddAquaAuthorizationPolicies();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

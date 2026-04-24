@@ -1,4 +1,4 @@
-﻿namespace Notification.Infrastructure.Extensions;
+﻿namespace Contracts.Options;
 
 public record EmailOptions
 {

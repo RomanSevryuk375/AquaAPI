@@ -1,4 +1,4 @@
-﻿namespace Control.Domain.Interfaces;
+﻿namespace Contracts.Abstractions;
 
 public interface IRepository<T> where T : class, IEntity
 {

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Notification.Domain.Specifications;
+namespace Contracts.Abstractions;
 
 public abstract class BaseSpecification<T>(Expression<Func<T, bool>> criteria)
 {

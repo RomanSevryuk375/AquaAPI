@@ -1,4 +1,4 @@
-﻿using Notification.Domain.Interfaces;
+﻿using Contracts.Abstractions;
 using System.Text.RegularExpressions;
 
 namespace Notification.Domain.Entities;

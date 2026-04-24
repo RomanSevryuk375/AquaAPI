@@ -1,5 +1,5 @@
 ﻿using Contracts.Authorization;
-using Contracts.JwtToken;
+using Contracts.Options;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
 using Microsoft.Extensions.Options;

@@ -1,4 +1,4 @@
-﻿using IdentityService.Domain.Interfaces;
+﻿using Contracts.Abstractions;
 
 namespace IdentityService.Domain.Entities;
 

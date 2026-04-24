@@ -1,5 +1,5 @@
-﻿using Contracts.Enums;
-using Device.Domain.Interfaces;
+﻿using Contracts.Abstractions;
+using Contracts.Enums;
 
 namespace Device.Domain.Entities;
 

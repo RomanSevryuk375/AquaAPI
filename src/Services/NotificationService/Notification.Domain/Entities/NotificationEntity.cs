@@ -1,5 +1,5 @@
-﻿using Contracts.Enums;
-using Notification.Domain.Interfaces;
+﻿using Contracts.Abstractions;
+using Contracts.Enums;
 
 namespace Notification.Domain.Entities;
 

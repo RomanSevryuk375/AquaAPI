@@ -1,4 +1,5 @@
-﻿using Device.Domain.Entities;
+﻿using Contracts.Abstractions;
+using Device.Domain.Entities;
 
 namespace Device.Domain.Interfaces;
 

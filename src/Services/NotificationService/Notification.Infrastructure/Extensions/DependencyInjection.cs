@@ -1,7 +1,8 @@
-﻿using MassTransit;
+﻿using Contracts.Options;
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Notification.Domain.Interfaces;
 using Notification.Infrastructure.BackgroundJob;
 using Notification.Infrastructure.Messaging;
@@ -17,6 +18,13 @@ public static class DependencyInjection
     {
         services.Configure<TelegramOptions>(configuration.GetSection(TelegramOptions.SectionName));
         services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+
+        var connectionSting = configuration.GetConnectionString(nameof(SystemDbContext));
+        services.AddDbContext<SystemDbContext>(options =>
+        {
+            options.UseNpgsql(connectionSting).UseSnakeCaseNamingConvention();
+        });
+        services.AddHealthChecks().AddNpgSql(connectionSting!);
 
         services.AddHttpClient<INotificationProvider, TgProvider>();
         services.AddSingleton<INotificationProvider, EmailProvider>();
@@ -34,7 +42,11 @@ public static class DependencyInjection
 
     public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+        var rabbitSection = configuration.GetSection(RabbitMqOptions.SectionName);
+        var rabbitOgtions = rabbitSection.Get<RabbitMqOptions>()
+            ?? throw new InvalidOperationException("RabbitMQ configuration is missing.");
+
+        services.Configure<RabbitMqOptions>(rabbitSection);
 
         services.AddMassTransit(busConfigurator =>
         {
@@ -54,17 +66,17 @@ public static class DependencyInjection
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
-                var options = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value; 
-
-                configurator.Host(new Uri(options.Host), h =>
+                configurator.Host(new Uri(rabbitOgtions.Host), h =>
                 {
-                    h.Username(options.UserName);
-                    h.Password(options.Password);
+                    h.Username(rabbitOgtions.UserName);
+                    h.Password(rabbitOgtions.Password);
                 });
 
                 configurator.ConfigureEndpoints(context);
             });
         });
+
+        services.AddHealthChecks().AddRabbitMQ(new Uri(rabbitOgtions.Host));
 
         return services;
     }
