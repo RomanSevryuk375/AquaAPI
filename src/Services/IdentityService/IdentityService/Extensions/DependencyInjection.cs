@@ -28,6 +28,7 @@ public static class DependencyInjection
         .AddEntityFrameworkStores<IdentityDbContext>() 
         .AddDefaultTokenProviders();
 
+        services.AddQuartzJobs();
         services.AddRabbitMq(configuration);
         services.AddRepositories(configuration);
 

@@ -13,6 +13,8 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ISubscriptionExpiredChecker, SubscriptionExpiredChecker>();
+        services.AddScoped<IIncorrectTokenChecker, IncorrectTokenChecker>();
 
         return services;
     }
