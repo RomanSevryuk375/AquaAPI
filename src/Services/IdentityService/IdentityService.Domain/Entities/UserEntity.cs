@@ -71,6 +71,11 @@ public class UserEntity : IdentityUser<Guid>, IEntity
         return (user, errors);
     }
 
+    public void SetName(string name)
+    {
+        Name = name;
+    }
+
     public void SetSubscription(Guid subscriptionId, int durationDays)
     {
         SubscriptionId = subscriptionId;

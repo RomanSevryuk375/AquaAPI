@@ -28,10 +28,7 @@ public class SubscriptionEntityConfigurations
                 Id = Guid.Parse(SubscriptionEnum.Free),
                 Name = "Free",
                 Price = 0m,
-                DurationDays = 36500,
-                MaxAquariums = 1,
-                CanUseAnalytics = false,
-                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                DurationDays = SubscriptionEnum.FreeDuration,
                 Permissions = new List<string>
                 {
                     SubPermissions.TankRead,
@@ -48,17 +45,15 @@ public class SubscriptionEntityConfigurations
                     SubPermissions.MaintenanceLogWrite,
                     SubPermissions.AccountUpdate,
                     SubPermissions.AccountView,
-                }
+                },
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             },
             new
             {
                 Id = Guid.Parse(SubscriptionEnum.Professional),
                 Name = "Professional",
                 Price = 9.99m,
-                DurationDays = 30,
-                MaxAquariums = 10,
-                CanUseAnalytics = true,
-                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                DurationDays = SubscriptionEnum.ProfessionalDuration,
                 Permissions = new List<string>
                 {
                     SubPermissions.TankRead,
@@ -78,17 +73,15 @@ public class SubscriptionEntityConfigurations
                     SubPermissions.ReminderManage,
                     SubPermissions.AccountUpdate,
                     SubPermissions.AccountView,
-                }
+                },
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             },
             new
             {
                 Id = Guid.Parse(SubscriptionEnum.Elite),
                 Name = "Elite",
                 Price = 19.99m,
-                DurationDays = 30,
-                MaxAquariums = 100,
-                CanUseAnalytics = true,
-                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                DurationDays = SubscriptionEnum.EliteDuration,
                 Permissions = new List<string>
                 {
                     SubPermissions.TankRead,
@@ -111,7 +104,8 @@ public class SubscriptionEntityConfigurations
                     SubPermissions.ReminderManage,
                     SubPermissions.EmailAlerts,
                     SubPermissions.TelegramAlerts,
-                }
+                },
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             }
         );
     }

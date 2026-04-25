@@ -7,4 +7,8 @@ public interface IUserServiceFromEvent
     Task CreateUserFromEventAsync(
         UserCreatedEvent userCreated, 
         CancellationToken cancellationToken);
+
+    Task UpdateUserFromEventAsync(
+        UserUpdatedEvent user,
+        CancellationToken cancellationToken);
 }

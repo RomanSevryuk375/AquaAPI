@@ -15,7 +15,8 @@ public class SubscriptionExpiredChecker(
 
         foreach (var user in users)
         {
-            user.SetSubscription(Guid.Parse(SubscriptionEnum.Free), 9999);
+            user.SetSubscription(Guid
+                .Parse(SubscriptionEnum.Free), SubscriptionEnum.FreeDuration);
 
             await userRepository
                 .UpdateAsync(user, cancellationToken);
