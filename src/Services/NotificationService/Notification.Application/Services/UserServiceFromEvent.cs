@@ -41,4 +41,22 @@ public class UserServiceFromEvent(
         await userRepository.AddAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateUserFromEventAsync(
+        UserUpdatedEvent user,
+        CancellationToken cancellationToken)
+    {
+        var currentUser = await userRepository
+            .GetByIdAsync(user.UserId, cancellationToken);
+
+        if (currentUser is null)
+        {
+            return;
+        }
+
+        currentUser.UpdateContacts(user.Email, user.PhoneNumber);
+
+        await userRepository.UpdateAsync(currentUser, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
 }

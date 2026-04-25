@@ -30,11 +30,6 @@ public class AuthService(
             throw new EmailIsBusyException($"{registerDto.Email} is busy.");
         }
 
-        var subscription = await subscriptionRepository
-            .GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
-
-        var permissions = subscription?.Permissions ?? [];
-
         var (user, errors) = UserEntity.Create(
             registerDto.Name,
             registerDto.Email,
@@ -46,6 +41,11 @@ public class AuthService(
             throw new DomainValidationException(
                 $"Failed to create {nameof(UserEntity)}: {string.Join(", ", errors)}");
         }
+
+        var subscription = await subscriptionRepository
+            .GetByIdAsync(user.SubscriptionId, cancellationToken);
+
+        var permissions = subscription?.Permissions ?? [];
 
         var result = await userManager.CreateAsync(user, registerDto.Password);
 
@@ -166,7 +166,7 @@ public class AuthService(
         return new LoginResponseDto
         {
             AccessToken = accessToken,
-            RefreshToken = refreshToken,
+            RefreshToken = newRefreshToken,
         };
     }
 

@@ -57,6 +57,7 @@ public static class DependencyInjection
             busConfigurator.AddConsumer<AquariumUpdatedEventConsumer>();
 
             busConfigurator.AddConsumer<UserCreatedEventConsumer>();
+            busConfigurator.AddConsumer<UserUpdatedEventConsumer>();
 
             busConfigurator.AddConsumer<CriticalTelemetryThresholdAlertEventConsumer>();
 

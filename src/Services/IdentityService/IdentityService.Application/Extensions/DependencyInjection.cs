@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISubscriptionExpiredChecker, SubscriptionExpiredChecker>();
         services.AddScoped<IIncorrectTokenChecker, IncorrectTokenChecker>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }
