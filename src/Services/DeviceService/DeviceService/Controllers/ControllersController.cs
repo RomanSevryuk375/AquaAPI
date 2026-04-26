@@ -44,17 +44,10 @@ public class ControllersController(
         var response = await controllerService
             .AddControllerAsync(request, cancellationToken);
 
-        var createdData = await controllerService
-            .GetControllerByIdAsync(response.ControllerId, cancellationToken);
-
         return CreatedAtRoute(
             NameGetById,
-            new 
-            { 
-                response.ControllerId,
-                response.DeviceToken,
-            },
-            createdData);
+            new { id = response.ControllerId },
+            response);
     }
 
     [HttpPost("{id:guid}/ping")]

@@ -9,7 +9,7 @@ public interface IAuthService
         CancellationToken cancellationToken);
 
     Task<LoginResponseDto> LoginWithRefreshTokenAsync(
-        string refreshToken, 
+        RefreshTokenRequestDto request,
         CancellationToken cancellationToken);
 
     Task LogoutAsync(CancellationToken cancellationToken);

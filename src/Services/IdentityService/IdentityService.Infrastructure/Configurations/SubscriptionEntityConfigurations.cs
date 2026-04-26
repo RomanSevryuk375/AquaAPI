@@ -3,12 +3,15 @@ using Contracts.Enums;
 using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace IdentityService.Infrastructure.Configurations;
 
 public class SubscriptionEntityConfigurations 
     : IEntityTypeConfiguration<SubscriptionEntity>
 {
+    private const JsonSerializerOptions? Options = (JsonSerializerOptions)null;
+
     public void Configure(EntityTypeBuilder<SubscriptionEntity> builder)
     {
         builder.ToTable("subscriptions");
@@ -16,6 +19,10 @@ public class SubscriptionEntityConfigurations
 
         builder.Property(x => x.Permissions)
             .HasColumnType("jsonb")
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, Options),
+                v => JsonSerializer.Deserialize<List<string>>(v, Options) ?? new List<string>()
+            )
             .IsRequired();
 
         builder.Property(x => x.Price)

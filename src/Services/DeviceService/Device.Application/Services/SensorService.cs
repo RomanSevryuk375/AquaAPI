@@ -220,6 +220,13 @@ public class SensorService(
                 continue;
             }
 
+            if (string.IsNullOrWhiteSpace(item.ExternalMessageId))
+            {
+                validationErrors.Add($"ExternalMessageId can not be empty. (Sensor {item.SensorId})");
+                skippedCount++;
+                continue;
+            }
+
             if (sensor is null)
             {
                 validationErrors.Add($"Sensor {item.SensorId} not found. (Sensor {item.SensorId})");

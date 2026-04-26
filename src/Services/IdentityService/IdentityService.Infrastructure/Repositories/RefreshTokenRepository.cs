@@ -13,16 +13,16 @@ public class RefreshTokenRepository(IdentityDbContext dbContext)
     {
         await dbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
 
-        return refreshToken.Token;
+        return refreshToken.TokenHash;
     }
 
-    public async Task<RefreshTokenEntity?> GetByTokenStringAsync(
-        string token,
+    public async Task<RefreshTokenEntity?> GetByIdAsync(
+        Guid tokenId,
         CancellationToken cancellationToken)
     {
         return await dbContext.RefreshTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == tokenId, cancellationToken);
     }
 
     public async Task DeleteTokensByUserIdAsync(

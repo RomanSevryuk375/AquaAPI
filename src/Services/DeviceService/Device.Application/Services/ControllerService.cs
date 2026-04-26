@@ -17,7 +17,9 @@ public class ControllerService(
     IUnitOfWork unitOfWork,
     IMyHasher myHasher) : IControllerService
 {
-    public async Task<ControllerRegistredResponseDto> AddControllerAsync(ControllerRequestDto request, CancellationToken cancellationToken)
+    public async Task<ControllerRegistredResponseDto> AddControllerAsync(
+        ControllerRequestDto request, 
+        CancellationToken cancellationToken)
     {
         var userId = userContext.UserId; 
 

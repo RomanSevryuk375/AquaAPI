@@ -11,8 +11,8 @@ public interface IRefreshTokenRepository
     Task DeleteIncorrectTokensAsync(
         CancellationToken cancellationToken);
 
-    Task<RefreshTokenEntity?> GetByTokenStringAsync(
-        string token, 
+    Task<RefreshTokenEntity?> GetByIdAsync(
+        Guid tokenId, 
         CancellationToken cancellationToken);
 
     Task DeleteTokensByUserIdAsync(

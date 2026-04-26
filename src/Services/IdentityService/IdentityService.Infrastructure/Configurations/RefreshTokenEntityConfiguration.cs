@@ -16,10 +16,10 @@ public class RefreshTokenEntityConfiguration
         builder.Property(x => x.UserId).IsRequired();
         builder.HasIndex(x => x.UserId);
 
-        builder.Property(x => x.Token)
+        builder.Property(x => x.TokenHash)
             .HasMaxLength(256)
             .IsRequired();
-        builder.HasIndex(x => x.Token).IsUnique();
+        builder.HasIndex(x => x.TokenHash).IsUnique();
 
         builder.Property(x => x.IsUsed).IsRequired();
         builder.Property(x => x.IsRevoked).IsRequired();

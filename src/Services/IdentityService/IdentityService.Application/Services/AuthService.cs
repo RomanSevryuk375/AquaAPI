@@ -17,6 +17,7 @@ public class AuthService(
     IPublishEndpoint publishEndpoint,
     IJwtProvider jwtProvider,
     IUnitOfWork unitOfWork,
+    IMyHasher myHasher,
     IUserContext userContext) : IAuthService
 {
     public async Task<LoginResponseDto> RegisterUserAsync(
@@ -66,12 +67,7 @@ public class AuthService(
         }, cancellationToken);
 
         var accessToken = jwtProvider.GenerateToken(user, permissions);
-
-        var refreshTokenEntity = RefreshTokenEntity
-            .Create(user.Id, jwtProvider.GenerateRefreshToken());
-
-        var refreshToken = await refreshTokenRepository
-            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+        var refreshToken = await CreateAndPersistRefreshTokenAsync(user.Id, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -104,14 +100,8 @@ public class AuthService(
             throw new InvalidCredentialsException("Invalid password.");
         }
 
-        var accessToken = jwtProvider
-            .GenerateToken(existingUser, permissions);
-
-        var refreshTokenEntity = RefreshTokenEntity
-            .Create(existingUser.Id, jwtProvider.GenerateRefreshToken());
-
-        var refreshToken = await refreshTokenRepository
-            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+        var accessToken = jwtProvider.GenerateToken(existingUser, permissions);
+        var refreshToken = await CreateAndPersistRefreshTokenAsync(existingUser.Id, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -123,14 +113,21 @@ public class AuthService(
     }
 
     public async Task<LoginResponseDto> LoginWithRefreshTokenAsync(
-        string refreshToken,
+        RefreshTokenRequestDto request,
         CancellationToken cancellationToken)
     {
+        var parts = request.RefreshToken.Split('.');
+        if (parts.Length != 2 || !Guid.TryParse(parts[0], out var tokenId))
+        {
+            throw new InvalidCredentialsException("Invalid refresh token format.");
+        }
+
         var usedToken = await refreshTokenRepository
-            .GetByTokenStringAsync(refreshToken, cancellationToken);
+            .GetByIdAsync(tokenId, cancellationToken);
 
         if (usedToken is null ||
             usedToken.IsUsed ||
+            !myHasher.Verify(request.RefreshToken, usedToken.TokenHash) ||
             usedToken.IsRevoked ||
             usedToken.ExpiredAt < DateTime.UtcNow)
         {
@@ -138,28 +135,22 @@ public class AuthService(
         }
 
         usedToken.MarkAsUsed();
-
         await refreshTokenRepository
             .UpdateTokenAsync(usedToken, cancellationToken);
 
         var existingUser = await userManager
             .FindByIdAsync(usedToken.UserId.ToString())
-            ?? throw new NotFoundException($"{nameof(UserEntity)} " +
-                            $"with id {usedToken.Id} not found");
+            ?? throw new NotFoundException("User not found");
 
         var subscription = await subscriptionRepository
-            .GetByIdAsync(existingUser!.SubscriptionId, cancellationToken);
-
+            .GetByIdAsync(existingUser.SubscriptionId, cancellationToken);
         var permissions = subscription?.Permissions ?? [];
 
         var accessToken = jwtProvider
             .GenerateToken(existingUser, permissions);
 
-        var refreshTokenEntity = RefreshTokenEntity
-            .Create(existingUser.Id, jwtProvider.GenerateRefreshToken());
-
-        var newRefreshToken = await refreshTokenRepository
-            .AddTokenAsync(refreshTokenEntity, cancellationToken);
+        var newRefreshToken = await 
+            CreateAndPersistRefreshTokenAsync(existingUser.Id, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -176,5 +167,22 @@ public class AuthService(
             .DeleteTokensByUserIdAsync(userContext.UserId, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<string> CreateAndPersistRefreshTokenAsync(
+        Guid userId, 
+        CancellationToken ct)
+    {
+        var rawSecret = jwtProvider.GenerateRefreshToken();
+
+        var refreshTokenEntity = RefreshTokenEntity.Create(
+            userId,
+            myHasher.Generate(rawSecret)
+        );
+
+        await refreshTokenRepository
+            .AddTokenAsync(refreshTokenEntity, ct);
+
+        return $"{refreshTokenEntity.Id}.{rawSecret}";
     }
 }

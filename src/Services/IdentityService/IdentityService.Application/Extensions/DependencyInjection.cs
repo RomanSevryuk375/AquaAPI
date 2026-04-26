@@ -16,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionExpiredChecker, SubscriptionExpiredChecker>();
         services.AddScoped<IIncorrectTokenChecker, IncorrectTokenChecker>();
         services.AddScoped<IUserService, UserService>();
+        services.AddSingleton<IMyHasher, MyHasher>();
 
         return services;
     }

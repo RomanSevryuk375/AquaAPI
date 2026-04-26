@@ -34,11 +34,6 @@ public class SubscriptionEntity : IEntity
         int durationDays,
         List<string> pernissions)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Name required");
-        }
-
         return new SubscriptionEntity(
             id, 
             name, 

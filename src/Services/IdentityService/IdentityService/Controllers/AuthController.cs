@@ -28,16 +28,40 @@ public class AuthController(IAuthService authService) : ControllerBase
         var token = await authService
             .LoginAsync(request, cancellationToken);
 
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddHours(12),
+            Path = "/",
+            IsEssential = true
+        };
+
+        Response.Cookies.Append("jwt", token.AccessToken, cookieOptions);
+
         return Ok(token);
     }
 
     [HttpPost("refresh")]
     public async Task<ActionResult<LoginResponseDto>> RefreshAsync(
-    [FromBody] string refreshToken,
+    [FromBody] RefreshTokenRequestDto request,
     CancellationToken cancellationToken)
     {
         var result = await authService
-            .LoginWithRefreshTokenAsync(refreshToken, cancellationToken);
+            .LoginWithRefreshTokenAsync(request, cancellationToken);
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddHours(12),
+            Path = "/",
+            IsEssential = true
+        };
+
+        Response.Cookies.Append("jwt", result.AccessToken, cookieOptions);
 
         return Ok(result);
     }
@@ -47,6 +71,14 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<ActionResult> LogoutAsync(CancellationToken cancellationToken)
     {
         await authService.LogoutAsync(cancellationToken);
+
+        Response.Cookies.Delete("jwt", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Path = "/"
+        });
 
         return NoContent();
     }
