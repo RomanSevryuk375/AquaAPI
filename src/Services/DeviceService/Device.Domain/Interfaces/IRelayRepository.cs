@@ -5,5 +5,7 @@ namespace Device.Domain.Interfaces;
 
 public interface IRelayRepository : IRepository<RelayEntity>
 {
-    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
+    Task<bool> ExistsAsync(
+        Guid relayId, 
+        CancellationToken cancellationToken);
 }

@@ -1,5 +1,6 @@
 ﻿using Device.Application.Interfaces;
 using Device.Application.Services;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Device.Application.Extesions;
@@ -14,6 +15,8 @@ public static class DependencyInjection
         services.AddScoped<ISensorService, SensorService>();
 
         services.AddSingleton<IMyHasher, MyHasher>();
+
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         return services;
     }

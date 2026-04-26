@@ -13,17 +13,23 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.ControllerId).IsRequired();
-        builder.Property(x => x.HardwarePin)
-            .HasMaxLength(32)
+        builder.Property(x => x.Name)
+            .HasMaxLength(128)
             .IsRequired();
 
-        builder.HasIndex(x => new 
-        { 
-            x.ControllerId, 
-            x.HardwarePin 
-        }).IsUnique();
+        builder.Property(x => x.ConnectionProtocol)
+            .HasConversion<int>()
+            .IsRequired();
+
+        builder.Property(x => x.ConnectionAddress)
+           .HasMaxLength(32)
+           .IsRequired();
 
         builder.Property(x => x.Type)
+            .HasConversion<int>()
+            .IsRequired();
+
+        builder.Property(x => x.State)
             .HasConversion<int>()
             .IsRequired();
 
@@ -32,5 +38,11 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
             .IsRequired();
 
         builder.Property(x => x.CreatedAt).IsRequired();
+
+        builder.HasIndex(x => new
+        {
+            x.ControllerId,
+            x.ConnectionAddress
+        }).IsUnique();
     }
 }

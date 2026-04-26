@@ -9,6 +9,7 @@ using Device.Domain.Entities;
 using Device.Domain.Interfaces;
 using Device.Domain.SpecificationParams;
 using Device.Domain.Specifications;
+using FluentValidation;
 using MassTransit;
 
 namespace Device.Application.Services;
@@ -18,7 +19,8 @@ public class SensorService(
     IControllerRepository controllerRepository,
     IUnitOfWork unitOfWork,
     IPublishEndpoint publishEndpoint,
-    IMyHasher myHasher) : ISensorService
+    IMyHasher myHasher,
+    IValidator<TelemetryBatchRequest> batchValidator) : ISensorService
 {
     public async Task<Guid> AddSensorAsync(
         SensorRequestDto request,
@@ -184,20 +186,24 @@ public class SensorService(
         string deviceToken,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.MacAddress))
+        var validationResult = batchValidator.Validate(request);
+
+        if (!validationResult.IsValid)
         {
-            throw new DomainValidationException(
-                $"Controller MacAddress must not be empty or white space.");
+            return new TelemetryResponse
+            {
+                AcceptedCount = 0,
+                SkippedCount = request.Items?.Count ?? 0,
+                ValidationErrors = validationResult.Errors
+                    .Select(e => $"{e.PropertyName}: {e.ErrorMessage}").ToList()
+            };
         }
 
         var existingController = await controllerRepository
             .GetByMacAddress(request.MacAddress, cancellationToken)
             ?? throw new NotFoundException($"Controller {request.MacAddress} not found");
 
-        var verify = myHasher
-            .Verify(deviceToken, existingController.DeviceTokenHash);
-
-        if (!verify)
+        if (!(myHasher.Verify(deviceToken, existingController.DeviceTokenHash)))
         {
             throw new InvalidCredentialsException("DeviceToken is not verified.");
         }
@@ -205,32 +211,16 @@ public class SensorService(
         var existingSensors = await sensorRepository
             .GetAllSensorsAsync(existingController.Id, cancellationToken);
 
-        var acceptedCount = 0;
-        var validationErrors = new List<string>();
-        var skippedCount = 0;
+        var response = new TelemetryResponse();
 
         foreach (var item in request.Items)
         {
             var sensor = existingSensors.FirstOrDefault(x => x.Id == item.SensorId);
 
-            if (item.RecordedAt > DateTime.UtcNow.AddMinutes(5))
-            {
-                validationErrors.Add($"RecordedAt can not be in future. (Sensor {item.SensorId})");
-                skippedCount++;
-                continue;
-            }
-
-            if (string.IsNullOrWhiteSpace(item.ExternalMessageId))
-            {
-                validationErrors.Add($"ExternalMessageId can not be empty. (Sensor {item.SensorId})");
-                skippedCount++;
-                continue;
-            }
-
             if (sensor is null)
             {
-                validationErrors.Add($"Sensor {item.SensorId} not found. (Sensor {item.SensorId})");
-                skippedCount++;
+                response.ValidationErrors.Add($"Sensor {item.SensorId} not found. (Sensor {item.SensorId})");
+                response.SkippedCount++;
                 continue;
             }
 
@@ -242,14 +232,9 @@ public class SensorService(
                 RecordedAt = item.RecordedAt,
             }, cancellationToken);
 
-            acceptedCount++;
+            response.AcceptedCount++;
         }
 
-        return new TelemetryResponse
-        {
-            AcceptedCount = acceptedCount,
-            ValidationErrors = validationErrors,
-            SkippedCount = skippedCount
-        };
+        return response;
     }
 }

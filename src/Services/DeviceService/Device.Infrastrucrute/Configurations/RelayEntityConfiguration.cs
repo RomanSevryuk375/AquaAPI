@@ -14,9 +14,19 @@ public class RelayEntityConfiguration : IEntityTypeConfiguration<RelayEntity>
 
         builder.Property(x => x.ControllerId).IsRequired();
 
-        builder.Property(x => x.HardwarePin)
-            .HasMaxLength(32)
+        builder.Property(x => x.Name)
+            .HasMaxLength(128)
             .IsRequired();
+
+        builder.Property(x => x.ConnectionProtocol)
+            .HasConversion<int>()
+            .IsRequired();
+
+        builder.Property(x => x.ConnectionAddress)
+           .HasMaxLength(32)
+           .IsRequired();
+
+        builder.Property(x => x.IsNormalyOpen).IsRequired();
 
         builder.Property(x => x.Purpose)
             .HasConversion<int>()
@@ -29,7 +39,12 @@ public class RelayEntityConfiguration : IEntityTypeConfiguration<RelayEntity>
         builder.HasIndex(x => new 
         { 
             x.ControllerId, 
-            x.HardwarePin 
+            x.ConnectionAddress
         }).IsUnique();
+
+        builder.HasMany<RelayCommandsQueueEntity>()
+            .WithOne()
+            .HasForeignKey(x => x.RelayId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Device.Infrastructure.Configurations;
 
-public class ControllerEntityConfiguration : IEntityTypeConfiguration<ControllerEntity>
+public sealed class ControllerEntityConfiguration 
+    : IEntityTypeConfiguration<ControllerEntity>
 {
     public void Configure(EntityTypeBuilder<ControllerEntity> builder)
     {
@@ -13,15 +14,12 @@ public class ControllerEntityConfiguration : IEntityTypeConfiguration<Controller
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.UserId).IsRequired();
-        builder.HasIndex(x => x.UserId);
 
         builder.Property(x => x.MacAddress)
             .HasMaxLength(17)
             .IsRequired();
-        builder.HasIndex(x => x.MacAddress).IsUnique();
 
         builder.Property(x => x.DeviceTokenHash).IsRequired();
-        builder.HasIndex(x => x.DeviceTokenHash).IsUnique();
 
         builder.Property(x => x.Name)
             .HasMaxLength(128)
@@ -40,5 +38,14 @@ public class ControllerEntityConfiguration : IEntityTypeConfiguration<Controller
             .WithOne()
             .HasForeignKey(r => r.ControllerId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany<RelayCommandsQueueEntity>()
+            .WithOne()
+            .HasForeignKey(x => x.ControllerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(x => x.UserId);
+        builder.HasIndex(x => x.MacAddress).IsUnique();
+        builder.HasIndex(x => x.DeviceTokenHash).IsUnique();
     }
 }
