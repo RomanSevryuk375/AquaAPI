@@ -1,4 +1,5 @@
-﻿using Device.Domain.Entities;
+﻿using Contracts.Constants;
+using Device.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,7 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
 
         builder.Property(x => x.ControllerId).IsRequired();
         builder.Property(x => x.Name)
-            .HasMaxLength(128)
+            .HasMaxLength(SensorConstants.NameLength)
             .IsRequired();
 
         builder.Property(x => x.ConnectionProtocol)
@@ -22,7 +23,7 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
             .IsRequired();
 
         builder.Property(x => x.ConnectionAddress)
-           .HasMaxLength(32)
+           .HasMaxLength(SensorConstants.ConnectionAddressLength)
            .IsRequired();
 
         builder.Property(x => x.Type)
@@ -34,7 +35,7 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
             .IsRequired();
 
         builder.Property(x => x.Unit)
-            .HasMaxLength(10)
+            .HasMaxLength(SensorConstants.UnitLength)
             .IsRequired();
 
         builder.Property(x => x.CreatedAt).IsRequired();

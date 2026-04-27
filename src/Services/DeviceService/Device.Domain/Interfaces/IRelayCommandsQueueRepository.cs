@@ -1,8 +1,9 @@
-﻿using Device.Domain.Entities;
+﻿using Contracts.Abstractions;
+using Device.Domain.Entities;
 
 namespace Device.Domain.Interfaces;
 
-public interface IRelayCommandsQueueRepository
+public interface IRelayCommandsQueueRepository : IRepository<RelayCommandsQueueEntity>
 {
     Task DeleteCompletedAsync(
         CancellationToken cancellationToken);

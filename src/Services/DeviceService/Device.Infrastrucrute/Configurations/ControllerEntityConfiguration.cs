@@ -1,4 +1,5 @@
-﻿using Device.Domain.Entities;
+﻿using Contracts.Constants;
+using Device.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,13 +17,13 @@ public sealed class ControllerEntityConfiguration
         builder.Property(x => x.UserId).IsRequired();
 
         builder.Property(x => x.MacAddress)
-            .HasMaxLength(17)
+            .HasMaxLength(ControllerConstants.MacAddressLength)
             .IsRequired();
 
         builder.Property(x => x.DeviceTokenHash).IsRequired();
 
         builder.Property(x => x.Name)
-            .HasMaxLength(128)
+            .HasMaxLength(ControllerConstants.NameLength)
             .IsRequired();
 
         builder.Property(x => x.IsOnline).IsRequired();

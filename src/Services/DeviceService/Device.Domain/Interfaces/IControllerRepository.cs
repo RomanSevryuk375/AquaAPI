@@ -5,7 +5,7 @@ namespace Device.Domain.Interfaces;
 
 public interface IControllerRepository : IRepository<ControllerEntity>
 {
-    Task<ControllerEntity?> GetByMacAddress(
+    Task<ControllerEntity?> GetByMacAddressAsync(
         string macAddress, 
         CancellationToken cancellationToken);
 
