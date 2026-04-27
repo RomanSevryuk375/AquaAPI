@@ -8,6 +8,7 @@ public sealed class RelayEntity : IEntity
     private RelayEntity(
         Guid id,
         Guid controllerId,
+        Guid? poserSensorId, 
         string name,
         ConnectionProtocolEnum connectionProtocol,
         string connectionAddress,
@@ -19,6 +20,7 @@ public sealed class RelayEntity : IEntity
     {
         Id = id;
         ControllerId = controllerId;
+        PowerSensorId = poserSensorId;
         Name = name;
         ConnectionProtocol = connectionProtocol;
         ConnectionAddress = connectionAddress;
@@ -31,6 +33,7 @@ public sealed class RelayEntity : IEntity
     
     public Guid Id { get; private set; }
     public Guid ControllerId { get; private set; }
+    public Guid? PowerSensorId { get; private set; }
     public string Name { get; private set; }
     public ConnectionProtocolEnum ConnectionProtocol { get; private set; }
     public string ConnectionAddress { get; private set; }
@@ -42,6 +45,7 @@ public sealed class RelayEntity : IEntity
 
     public static (RelayEntity? relay, List<string>? errors) Create (
         Guid controllerId,
+        Guid? powerSensorId,
         string name,
         ConnectionProtocolEnum connectionProtocol,
         string connectionAddress,
@@ -75,6 +79,7 @@ public sealed class RelayEntity : IEntity
         var relay = new RelayEntity(
             Guid.NewGuid(),
             controllerId,
+            powerSensorId,
             name.Trim(),
             connectionProtocol,
             connectionAddress.Trim(),
@@ -140,6 +145,25 @@ public sealed class RelayEntity : IEntity
         }
 
         Name = name;
+
+        return null;
+    }
+
+    public List<string>? SetPowerSensor(Guid powerSensorId)
+    {
+        var errors = new List<string>();
+
+        if (powerSensorId == Guid.Empty)
+        {
+            errors.Add("powerSensorId must not be empty.");
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
+        }
+
+        PowerSensorId = powerSensorId;
 
         return null;
     }

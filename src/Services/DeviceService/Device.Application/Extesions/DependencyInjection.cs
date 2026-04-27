@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<IControllerService, ControllerService>();
         services.AddScoped<IRelayService, RelayService>();
         services.AddScoped<ISensorService, SensorService>();
+        services.AddScoped<ITelemtryBatchService, TelemetryBatchService>();
 
         services.AddSingleton<IMyHasher, MyHasher>();
 

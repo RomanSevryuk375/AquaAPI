@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IControllerRepository, ControllerRepository>();
         services.AddScoped<IRelayRepository, RelayRepository>();
         services.AddScoped<ISensorRepository, SensorRepository>();
+        services.AddScoped<IRelayCommandsQueueRepository, RelayCommandsQueueRepository>();
 
         var connectionString = configuration.GetConnectionString(nameof(SystemDbContext));
 
