@@ -9,6 +9,7 @@ using Device.Domain.Entities;
 using Device.Domain.Factories;
 using Device.Domain.Interfaces;
 using MassTransit;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Device.Application.Services;
 
@@ -18,14 +19,25 @@ public class RelayCommandQueueService(
     IRelayCommandsQueueRepository queueRepository,
     IMapper mapper,
     IUnitOfWork unitOfWork,
+    IMyHasher myHasher,
     IPublishEndpoint publisherEndpoint) : IRelayCommandQueueService
 {
     public async Task<IReadOnlyList<RelayCommandResponseDto>> GetPendingCommands(
         Guid controllerId,
+        string deviceToken,
         CancellationToken cancellationToken)
     {
         var commands = await queueRepository
             .GetPendingByControllerIdAsync(controllerId, cancellationToken);
+
+        var controller = await controllerRepository
+            .GetByIdAsync(controllerId, cancellationToken)
+            ?? throw new NotFoundException($"Controller {controllerId} not found");
+
+        if(!myHasher.Verify(deviceToken, controller.DeviceTokenHash))
+        {
+            throw new InvalidCredentialsException("DeviceToken is not verified.");
+        }
 
         foreach (var command in commands)
         {
@@ -40,6 +52,7 @@ public class RelayCommandQueueService(
 
     public async Task MarkAsCompletedByIdAsync(
         Guid commandId,
+        string deviceToken,
         CancellationToken cancellationToken)
     {
         var command = await queueRepository
@@ -49,6 +62,15 @@ public class RelayCommandQueueService(
         var existingRelay = await relayRepository
             .GetByIdAsync(command.RelayId, cancellationToken)
             ?? throw new NotFoundException($"Relay {command.RelayId} not found");
+
+        var controller = await controllerRepository
+            .GetByIdAsync(command.ControllerId, cancellationToken)
+            ?? throw new NotFoundException($"Controller {command.ControllerId} not found");
+
+        if (!myHasher.Verify(deviceToken, controller.DeviceTokenHash))
+        {
+            throw new InvalidCredentialsException("DeviceToken is not verified.");
+        }
 
         existingRelay.SetState(StateEvaluatorFactory.EvaluateEnum(command.Action));
         await relayRepository.UpdateAsync(existingRelay, cancellationToken);
@@ -66,12 +88,22 @@ public class RelayCommandQueueService(
 
     public async Task MarkAsFailedByIdAsync(
         Guid commandId,
+        string deviceToken,
         string errorMessage,
         CancellationToken cancellationToken)
     {
         var command = await queueRepository
             .GetByIdAsync(commandId, cancellationToken)
             ?? throw new NotFoundException($"Command {commandId} not found");
+
+        var controller = await controllerRepository
+            .GetByIdAsync(command.ControllerId, cancellationToken)
+            ?? throw new NotFoundException($"Controller {command.ControllerId} not found");
+
+        if (!myHasher.Verify(deviceToken, controller.DeviceTokenHash))
+        {
+            throw new InvalidCredentialsException("DeviceToken is not verified.");
+        }
 
         if (command.Status == CommandStatusEnum.Failed)
         {
@@ -129,7 +161,7 @@ public class RelayCommandQueueService(
 
         try
         {
-            await queueRepository.UpdateAsync(newCommand, cancellationToken);
+            await queueRepository.AddAsync(newCommand, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

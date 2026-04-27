@@ -1,4 +1,5 @@
-﻿using IdentityService.Application.Extensions;
+﻿using Contracts.Authorization;
+using IdentityService.Application.Extensions;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using IdentityService.Infrastructure.Extensions;
@@ -27,6 +28,7 @@ public static class DependencyInjection
         })
         .AddEntityFrameworkStores<IdentityDbContext>() 
         .AddDefaultTokenProviders();
+        services.AddCommonAuthentication(configuration);
 
         services.AddQuartzJobs();
         services.AddRabbitMq(configuration);

@@ -84,7 +84,7 @@ public class TelemetryServiceFromEvent(
             await publishEndpoint.Publish(new ChangeRelayStateCommand
             {
                 RelayId = relay.Id,
-                IsActive = targetState,
+                Action = StateEvaluatorFactory.EvaluateBool(targetState),
             }, cancellationToken);
         }
 

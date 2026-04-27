@@ -20,7 +20,7 @@ public class SensorServiceFromEvent(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository.GetByIdAsync(
-            sensorState.Id, cancellationToken);
+            sensorState.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {
@@ -38,7 +38,7 @@ public class SensorServiceFromEvent(
         CancellationToken cancellationToken)
     {
         if (await sensorRepository
-            .GetByIdAsync(sensorCreated.Id, cancellationToken) is not null)
+            .GetByIdAsync(sensorCreated.SensorId, cancellationToken) is not null)
         {
             return;
         }
@@ -52,7 +52,7 @@ public class SensorServiceFromEvent(
         }
 
         var (sensor, errors) = SensorEntity.Create(
-            sensorCreated.Id,
+            sensorCreated.SensorId,
             existingAquarium.Id,
             sensorCreated.State,
             sensorCreated.Type,
@@ -72,14 +72,14 @@ public class SensorServiceFromEvent(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository.GetByIdAsync(
-            sensorDeleted.Id, cancellationToken);
+            sensorDeleted.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {
             return;
         }
 
-        await sensorRepository.DeleteAsync(sensorDeleted.Id, cancellationToken);
+        await sensorRepository.DeleteAsync(sensorDeleted.SensorId, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -120,8 +120,9 @@ public class SensorServiceFromEvent(
         {
             await publishEndpoint.Publish(new ChangeRelayStateCommand
             {
+                //ControllerId = 
                 RelayId = rule.RelayId,
-                IsActive = false,
+                Action = RuleActionEnum.SwitchOff,
             }, cancellationToken);
 
             await publishEndpoint.Publish(new SensorNoDataAlertEvent
@@ -139,7 +140,7 @@ public class SensorServiceFromEvent(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository.GetByIdAsync(
-            sensorUpdated.Id, cancellationToken);
+            sensorUpdated.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {
@@ -152,7 +153,7 @@ public class SensorServiceFromEvent(
             }
 
             var (sensor, errors) = SensorEntity.Create(
-                sensorUpdated.Id,
+                sensorUpdated.SensorId,
                 existingAquarium.Id,
                 sensorUpdated.State,
                 sensorUpdated.Type,

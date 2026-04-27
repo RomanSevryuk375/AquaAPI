@@ -1,10 +1,13 @@
-﻿using Device.Application.DTOs.Controller;
+﻿using Contracts.Authorization;
+using Device.Application.DTOs.Controller;
 using Device.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Device.API.Controllers;
 
 [ApiController]
+[Authorize(Policy = SubPermissions.DeviceControl)]
 [Route("api/device/v1/controllers")]
 public class ControllersController(
     IControllerService controllerService) : ControllerBase
@@ -51,6 +54,7 @@ public class ControllersController(
     }
 
     [HttpPost("{id:guid}/ping")]
+    [AllowAnonymous]
     public async Task<ActionResult<ControllerPingResponseDto>> PingControllerAsync(
         [FromRoute] Guid id,
         [FromHeader(Name = "X-Device-Token")] string deviceToken,
@@ -71,16 +75,6 @@ public class ControllersController(
         await controllerService.UpdateControllerAsync(id, request, cancellationToken);
 
         return NoContent();
-    }
-
-    [HttpPatch("{id:guid}")]
-    public async Task<ActionResult<bool>> ToggleControllerStateAsync(
-        [FromRoute] Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        var result = await controllerService.ToggleControllerStateAsync(id, cancellationToken);
-
-        return Ok(result);
     }
 
     [HttpDelete("{id:guid}")]

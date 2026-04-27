@@ -8,7 +8,7 @@ public sealed class RelayEntity : IEntity
     private RelayEntity(
         Guid id,
         Guid controllerId,
-        Guid? poserSensorId, 
+        Guid? powerSensorId, 
         string name,
         ConnectionProtocolEnum connectionProtocol,
         string connectionAddress,
@@ -20,7 +20,7 @@ public sealed class RelayEntity : IEntity
     {
         Id = id;
         ControllerId = controllerId;
-        PowerSensorId = poserSensorId;
+        PowerSensorId = powerSensorId;
         Name = name;
         ConnectionProtocol = connectionProtocol;
         ConnectionAddress = connectionAddress;

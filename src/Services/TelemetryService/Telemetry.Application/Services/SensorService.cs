@@ -15,7 +15,7 @@ public class SensorService(
         CancellationToken cancellationToken)
     {
         var exists = await sensorRepository
-            .ExistsAsync(sensorCreated.Id, cancellationToken);
+            .ExistsAsync(sensorCreated.SensorId, cancellationToken);
 
         if (exists)
         {
@@ -23,7 +23,7 @@ public class SensorService(
         }
 
         var (sensor, errors) = SensorEntity.Create(
-            sensorCreated.Id,
+            sensorCreated.SensorId,
             sensorCreated.ControllerId,
             sensorCreated.Type,
             sensorCreated.State,
@@ -46,7 +46,7 @@ public class SensorService(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
-            .GetByIdAsync(sensorDeleted.Id, cancellationToken);
+            .GetByIdAsync(sensorDeleted.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {
@@ -62,17 +62,17 @@ public class SensorService(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
-            .GetByIdAsync(updatedEvent.Id, cancellationToken);
+            .GetByIdAsync(updatedEvent.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {
             var (sensor, createErrors) = SensorEntity.Create(
-            updatedEvent.Id,
+            updatedEvent.SensorId,
             updatedEvent.ControllerId,
             updatedEvent.Type,
             SensorStateEnum.NoData,
             updatedEvent.Unit,
-            updatedEvent.LastValue,
+            0.0,
             updatedEvent.UpdatedAt,
             updatedEvent.CreatedAt);
 
@@ -106,7 +106,7 @@ public class SensorService(
         CancellationToken cancellationToken)
     {
         var existingSensor = await sensorRepository
-            .GetByIdAsync(sensorStateChanged.Id, cancellationToken);
+            .GetByIdAsync(sensorStateChanged.SensorId, cancellationToken);
 
         if (existingSensor is null)
         {

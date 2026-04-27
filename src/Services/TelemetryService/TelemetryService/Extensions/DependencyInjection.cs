@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddSwaggerGen();
         services.AddControllers();
 
+        services.AddCommonAuthentication(configuration);
         services.AddServices();
 
         services.AddRepositories(configuration);

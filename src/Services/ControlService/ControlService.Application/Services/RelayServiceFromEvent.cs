@@ -1,6 +1,7 @@
 ﻿using Contracts.Events.RelayEvents;
 using Control.Application.Interfaces;
 using Control.Domain.Entities;
+using Control.Domain.Factories;
 using Control.Domain.Interfaces;
 
 namespace Control.Application.Services;
@@ -40,7 +41,7 @@ public class RelayServiceFromEvent(
             return;
         }
 
-        existingRelay.SetState(relayState.IsActive);
+        existingRelay.SetState(StateEvaluatorFactory.EvaluateEnum(relayState.Action));
 
         await relayRepository.UpdateAsync(existingRelay, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

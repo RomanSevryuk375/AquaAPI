@@ -11,6 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IControllerOfflineCheckerService, ControllerOfflineCheckerService>();
         services.AddScoped<IControllerService, ControllerService>();
+        services.AddScoped<IRelayCommandQueueService, RelayCommandQueueService>();
         services.AddScoped<IRelayService, RelayService>();
         services.AddScoped<ISensorService, SensorService>();
         services.AddScoped<ITelemtryBatchService, TelemetryBatchService>();
@@ -18,6 +19,9 @@ public static class DependencyInjection
         services.AddSingleton<IMyHasher, MyHasher>();
 
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+        services.AddAutoMapper(config => 
+            config.AddMaps(typeof(DependencyInjection).Assembly));
 
         return services;
     }

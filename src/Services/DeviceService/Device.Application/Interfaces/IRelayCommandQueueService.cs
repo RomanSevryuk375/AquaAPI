@@ -7,15 +7,18 @@ namespace Device.Application.Interfaces;
 public interface IRelayCommandQueueService
 {
     Task<IReadOnlyList<RelayCommandResponseDto>> GetPendingCommands(
-        Guid controllerId, 
+        Guid controllerId,
+        string deviceToken,
         CancellationToken cancellationToken);
 
     Task MarkAsCompletedByIdAsync(
-        Guid commandId, 
+        Guid commandId,
+        string deviceToken,
         CancellationToken cancellationToken);
 
     Task MarkAsFailedByIdAsync(
-        Guid commandId, 
+        Guid commandId,
+        string deviceToken,
         string errorMessage, 
         CancellationToken cancellationToken);
 

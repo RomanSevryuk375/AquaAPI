@@ -13,7 +13,7 @@ public sealed class RelayCommandsQueueEntity : IEntity
         CommandStatusEnum status,
         DateTime? expireAt,
         int attemptCount,
-        DateTime? processdAt,
+        DateTime? processedAt,
         string? errorMessage,
         DateTime createdAt)
     {
@@ -24,7 +24,7 @@ public sealed class RelayCommandsQueueEntity : IEntity
         Status = status;
         ExpireAt = expireAt;
         AttemptCount = attemptCount;
-        ProcessedAt = processdAt;
+        ProcessedAt = processedAt;
         ErrorMessage = errorMessage;
         CreatedAt = createdAt;
     }

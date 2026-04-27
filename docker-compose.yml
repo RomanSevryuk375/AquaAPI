@@ -160,6 +160,10 @@ services:
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
       - MT_LICENSE=community  
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -189,6 +193,10 @@ services:
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
       - MT_LICENSE=community  
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -216,6 +224,10 @@ services:
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
+      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
       - MT_LICENSE=community
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -272,6 +284,9 @@ services:
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
+      - JwtOptions__Issuer=AquaSmart.Identity
+      - JwtOptions__Audience=AquaSmart.Gateway
+      - JwtOptions__ExpiresHours=12
       - TelegramOptions__BotToken=test
       - EmailOptions__Host=test
       - EmailOptions__UserName=test
