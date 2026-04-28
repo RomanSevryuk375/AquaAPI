@@ -41,15 +41,40 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            var jobKey = new JobKey(nameof(CheckSensorStateJob));
+            var sensorCheckKey = new JobKey(nameof(CheckSensorStateJob));
+            options.AddJob<CheckSensorStateJob>(opts => opts.WithIdentity(sensorCheckKey));
+            options.AddTrigger(opts => opts
+                .ForJob(sensorCheckKey)
+                .WithIdentity("CheckSensorState-trigger")
+                .WithCronSchedule("0 */2 * * * ?"));
 
-            options.AddJob<CheckSensorStateJob>(jobOptions =>
-                jobOptions.WithIdentity(jobKey));
+            var minCompressKey = new JobKey(nameof(CompressRawDataToMinutesJob));
+            options.AddJob<CompressRawDataToMinutesJob>(opts => opts.WithIdentity(minCompressKey));
+            options.AddTrigger(opts => opts
+                .ForJob(minCompressKey)
+                .WithIdentity("MinuteCompress-trigger")
+                .WithCronSchedule("5 * * * * ?"));
 
-            options.AddTrigger(triggerOptions => triggerOptions
-                .ForJob(jobKey)
-                .WithIdentity($"{jobKey}-trigger")
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(60).RepeatForever()));
+            var hourCompressKey = new JobKey(nameof(CompressRawDataToHoursJob));
+            options.AddJob<CompressRawDataToHoursJob>(opts => opts.WithIdentity(hourCompressKey));
+            options.AddTrigger(opts => opts
+                .ForJob(hourCompressKey)
+                .WithIdentity("HourCompress-trigger")
+                .WithCronSchedule("0 1 * * * ?"));
+
+            var dayCompressKey = new JobKey(nameof(CompressRawDataToDaysJob));
+            options.AddJob<CompressRawDataToDaysJob>(opts => opts.WithIdentity(dayCompressKey));
+            options.AddTrigger(opts => opts
+                .ForJob(dayCompressKey)
+                .WithIdentity("DayCompress-trigger")
+                .WithCronSchedule("0 5 0 * * ?"));
+
+            var cleanupKey = new JobKey(nameof(CleanUpOldDataJob));
+            options.AddJob<CleanUpOldDataJob>(opts => opts.WithIdentity(cleanupKey));
+            options.AddTrigger(opts => opts
+                .ForJob(cleanupKey)
+                .WithIdentity("Cleanup-trigger")
+                .WithCronSchedule("0 0 3 * * ?"));
         });
 
         services.AddQuartzHostedService(hostOptions 

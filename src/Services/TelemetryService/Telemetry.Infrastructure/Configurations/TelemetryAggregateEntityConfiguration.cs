@@ -33,6 +33,9 @@ public class TelemetryAggregateEntityConfiguration
 
         builder.Property(x => x.DataPointsCount).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.IsAggregated).IsRequired();
+
+        builder.HasIndex(x => x.IsAggregated).IsUnique();
 
         builder.HasIndex(t => new
         {

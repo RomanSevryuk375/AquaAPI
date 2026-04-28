@@ -2,7 +2,7 @@
 
 public enum PeriodTypeEnum
 {
-    Hourly = 1,
-    Weekly = 2,
-    Monthly = 3,
+    Minute = 1,
+    Hourly = 2,
+    Daily = 3,
 }

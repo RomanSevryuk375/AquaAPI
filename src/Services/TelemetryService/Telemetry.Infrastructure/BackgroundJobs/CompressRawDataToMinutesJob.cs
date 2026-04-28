@@ -4,12 +4,12 @@ using Telemetry.Application.Interfaces;
 namespace Telemetry.Infrastructure.BackgroundJobs;
 
 [DisallowConcurrentExecution]
-public sealed class CheckSensorStateJob(
-    ISensorStateCheckerService service) : IJob
+public sealed class CompressRawDataToMinutesJob(
+    ICompressorService service) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
         await service
-            .CheckStateAndNotify(context.CancellationToken);
+            .CompressToMinutesAsync(context.CancellationToken);
     }
 }

@@ -14,7 +14,8 @@ public sealed class TelemetryAggregateEntity : IEntity
         double maxValue,
         double avgValue,
         int dataPointsCount,
-        DateTime createdAt)
+        DateTime createdAt,
+        bool isAggregated)
     {
         Id = id;
         SensorId = sensorId;
@@ -25,6 +26,7 @@ public sealed class TelemetryAggregateEntity : IEntity
         AvgValue = avgValue;
         DataPointsCount = dataPointsCount;
         CreatedAt = createdAt;
+        IsAggregated = isAggregated;
     }
 
     public Guid Id { get; private set; }
@@ -36,6 +38,8 @@ public sealed class TelemetryAggregateEntity : IEntity
     public double AvgValue { get; private set; }
     public int DataPointsCount { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public bool IsAggregated { get; private set; }
+
 
     public static (TelemetryAggregateEntity? aggregateData, List<string>? errors) Create(
         Guid sensorId,
@@ -82,8 +86,13 @@ public sealed class TelemetryAggregateEntity : IEntity
             maxValue,
             avgValue,
             dataPointsCount,
-            DateTime.UtcNow);
+            DateTime.UtcNow,
+            false);
 
         return (aggregateData, errors);
+    }
+    public void MarkAsAggregated()
+    {
+        IsAggregated = true;
     }
 }

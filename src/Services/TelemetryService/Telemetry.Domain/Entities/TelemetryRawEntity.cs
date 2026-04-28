@@ -10,7 +10,8 @@ public sealed class TelemetryRawEntity : IEntity
         double value,
         string externalMessageId,
         DateTime recordedAt,
-        DateTime createdAt)
+        DateTime createdAt,
+        bool isAggregated)
     {
         Id = id;
         SensorId = sensorId;
@@ -18,6 +19,7 @@ public sealed class TelemetryRawEntity : IEntity
         ExternalMessageId = externalMessageId;
         RecordedAt = recordedAt;
         CreatedAt = createdAt;
+        IsAggregated = isAggregated;
     }
 
     public Guid Id { get; private set; }
@@ -26,6 +28,7 @@ public sealed class TelemetryRawEntity : IEntity
     public string ExternalMessageId { get; private set; }
     public DateTime RecordedAt { get; private set; }
     public DateTime CreatedAt { get; private set; } 
+    public bool IsAggregated { get; private set; } 
 
     public static (TelemetryRawEntity? telemetryData, List<string> errors) Create(
         Guid sensorId,
@@ -61,8 +64,14 @@ public sealed class TelemetryRawEntity : IEntity
             value, 
             externalMessageId,
             recordedAt,
-            DateTime.UtcNow);
+            DateTime.UtcNow,
+            false);
 
         return (telemetryData, errors);
+    }
+
+    public void MarkAsAggregated()
+    {
+        IsAggregated = true;
     }
 }

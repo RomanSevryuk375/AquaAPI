@@ -25,8 +25,10 @@ public sealed class TelemetryRawEntityConfiguration
 
         builder.Property(x => x.RecordedAt).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
+        builder.Property(x => x.IsAggregated).IsRequired();
 
         builder.HasIndex(x => x.ExternalMessageId).IsUnique();
+        builder.HasIndex(x => x.IsAggregated).IsUnique();
         builder.HasIndex(x => new 
         { 
             x.SensorId, 

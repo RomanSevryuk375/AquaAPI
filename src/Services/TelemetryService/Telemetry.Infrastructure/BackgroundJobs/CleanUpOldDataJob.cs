@@ -3,13 +3,12 @@ using Telemetry.Application.Interfaces;
 
 namespace Telemetry.Infrastructure.BackgroundJobs;
 
-[DisallowConcurrentExecution]
-public sealed class CheckSensorStateJob(
-    ISensorStateCheckerService service) : IJob
+public class CleanUpOldDataJob(
+    ITelemetryRetentionService service) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
         await service
-            .CheckStateAndNotify(context.CancellationToken);
+            .CleanUpOldDataAsync(context.CancellationToken);
     }
 }
