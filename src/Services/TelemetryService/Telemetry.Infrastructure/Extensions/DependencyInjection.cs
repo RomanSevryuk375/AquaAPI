@@ -1,4 +1,5 @@
-﻿using Contracts.Options;
+﻿using Contracts.Events.EcosystemEvents;
+using Contracts.Options;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,10 @@ using Quartz;
 using Telemetry.Domain.Interfaces;
 using Telemetry.Infrastructure.BackgroundJobs;
 using Telemetry.Infrastructure.Messaging;
+using Telemetry.Infrastructure.Messaging.EcosystemConsumers;
+using Telemetry.Infrastructure.Messaging.SensorConsumers;
 using Telemetry.Infrastructure.Repositories;
+using EcosystemCreatedConsumer = Telemetry.Infrastructure.Messaging.EcosystemConsumers.EcosystemCreatedConsumer;
 
 namespace Telemetry.Infrastructure.Extensions;
 
@@ -15,8 +19,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IEcosystemRepository, EcosystemRepository>();
         services.AddScoped<ISensorRepository, SensorRepository>();
-        services.AddScoped<ITelemetryDataRepository, TelemetryRawDataRepository>();
+        services.AddScoped<ITelemetryRawDataRepository, TelemetryRawDataRepository>();
+        services.AddScoped<ITelemetryAggregateDataRepository, TelemetryAggregateDataRepository>();
 
         var connectionString = configuration.GetConnectionString(nameof(SystemDbContext));
         services.AddDbContext<SystemDbContext>(options =>
@@ -64,12 +70,16 @@ public static class DependencyInjection
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
+            busConfigurator.AddConsumer<EcosystemCreatedConsumer>();
+            busConfigurator.AddConsumer<EcosystemDeletedConsumer>();
+
             busConfigurator.AddConsumer<SensorCreatedConsumer>();
             busConfigurator.AddConsumer<SensorUpdatedConsumer>();
             busConfigurator.AddConsumer<SensorDeletedConsumer>();
+            busConfigurator.AddConsumer<SensorRenamedConsumer>();
             busConfigurator.AddConsumer<SensorStateChangedConsumer>();
 
-            busConfigurator.AddConsumer<TelemetryReportedFromHardwareConsumer>();
+            busConfigurator.AddConsumer<TelemetryBatchConsumer>();
 
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {

@@ -1,12 +1,13 @@
 ﻿using Contracts.Events.TelemetryEvents;
+using Contracts.Results;
 using Telemetry.Application.DTOs;
 
 namespace Telemetry.Application.Interfaces;
 
 public interface ITelemetryDataService
 {
-    Task AddDataAsync(
-        TelemetryReportedFromHardwareEvent telemetry,
+    Task<ConsumerResult> AddDataAsync(
+        TelemetryBatchEvent telemetry,
         CancellationToken cancellationToken);
 
     Task<IEnumerable<TelemetryDataResponse>> GetAllDataAsync(

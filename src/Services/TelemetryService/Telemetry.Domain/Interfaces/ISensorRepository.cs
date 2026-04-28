@@ -6,6 +6,10 @@ namespace Telemetry.Domain.Interfaces;
 public interface ISensorRepository : IRepository<SensorEntity>
 {
     Task<bool> ExistsAsync(
-        Guid id, 
+        Guid sensorId, 
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<SensorEntity>> GetAllByEcosystemId(
+        Guid ecosystemId,
         CancellationToken cancellationToken);
 }

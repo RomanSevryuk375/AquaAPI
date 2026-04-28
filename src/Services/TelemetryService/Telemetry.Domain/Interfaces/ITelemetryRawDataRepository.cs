@@ -3,7 +3,7 @@ using Telemetry.Domain.Entities;
 
 namespace Telemetry.Domain.Interfaces;
 
-public interface ITelemetryDataRepository : IRepository<TelemetryRawEntity>
+public interface ITelemetryRawDataRepository : IRepository<TelemetryRawEntity>
 {
     Task<TelemetryRawEntity?> GetByExternalMessageIdAsync(
         string externalMessageId, 

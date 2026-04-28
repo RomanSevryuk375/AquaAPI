@@ -3,6 +3,7 @@ using Contracts.Enums;
 using Contracts.Events.RelayEvents;
 using Contracts.Exceptions;
 using Contracts.Extensions;
+using Contracts.Results;
 using Device.Application.DTOs.RelayCommands;
 using Device.Application.Interfaces;
 using Device.Domain.Entities;

@@ -1,4 +1,5 @@
 ﻿using Telemetry.Domain.Entities;
+using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Infrastructure.Repositories;
 

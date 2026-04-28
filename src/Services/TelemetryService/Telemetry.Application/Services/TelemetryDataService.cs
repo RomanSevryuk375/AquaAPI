@@ -1,5 +1,6 @@
 ﻿using Contracts.Events.TelemetryEvents;
 using Contracts.Exceptions;
+using Contracts.Results;
 using MassTransit;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
@@ -11,8 +12,9 @@ using Telemetry.Domain.Specifications;
 namespace Telemetry.Application.Services;
 
 public class TelemetryDataService(
-    ITelemetryDataRepository telemetryRepository,
+    ITelemetryRawDataRepository telemetryRepository,
     ISensorRepository sensorRepository,
+    IEcosystemRepository ecosystemRepository,
     IPublishEndpoint publishEndpoint,
     IUnitOfWork unitOfWork) : ITelemetryDataService
 {
@@ -65,51 +67,86 @@ public class TelemetryDataService(
         };
     }
 
-    public async Task AddDataAsync(
-        TelemetryReportedFromHardwareEvent telemetry,
+    public async Task<ConsumerResult> AddDataAsync(
+        TelemetryBatchEvent batch,
         CancellationToken cancellationToken)
     {
-        var existingSensor = await sensorRepository
-            .GetByIdAsync(telemetry.SensorId, cancellationToken);
+        var ecosystem = await ecosystemRepository
+            .GetByControllerIdAsync(batch.ControllerId, cancellationToken);
 
-        if (existingSensor is null)
+        if (ecosystem is null)
         {
-            return;
+            return ConsumerResult
+                .RetryableError($"Ecosystem for controller {batch.ControllerId} not found.");
         }
 
-        var existingTelemetry = await telemetryRepository
-            .GetByExternalMessageIdAsync(telemetry.ExternalMessageId, cancellationToken);
+        var sensors = await sensorRepository
+            .GetAllByEcosystemId(ecosystem.Id, cancellationToken);
 
-        if (existingTelemetry is not null)
+        if (!sensors.Any())
         {
-            return;
+            return ConsumerResult
+                .FatalError($"Any sensors for ecosystem {ecosystem.Id} not found.");
         }
 
-        var (telemetryData, errors) = TelemetryRawEntity.Create(
-            telemetry.SensorId,
-            telemetry.Value,
-            telemetry.ExternalMessageId,
-            telemetry.RecordedAt);
+        var eventsToPublish = new List<TelemetryReceivedEvent>();
 
-        if (errors.Count > 0)
+        foreach (var item in batch.Items)
         {
-            return;
-        }
+            var existingTelemetry = await telemetryRepository
+                .GetByExternalMessageIdAsync(item.ExternalMessageId, cancellationToken);
 
-        existingSensor.UpdateLastValue(telemetry.Value);
-
-        var result = await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
-
-        await sensorRepository.UpdateAsync(existingSensor, cancellationToken); 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        await publishEndpoint.Publish(new TelemetryReceivedEvent
+            if (existingTelemetry is not null)
             {
-                SensorId = telemetry.SensorId,
-                Value = telemetry.Value,
-                RecordedAt = telemetry.RecordedAt,
-            }, cancellationToken);
+                continue;
+            }
 
-        return;
+            var sensor = sensors
+                .FirstOrDefault(x => x.Id == item.SensorId);
+
+            if (sensor is null)
+            {
+                continue;
+            }
+
+            var (telemetryData, errors) = TelemetryRawEntity.Create(
+                item.SensorId,
+                item.Value,
+                item.ExternalMessageId,
+                item.RecordedAt);
+
+            if (telemetryData is null)
+            {
+                continue;
+            }
+
+            sensor.UpdateLastValue(item.Value);
+
+            await telemetryRepository.AddAsync(telemetryData!, cancellationToken);
+            await sensorRepository.UpdateAsync(sensor, cancellationToken);
+
+            eventsToPublish.Add(new TelemetryReceivedEvent
+            {
+                SensorId = item.SensorId,
+                Value = item.Value,
+                RecordedAt = item.RecordedAt,
+            });
+        }
+
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return ConsumerResult.RetryableError($"Database error: {ex.Message}");
+        }
+
+        foreach (var item in eventsToPublish)
+        {
+            await publishEndpoint.Publish(item, cancellationToken);
+        }
+
+        return ConsumerResult.Success();
     }
 }
