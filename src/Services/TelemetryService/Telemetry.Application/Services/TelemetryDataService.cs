@@ -52,7 +52,7 @@ public class TelemetryDataService(
         CancellationToken cancellationToken)
     {
         var entity = await telemetryRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new NotFoundException($"{nameof(TelemetryDataEntity)} not found");
+            ?? throw new NotFoundException($"{nameof(TelemetryRawEntity)} not found");
 
         return new TelemetryDataResponse()
         {
@@ -85,7 +85,7 @@ public class TelemetryDataService(
             return;
         }
 
-        var (telemetryData, errors) = TelemetryDataEntity.Create(
+        var (telemetryData, errors) = TelemetryRawEntity.Create(
             telemetry.SensorId,
             telemetry.Value,
             telemetry.ExternalMessageId,

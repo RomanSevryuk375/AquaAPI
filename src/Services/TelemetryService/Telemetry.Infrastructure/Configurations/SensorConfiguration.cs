@@ -34,7 +34,7 @@ public class SensorConfiguration : IEntityTypeConfiguration<SensorEntity>
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.IsDataDelayed).IsRequired();
 
-        builder.HasMany<TelemetryDataEntity>()
+        builder.HasMany<TelemetryRawEntity>()
             .WithOne()
             .HasForeignKey(x => x.SensorId)
             .OnDelete(DeleteBehavior.Cascade);

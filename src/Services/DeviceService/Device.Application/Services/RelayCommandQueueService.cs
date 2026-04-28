@@ -9,6 +9,7 @@ using Device.Domain.Entities;
 using Device.Domain.Factories;
 using Device.Domain.Interfaces;
 using MassTransit;
+using static MassTransit.ValidationResultExtensions;
 
 namespace Device.Application.Services;
 
@@ -115,7 +116,7 @@ public class RelayCommandQueueService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Result> SetRelayStateAsync(
+    public async Task<ConsumerResult> SetRelayStateAsync(
         ChangeRelayStateCommand command,
         CancellationToken cancellationToken)
     {
@@ -124,8 +125,7 @@ public class RelayCommandQueueService(
 
         if (existingRelay is null)
         {
-            return Result
-                .Failure($"Relay {command.RelayId} not found", false);
+            return ConsumerResult.FatalError($"Relay {command.RelayId} not found");
         }
 
         var existingController = await controllerRepository
@@ -133,16 +133,14 @@ public class RelayCommandQueueService(
 
         if (existingController is null)
         {
-            return Result
-                .Failure($"Controller {command.ControllerId} not found", false);
+            return ConsumerResult.FatalError($"Controller {command.ControllerId} not found");
         }
 
         if (existingRelay.IsManual ||
            (command.ExpireAt.HasValue && command.ExpireAt.Value < DateTime.UtcNow) ||
            existingRelay.IsActive == StateEvaluatorFactory.EvaluateEnum(command.Action))
         {
-            return Result
-                .Failure($"Command is unavalible or was expired.", false);
+            return ConsumerResult.FatalError($"Command is unavalible or was expired.");
         }
 
         var (newCommand, errors) = RelayCommandsQueueEntity.Create(
@@ -153,8 +151,8 @@ public class RelayCommandQueueService(
 
         if (newCommand is null)
         {
-            return Result
-                .Failure($"Failed to create {nameof(RelayCommandsQueueEntity)}: " +
+            return ConsumerResult
+                .FatalError($"Failed to create {nameof(RelayCommandsQueueEntity)}: " +
                 $"{string.Join(", ", errors!)}");
         }
 
@@ -162,12 +160,11 @@ public class RelayCommandQueueService(
         {
             await queueRepository.AddAsync(newCommand, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            return ConsumerResult.Success();
         }
         catch (Exception ex)
         {
-            return Result
-                .Failure(ex.Message, retryable: true);
+            return ConsumerResult.RetryableError(ex.Message);
         }
     }
 

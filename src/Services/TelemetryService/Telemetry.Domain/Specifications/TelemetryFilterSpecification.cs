@@ -4,9 +4,11 @@ using Telemetry.Domain.SpecificationParams;
 
 namespace Telemetry.Domain.Specifications;
 
-public class TelemetryFilterSpecification : BaseSpecification<TelemetryDataEntity>
+public sealed class TelemetryFilterSpecification 
+    : BaseSpecification<TelemetryRawEntity>
 {
-    public TelemetryFilterSpecification(TelemetryFilterParams @params)
+    public TelemetryFilterSpecification(
+        TelemetryFilterParams @params)
         : base (data =>
             (!@params.SensorId.HasValue || data.SensorId == @params.SensorId) &&
             (!@params.From.HasValue || data.RecordedAt >= @params.From.Value) &&

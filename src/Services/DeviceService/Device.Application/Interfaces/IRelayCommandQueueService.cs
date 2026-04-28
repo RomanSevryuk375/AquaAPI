@@ -22,7 +22,7 @@ public interface IRelayCommandQueueService
         string errorMessage, 
         CancellationToken cancellationToken);
 
-    Task<Result> SetRelayStateAsync(
+    Task<ConsumerResult> SetRelayStateAsync(
         ChangeRelayStateCommand command, 
         CancellationToken cancellationToken);
 

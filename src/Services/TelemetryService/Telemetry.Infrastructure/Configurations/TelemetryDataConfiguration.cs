@@ -4,9 +4,9 @@ using Telemetry.Domain.Entities;
 
 namespace Telemetry.Infrastructure.Configurations;
 
-public class TelemetryDataConfiguration : IEntityTypeConfiguration<TelemetryDataEntity>
+public class TelemetryDataConfiguration : IEntityTypeConfiguration<TelemetryRawEntity>
 {
-    void IEntityTypeConfiguration<TelemetryDataEntity>.Configure(EntityTypeBuilder<TelemetryDataEntity> builder)
+    void IEntityTypeConfiguration<TelemetryRawEntity>.Configure(EntityTypeBuilder<TelemetryRawEntity> builder)
     {
         builder.ToTable("telemetry_data");
 

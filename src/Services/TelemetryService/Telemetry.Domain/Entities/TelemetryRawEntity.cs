@@ -2,9 +2,9 @@ using Contracts.Abstractions;
 
 namespace Telemetry.Domain.Entities;
 
-public sealed class TelemetryDataEntity : IEntity
+public sealed class TelemetryRawEntity : IEntity
 {
-    private TelemetryDataEntity(
+    private TelemetryRawEntity(
         Guid id,
         Guid sensorId,
         double value,
@@ -27,7 +27,7 @@ public sealed class TelemetryDataEntity : IEntity
     public DateTime RecordedAt { get; private set; }
     public DateTime CreatedAt { get; private set; } 
 
-    public static (TelemetryDataEntity? telemetryData, List<string> errors) Create(
+    public static (TelemetryRawEntity? telemetryData, List<string> errors) Create(
         Guid sensorId,
         double value,
         string externalMessageId,
@@ -55,7 +55,7 @@ public sealed class TelemetryDataEntity : IEntity
             return (null, errors);
         }
 
-        var telemetryData = new TelemetryDataEntity(
+        var telemetryData = new TelemetryRawEntity(
             Guid.NewGuid(),
             sensorId,
             value, 

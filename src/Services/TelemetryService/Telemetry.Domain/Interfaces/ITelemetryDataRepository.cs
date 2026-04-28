@@ -5,13 +5,13 @@ namespace Telemetry.Domain.Interfaces;
 
 public interface ITelemetryDataRepository
 {
-    Task<IReadOnlyList<TelemetryDataEntity>> GetAllAsync(
-        BaseSpecification<TelemetryDataEntity>? specification,
+    Task<IReadOnlyList<TelemetryRawEntity>> GetAllAsync(
+        BaseSpecification<TelemetryRawEntity>? specification,
         int? skip,
         int? take,
         CancellationToken cancellationToken = default);
 
-    Task<TelemetryDataEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<TelemetryDataEntity?> GetByExternalMessageIdAsync(string externalMessageId, CancellationToken cancellationToken = default);
-    Task<Guid> AddAsync(TelemetryDataEntity entity, CancellationToken cancellationToken = default);
+    Task<TelemetryRawEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<TelemetryRawEntity?> GetByExternalMessageIdAsync(string externalMessageId, CancellationToken cancellationToken = default);
+    Task<Guid> AddAsync(TelemetryRawEntity entity, CancellationToken cancellationToken = default);
 }

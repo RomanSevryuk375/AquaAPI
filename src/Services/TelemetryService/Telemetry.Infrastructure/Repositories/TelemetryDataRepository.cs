@@ -5,9 +5,9 @@ using Telemetry.Domain.Interfaces;
 namespace Telemetry.Infrastructure.Repositories;
 
 public class TelemetryDataRepository(SystemDbContext dbContext)
-    : BaseRepository<TelemetryDataEntity>(dbContext), ITelemetryDataRepository
+    : BaseRepository<TelemetryRawEntity>(dbContext), ITelemetryDataRepository
 {
-    public async Task<TelemetryDataEntity?> GetByExternalMessageIdAsync(
+    public async Task<TelemetryRawEntity?> GetByExternalMessageIdAsync(
         string externalMessageId, 
         CancellationToken cancellationToken = default)
     {
