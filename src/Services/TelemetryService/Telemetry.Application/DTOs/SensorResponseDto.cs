@@ -1,6 +1,5 @@
-﻿namespace Telemetry.Application.DTOs
+﻿namespace Telemetry.Application.DTOs;
+
+internal class SensorResponseDto
 {
-    internal class SensorResponseDto
-    {
-    }
 }

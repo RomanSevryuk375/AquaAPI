@@ -4,14 +4,14 @@ using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Infrastructure.Repositories;
 
-public class TelemetryDataRepository(SystemDbContext dbContext)
+public sealed class TelemetryRawDataRepository(SystemDbContext dbContext)
     : BaseRepository<TelemetryRawEntity>(dbContext), ITelemetryDataRepository
 {
     public async Task<TelemetryRawEntity?> GetByExternalMessageIdAsync(
         string externalMessageId, 
         CancellationToken cancellationToken = default)
     {
-        return await Context.TelemetryDatas
+        return await Context.TelemetryRawData
             .AsNoTracking()
             .FirstOrDefaultAsync(x => 
                 x.ExternalMessageId == externalMessageId, cancellationToken);

@@ -9,115 +9,114 @@ using Telemetry.Infrastructure;
 
 #nullable disable
 
-namespace Telemetry.Infrastructure.Migrations
+namespace Telemetry.Infrastructure.Migrations;
+
+[DbContext(typeof(SystemDbContext))]
+[Migration("20260402140317_InitialCreate")]
+partial class InitialCreate
 {
-    [DbContext(typeof(SystemDbContext))]
-    [Migration("20260402140317_InitialCreate")]
-    partial class InitialCreate
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.25")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+        modelBuilder
+            .HasAnnotation("ProductVersion", "8.0.25")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Telemetry.Domain.Entities.SensorEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+        modelBuilder.Entity("Telemetry.Domain.Entities.SensorEntity", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid")
+                    .HasColumnName("id");
 
-                    b.Property<Guid>("ControllerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("controller_id");
+                b.Property<Guid>("ControllerId")
+                    .HasColumnType("uuid")
+                    .HasColumnName("controller_id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("created_at");
 
-                    b.Property<double>("LastValue")
-                        .HasPrecision(10, 4)
-                        .HasColumnType("double precision")
-                        .HasColumnName("last_value");
+                b.Property<double>("LastValue")
+                    .HasPrecision(10, 4)
+                    .HasColumnType("double precision")
+                    .HasColumnName("last_value");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type");
+                b.Property<int>("Type")
+                    .HasColumnType("integer")
+                    .HasColumnName("type");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("unit");
+                b.Property<string>("Unit")
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasColumnType("character varying(10)")
+                    .HasColumnName("unit");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("updated_at");
 
-                    b.HasKey("Id")
-                        .HasName("pk_sensors");
+                b.HasKey("Id")
+                    .HasName("pk_sensors");
 
-                    b.ToTable("sensors", (string)null);
-                });
+                b.ToTable("sensors", (string)null);
+            });
 
-            modelBuilder.Entity("Telemetry.Domain.Entities.TelemetryDataEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+        modelBuilder.Entity("Telemetry.Domain.Entities.TelemetryDataEntity", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid")
+                    .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("created_at");
 
-                    b.Property<string>("ExternalMessageId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("external_message_id");
+                b.Property<string>("ExternalMessageId")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)")
+                    .HasColumnName("external_message_id");
 
-                    b.Property<DateTime>("RecordedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("recorded_at");
+                b.Property<DateTime>("RecordedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("recorded_at");
 
-                    b.Property<Guid>("SensorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("sensor_id");
+                b.Property<Guid>("SensorId")
+                    .HasColumnType("uuid")
+                    .HasColumnName("sensor_id");
 
-                    b.Property<double>("Value")
-                        .HasPrecision(10, 4)
-                        .HasColumnType("double precision")
-                        .HasColumnName("value");
+                b.Property<double>("Value")
+                    .HasPrecision(10, 4)
+                    .HasColumnType("double precision")
+                    .HasColumnName("value");
 
-                    b.HasKey("Id")
-                        .HasName("pk_telemetry_data");
+                b.HasKey("Id")
+                    .HasName("pk_telemetry_data");
 
-                    b.HasIndex("ExternalMessageId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_telemetry_data_external_message_id");
+                b.HasIndex("ExternalMessageId")
+                    .IsUnique()
+                    .HasDatabaseName("ix_telemetry_data_external_message_id");
 
-                    b.HasIndex("SensorId", "RecordedAt")
-                        .HasDatabaseName("ix_telemetry_data_sensor_id_recorded_at");
+                b.HasIndex("SensorId", "RecordedAt")
+                    .HasDatabaseName("ix_telemetry_data_sensor_id_recorded_at");
 
-                    b.ToTable("telemetry_data", (string)null);
-                });
+                b.ToTable("telemetry_data", (string)null);
+            });
 
-            modelBuilder.Entity("Telemetry.Domain.Entities.TelemetryDataEntity", b =>
-                {
-                    b.HasOne("Telemetry.Domain.Entities.SensorEntity", null)
-                        .WithMany()
-                        .HasForeignKey("SensorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_telemetry_data_sensors_sensor_id");
-                });
+        modelBuilder.Entity("Telemetry.Domain.Entities.TelemetryDataEntity", b =>
+            {
+                b.HasOne("Telemetry.Domain.Entities.SensorEntity", null)
+                    .WithMany()
+                    .HasForeignKey("SensorId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired()
+                    .HasConstraintName("fk_telemetry_data_sensors_sensor_id");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

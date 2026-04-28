@@ -16,7 +16,7 @@ public static class DependencyInjection
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ISensorRepository, SensorRepository>();
-        services.AddScoped<ITelemetryDataRepository, TelemetryDataRepository>();
+        services.AddScoped<ITelemetryDataRepository, TelemetryRawDataRepository>();
 
         var connectionString = configuration.GetConnectionString(nameof(SystemDbContext));
         services.AddDbContext<SystemDbContext>(options =>

@@ -4,11 +4,12 @@ using Telemetry.Domain.Entities;
 
 namespace Telemetry.Infrastructure.Configurations;
 
-public class TelemetryDataConfiguration : IEntityTypeConfiguration<TelemetryRawEntity>
+public sealed class TelemetryRawEntityConfiguration 
+    : IEntityTypeConfiguration<TelemetryRawEntity>
 {
-    void IEntityTypeConfiguration<TelemetryRawEntity>.Configure(EntityTypeBuilder<TelemetryRawEntity> builder)
+    public void Configure(EntityTypeBuilder<TelemetryRawEntity> builder)
     {
-        builder.ToTable("telemetry_data");
+        builder.ToTable("telemetry_raw_data");
 
         builder.HasKey(x => x.Id);
 
@@ -23,11 +24,9 @@ public class TelemetryDataConfiguration : IEntityTypeConfiguration<TelemetryRawE
             .IsRequired();
 
         builder.Property(x => x.RecordedAt).IsRequired();
-
         builder.Property(x => x.CreatedAt).IsRequired();
 
         builder.HasIndex(x => x.ExternalMessageId).IsUnique();
-
         builder.HasIndex(x => new 
         { 
             x.SensorId, 

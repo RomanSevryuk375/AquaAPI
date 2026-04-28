@@ -4,10 +4,12 @@ using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Infrastructure.Repositories;
 
-public class SensorRepository(SystemDbContext dbContext) 
+public sealed class SensorRepository(SystemDbContext dbContext) 
     : BaseRepository<SensorEntity>(dbContext), ISensorRepository
 {
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(
+        Guid id, 
+        CancellationToken cancellationToken)
     {
         return await Context.Sensors
             .AsNoTracking()
