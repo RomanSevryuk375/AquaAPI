@@ -40,15 +40,24 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            var jobKey = new JobKey(nameof(CheckOfflineControllersJob));
+            var offlineControllerJobKey = new JobKey(nameof(CheckOfflineControllersJob));
+            var deleteCompletedTaskAsync = new JobKey(nameof(DeleteCompletedCommandsJob));
 
             options.AddJob<CheckOfflineControllersJob>(jobOptions =>
-                jobOptions.WithIdentity(jobKey));
+                jobOptions.WithIdentity(offlineControllerJobKey));
+
+            options.AddJob<DeleteCompletedCommandsJob>(jobOptions =>
+                jobOptions.WithIdentity(deleteCompletedTaskAsync));
 
             options.AddTrigger(triggerOptions => triggerOptions
-                .ForJob(jobKey)
-                .WithIdentity($"{jobKey}-trigger")
+                .ForJob(offlineControllerJobKey)
+                .WithIdentity($"{offlineControllerJobKey}-trigger")
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(60).RepeatForever()));
+
+            options.AddTrigger(triggerOptions => triggerOptions
+                .ForJob(deleteCompletedTaskAsync)
+                .WithIdentity($"{deleteCompletedTaskAsync}-trigger")
+                .WithSimpleSchedule(x => x.WithIntervalInHours(3).RepeatForever()));
         });
 
         services.AddQuartzHostedService(hostOptions     

@@ -9,7 +9,6 @@ using Device.Domain.Entities;
 using Device.Domain.Factories;
 using Device.Domain.Interfaces;
 using MassTransit;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Device.Application.Services;
 
@@ -117,8 +116,8 @@ public class RelayCommandQueueService(
     }
 
     public async Task<Result> SetRelayStateAsync(
-    ChangeRelayStateCommand command,
-    CancellationToken cancellationToken)
+        ChangeRelayStateCommand command,
+        CancellationToken cancellationToken)
     {
         var existingRelay = await relayRepository
             .GetByIdAsync(command.RelayId, cancellationToken);
@@ -222,5 +221,11 @@ public class RelayCommandQueueService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return existingRelay.IsActive;
+    }
+
+    public async Task DeleteCompletedCommandsAsync(
+        CancellationToken cancellationToken)
+    {
+        await queueRepository.DeleteCompletedAsync(cancellationToken);
     }
 }

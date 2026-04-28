@@ -9,6 +9,9 @@ namespace Contracts.Authorization;
 
 public static class Extensions
 {
+    public const string AccessTokenCookieName = "AccessToken";
+    public const string RefreshTokenCookieName = "RefreshToken";
+
     public static IServiceCollection AddAquaAuthorizationPolicies(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
@@ -120,33 +123,46 @@ public static class Extensions
     {
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
 
+        if (jwtOptions is null || string.IsNullOrWhiteSpace(jwtOptions.SecretKey))
+        {
+            throw new InvalidOperationException("JWT configuration missing or invalid.");
+        }
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = jwtOptions!.Issuer,
-                    ValidateAudience = true,
-                    ValidAudience = jwtOptions.Audience,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        if (context.Request.Cookies.TryGetValue("AccessToken", out var token))
-                        {
-                            context.Token = token;
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
+                ConfigureJwtBearer(options, jwtOptions);
             });
 
         return services;
+    }
+
+    public static void ConfigureJwtBearer(JwtBearerOptions options, JwtOptions jwtOptions)
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtOptions.Audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (string.IsNullOrWhiteSpace(context.Token) &&
+                    context.Request.Cookies.TryGetValue(AccessTokenCookieName, out var token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     }
 }

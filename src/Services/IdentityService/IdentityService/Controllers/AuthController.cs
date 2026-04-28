@@ -1,7 +1,9 @@
-﻿using IdentityService.Application.DTOs;
+using Contracts.Authorization;
+using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace IdentityService.API.Controllers;
 
@@ -17,6 +19,8 @@ public class AuthController(IAuthService authService) : ControllerBase
         var token = await authService
             .RegisterUserAsync(request, cancellationToken);
 
+        AppendAuthCookies(token);
+
         return Ok(token);
     }
 
@@ -28,49 +32,31 @@ public class AuthController(IAuthService authService) : ControllerBase
         var token = await authService
             .LoginAsync(request, cancellationToken);
 
-        var loginResponse = new LoginResponseDto();
-
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddHours(12)
-        };
-
-        Response.Cookies.Append("AccessToken", loginResponse.AccessToken, cookieOptions);
-
-        var refreshOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(30)
-        };
-        Response.Cookies.Append("RefreshToken", loginResponse.RefreshToken, refreshOptions);
+        AppendAuthCookies(token);
 
         return Ok(token);
     }
 
     [HttpPost("refresh")]
     public async Task<ActionResult<LoginResponseDto>> RefreshAsync(
-    [FromBody] RefreshTokenRequestDto request,
-    CancellationToken cancellationToken)
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RefreshTokenRequestDto? request,
+        CancellationToken cancellationToken)
     {
-        var result = await authService
-            .LoginWithRefreshTokenAsync(request, cancellationToken);
-
-        var cookieOptions = new CookieOptions
+        var refreshToken = request?.RefreshToken;
+        if (string.IsNullOrWhiteSpace(refreshToken))
         {
-            HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTimeOffset.UtcNow.AddHours(12),
-            Path = "/",
-            IsEssential = true
-        };
+            Request.Cookies.TryGetValue(
+                Contracts.Authorization.Extensions.RefreshTokenCookieName,
+                out refreshToken);
+        }
 
-        Response.Cookies.Append("jwt", result.AccessToken, cookieOptions);
+        var result = await authService
+            .LoginWithRefreshTokenAsync(new RefreshTokenRequestDto
+            {
+                RefreshToken = refreshToken ?? string.Empty
+            }, cancellationToken);
+
+        AppendAuthCookies(result);
 
         return Ok(result);
     }
@@ -81,9 +67,52 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         await authService.LogoutAsync(cancellationToken);
 
-        Response.Cookies.Delete("AccessToken");
-        Response.Cookies.Delete("RefreshToken");
+        Response.Cookies.Delete(
+            Contracts.Authorization.Extensions.AccessTokenCookieName,
+            CreateAccessTokenCookieOptions());
+        Response.Cookies.Delete(
+            Contracts.Authorization.Extensions.RefreshTokenCookieName,
+            CreateRefreshTokenCookieOptions());
 
         return NoContent();
+    }
+
+    private void AppendAuthCookies(LoginResponseDto token)
+    {
+        Response.Cookies.Append(
+            Contracts.Authorization.Extensions.AccessTokenCookieName,
+            token.AccessToken,
+            CreateAccessTokenCookieOptions());
+
+        Response.Cookies.Append(
+            Contracts.Authorization.Extensions.RefreshTokenCookieName,
+            token.RefreshToken,
+            CreateRefreshTokenCookieOptions());
+    }
+
+    private static CookieOptions CreateAccessTokenCookieOptions()
+    {
+        return new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddHours(12),
+            Path = "/",
+            IsEssential = true
+        };
+    }
+
+    private static CookieOptions CreateRefreshTokenCookieOptions()
+    {
+        return new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            Path = "/api/identity/v1/auth",
+            IsEssential = true
+        };
     }
 }

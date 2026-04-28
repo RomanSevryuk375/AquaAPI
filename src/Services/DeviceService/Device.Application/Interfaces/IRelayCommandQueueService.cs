@@ -33,4 +33,7 @@ public interface IRelayCommandQueueService
     Task<bool> ToggleRelayStateAsync(
         Guid relayId, 
         CancellationToken cancellationToken);
+
+    Task DeleteCompletedCommandsAsync(
+        CancellationToken cancellationToken);
 }
