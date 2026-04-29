@@ -11,6 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IControllerOfflineCheckerService, ControllerOfflineCheckerService>();
         services.AddScoped<IControllerService, ControllerService>();
+        services.AddScoped<IDeviceConfigurationService, DeviceConfigurationService>();
         services.AddScoped<IRelayCommandQueueService, RelayCommandQueueService>();
         services.AddScoped<IRelayService, RelayService>();
         services.AddScoped<ISensorService, SensorService>();

@@ -8,4 +8,8 @@ public interface IRelayRepository : IRepository<RelayEntity>
     Task<bool> ExistsAsync(
         Guid relayId, 
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<RelayEntity>> GetAllByControllerId(
+        Guid controllerId,
+        CancellationToken cancellationToken);
 }

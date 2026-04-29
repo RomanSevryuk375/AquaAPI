@@ -14,9 +14,6 @@ public class TelemetryItemRequestValidator
             .NotEmpty().WithMessage("SensorId must not be empty.")
             .NotEqual(Guid.Empty).WithMessage("SensorId cannot be an empty Guid.");
 
-        RuleFor(x => x.Value)
-            .NotNull().WithMessage("Value must be provided.");
-
         RuleFor(x => x.ExternalMessageId)
             .NotEmpty().WithMessage("ExternalMessageId must not be empty.")
             .MaximumLength(100).WithMessage("ExternalMessageId is too long (max 100).");

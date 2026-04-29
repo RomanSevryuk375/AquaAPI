@@ -15,4 +15,14 @@ public sealed class RelayRepository(SystemDbContext dbContext)
             .AsNoTracking()
             .AnyAsync(x => x.Id == relayId, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<RelayEntity>> GetAllByControllerId(
+        Guid controllerId,
+        CancellationToken cancellationToken)
+    {
+        return await Context.Relays
+            .AsNoTracking()
+            .Where(x => x.ControllerId == controllerId)
+            .ToListAsync(cancellationToken);
+    }
 }

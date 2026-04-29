@@ -1,4 +1,6 @@
 ﻿using Contracts.Authorization;
+using Contracts.Results;
+using Device.Application.DTOs.Configurations;
 using Device.Application.DTOs.Controller;
 using Device.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +12,8 @@ namespace Device.API.Controllers;
 [Authorize(Policy = SubPermissions.DeviceControl)]
 [Route("api/device/v1/controllers")]
 public class ControllersController(
-    IControllerService controllerService) : ControllerBase
+    IControllerService controllerService,
+    IDeviceConfigurationService deviceConfigurationService) : ControllerBase
 {
     private const string NameGetById = "GetControllerById";
 
@@ -28,6 +31,20 @@ public class ControllersController(
             cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpGet("me/config")]
+    public async Task<ActionResult<ConfigResponseDto>> GetAllControllersAsync(
+        [FromBody] string macAddress,
+        [FromHeader(Name = "X-Device-Token")] string deviceToken,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await deviceConfigurationService.GetControllerConfigAsync(
+            macAddress,
+            deviceToken,
+            cancellationToken);
+
+        return this.ToActionResult(result);
     }
 
     [HttpGet("{id:guid}", Name = NameGetById)]
