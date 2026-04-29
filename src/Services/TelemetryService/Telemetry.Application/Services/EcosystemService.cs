@@ -19,8 +19,7 @@ public sealed class EcosystemService(
 
         if (existingEcosystem is null)
         {
-            return ConsumerResult
-                .FatalError($"Ecosystem {ecosystem.EcosystemId} is exists.");
+            return ConsumerResult.Success();
         }
 
         var (newEcosystem, errors) = EcosystemEntity.Create(

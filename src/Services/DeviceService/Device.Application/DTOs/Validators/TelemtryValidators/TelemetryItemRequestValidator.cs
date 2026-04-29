@@ -8,19 +8,22 @@ public class TelemetryItemRequestValidator
 {
     public TelemetryItemRequestValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.SensorId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("SensorId must not be empty.")
+            .NotEqual(Guid.Empty).WithMessage("SensorId cannot be an empty Guid.");
 
         RuleFor(x => x.Value)
-            .NotEmpty();
+            .NotNull().WithMessage("Value must be provided.");
 
         RuleFor(x => x.ExternalMessageId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("ExternalMessageId must not be empty.")
+            .MaximumLength(100).WithMessage("ExternalMessageId is too long (max 100).");
 
         RuleFor(x => x.RecordedAt)
-            .NotEmpty()
-            .Must(BeInPast).WithMessage("RecordedAt can not be in future.");
-
+            .NotEmpty().WithMessage("RecordedAt must be provided.")
+            .Must(BeInPast).WithMessage("RecordedAt can not be in the future.");
     }
 
     private bool BeInPast(DateTime recordedAt)

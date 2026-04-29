@@ -47,25 +47,38 @@ public sealed class TelemetryBatchService(
 
         var response = new TelemetryResponse();
 
-        var batchItems = request.Items
-            .Where(item => existingSensors.Any(x => x.Id == item.SensorId))
-            .Select(item => new TelemetryBatchEventItem
+        var batchItemsForEvent = new List<TelemetryBatchEventItem>();
+
+        foreach (var item in request.Items)
+        {
+            var isOwnSensor = existingSensors.Any(s => s.Id == item.SensorId);
+
+            if (!isOwnSensor)
+            {
+                response.ValidationErrors
+                    .Add($"Sensor {item.SensorId} does not belong " +
+                         $"to controller {request.MacAddress}.");
+                response.SkippedCount++;
+                continue;
+            }
+
+            batchItemsForEvent.Add(new TelemetryBatchEventItem
             {
                 SensorId = item.SensorId,
                 Value = item.Value,
                 ExternalMessageId = item.ExternalMessageId,
                 RecordedAt = item.RecordedAt,
-            }).ToList();
+            });
 
-        response.AcceptedCount = batchItems.Count;
-        response.SkippedCount = request.Items.Count - batchItems.Count;
+            response.AcceptedCount++;
+        }
 
-        if (batchItems.Count > 0)
+        if (batchItemsForEvent.Count > 0)
         {
             await publishEndpoint.Publish(new TelemetryBatchEvent
             {
                 ControllerId = existingController.Id,
-                Items = batchItems
+                Items = batchItemsForEvent
             }, cancellationToken);
         }
 

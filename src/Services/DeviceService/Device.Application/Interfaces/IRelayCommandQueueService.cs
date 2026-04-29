@@ -1,5 +1,5 @@
 ﻿using Contracts.Events.RelayEvents;
-using Contracts.Extensions;
+using Contracts.Results;
 using Device.Application.DTOs.RelayCommands;
 
 namespace Device.Application.Interfaces;
