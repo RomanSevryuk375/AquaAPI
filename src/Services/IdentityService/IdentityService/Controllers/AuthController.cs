@@ -1,4 +1,4 @@
-using Contracts.Authorization;
+using Contracts.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -16,12 +16,15 @@ public class AuthController(IAuthService authService) : ControllerBase
         [FromBody] RegisterUserRequestDto request,
         CancellationToken cancellationToken)
     {
-        var token = await authService
+        var result = await authService
             .RegisterUserAsync(request, cancellationToken);
 
-        AppendAuthCookies(token);
+        if (result.IsSuccess)
+        {
+            AppendAuthCookies(result.Value);
+        }
 
-        return Ok(token);
+        return this.ToActionResult(result);
     }
 
     [HttpPost("login")]
@@ -29,12 +32,15 @@ public class AuthController(IAuthService authService) : ControllerBase
         [FromBody] LoginUserRequestDto request,
         CancellationToken cancellationToken)
     {
-        var token = await authService
+        var result = await authService
             .LoginAsync(request, cancellationToken);
 
-        AppendAuthCookies(token);
+        if (result.IsSuccess)
+        {
+            AppendAuthCookies(result.Value);
+        }
 
-        return Ok(token);
+        return this.ToActionResult(result);
     }
 
     [HttpPost("refresh")]
@@ -56,9 +62,12 @@ public class AuthController(IAuthService authService) : ControllerBase
                 RefreshToken = refreshToken ?? string.Empty
             }, cancellationToken);
 
-        AppendAuthCookies(result);
+        if (result.IsSuccess)
+        {
+            AppendAuthCookies(result.Value);
+        }
 
-        return Ok(result);
+        return this.ToActionResult(result);
     }
 
     [Authorize]
