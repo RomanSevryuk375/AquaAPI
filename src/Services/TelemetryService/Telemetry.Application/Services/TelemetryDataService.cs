@@ -18,12 +18,26 @@ public class TelemetryDataService(
     IPublishEndpoint publishEndpoint,
     IUnitOfWork unitOfWork) : ITelemetryDataService
 {
-    public async Task<IEnumerable<TelemetryDataResponse>> GetAllDataAsync(
+    public async Task<Result<TelemetryRawChartResponseDto>> GetAllDataAsync(
         TelemetryDataFilterDto filter,
         int skip,
         int take,
         CancellationToken cancellationToken)
     {
+        var to = filter.To ?? DateTime.UtcNow;
+        var from = filter.From ?? to.AddDays(-1);
+
+        var sensor = await sensorRepository
+            .GetByIdAsync(filter.SensorId, cancellationToken);
+
+        if (sensor is null)
+        {
+            return Result<TelemetryRawChartResponseDto>
+                .Failure(Error.NotFound(
+                    "Sensor.NotFound", 
+                    $"Sensor {filter.SensorId} not found"));
+        }
+
         var specification = new TelemetryFilterSpecification(
             new TelemetryFilterParams
             {
@@ -32,39 +46,28 @@ public class TelemetryDataService(
                 To = filter.To,
             });
 
-        var entities = await telemetryRepository.GetAllAsync(
+        var data = await telemetryRepository.GetAllAsync(
             specification,
             skip,
             take,
             cancellationToken);
 
-        return entities.Select(entity => new TelemetryDataResponse
-        {
-            Id = entity.Id,
-            SensorId = entity.SensorId,
-            Value = entity.Value,
-            ExternalMessageId = entity.ExternalMessageId,
-            RecordedAt = entity.RecordedAt,
-            CreatedAt = entity.CreatedAt
-        }).ToList();
-    }
+        IEnumerable<TelemetryRawChartPointDto> points;
 
-    public async Task<TelemetryDataResponse> GetDataByIdAsync(
-        Guid id,
-        CancellationToken cancellationToken)
-    {
-        var entity = await telemetryRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new NotFoundException($"{nameof(TelemetryRawEntity)} not found");
-
-        return new TelemetryDataResponse()
+        points = data.Select(x => new TelemetryRawChartPointDto
         {
-            Id = entity.Id,
-            SensorId = entity.SensorId,
-            Value = entity.Value,
-            ExternalMessageId = entity.ExternalMessageId,
-            RecordedAt = entity.RecordedAt,
-            CreatedAt = entity.CreatedAt
-        };
+            Value = x.Value,
+            RecordedAt = x.RecordedAt,
+        });
+
+        return Result<TelemetryRawChartResponseDto>.Success(
+            new TelemetryRawChartResponseDto
+            {
+                SensorId = sensor.Id,
+                SensorName = sensor.Name,
+                Unit = sensor.Unit,
+                Points = points.OrderBy(p => p.RecordedAt).ToList()
+            });
     }
 
     public async Task<ConsumerResult> AddDataAsync(
