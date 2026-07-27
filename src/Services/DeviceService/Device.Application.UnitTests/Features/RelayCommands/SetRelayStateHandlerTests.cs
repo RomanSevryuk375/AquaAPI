@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.RelayCommands.Command.SetRelayState;
 
 namespace Device.Application.UnitTests.Features.RelayCommands;
@@ -7,12 +9,11 @@ public class SetRelayStateHandlerTests
     private readonly IRelayRepository _relayRepoMock = Substitute.For<IRelayRepository>();
     private readonly IControllerRepository _controllerRepoMock = Substitute.For<IControllerRepository>();
     private readonly IRelayCommandsRepository _queueRepoMock = Substitute.For<IRelayCommandsRepository>();
-    private readonly IUnitOfWork _unitOfWorkMock = Substitute.For<IUnitOfWork>();
     private readonly SetRelayStateHandler _handler;
 
     public SetRelayStateHandlerTests()
     {
-        _handler = new SetRelayStateHandler(_relayRepoMock, _controllerRepoMock, _queueRepoMock, _unitOfWorkMock);
+        _handler = new SetRelayStateHandler(_relayRepoMock, _controllerRepoMock, _queueRepoMock);
     }
 
     [Fact]
@@ -41,10 +42,8 @@ public class SetRelayStateHandlerTests
         result.IsSuccess.Should().BeTrue();
 
         await _queueRepoMock.Received(1).AddAsync(Arg.Is<RelayCommand>(c =>
-            c.RelayId == relay.Id && c.TargeState),
+            c.RelayId == relay.Id && c.TargetState),
             Arg.Any<CancellationToken>());
-
-        await _unitOfWorkMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]

@@ -1,4 +1,7 @@
+using BuildingBlocks.Domain.Abstractions;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Testcontainers.PostgreSql;
 
 namespace Device.Infrastructure.IntegrationTests.Infrastructure;
@@ -27,14 +30,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         builder.UseSetting("ConnectionStrings:DeviceDbContext", _dbContainer.GetConnectionString());
 
-        builder.ConfigureServices(services =>
+        builder.ConfigureTestServices(services =>
         {
-            ServiceDescriptor? massTransitHostedService = services.FirstOrDefault(d =>
-                d.ImplementationType?.Name == "MassTransitHostedService");
-            if (massTransitHostedService != null)
+            services.AddMassTransitTestHarness(x =>
             {
-                services.Remove(massTransitHostedService);
-            }
+                x.UsingInMemory((context, cfg) =>
+                {
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
 
             ServiceDescriptor? quartzHostedService = services.FirstOrDefault(d =>
                 d.ImplementationType?.Name == "QuartzHostedService");
@@ -43,10 +47,27 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 services.Remove(quartzHostedService);
             }
 
+            ServiceDescriptor? userContextDescriptor = services.FirstOrDefault(d =>
+                d.ServiceType == typeof(IUserContext));
+            if (userContextDescriptor != null)
+            {
+                services.Remove(userContextDescriptor);
+            }
+
+            services.AddSingleton<TestUserContext>();
+            services.AddTransient<IUserContext>(sp =>
+                sp.GetRequiredService<TestUserContext>());
+
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             using IServiceScope scope = serviceProvider.CreateScope();
             DeviceDbContext context = scope.ServiceProvider.GetRequiredService<DeviceDbContext>();
             context.Database.Migrate();
         });
     }
+}
+
+public sealed class TestUserContext : IUserContext
+{
+    public Guid UserId { get; set; } = Guid.Parse("22222222-2222-2222-2222-222222222222");
+    public bool IsAuthenticated { get; set; } = true;
 }

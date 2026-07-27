@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Domain.UnitTests.Entities;
 
 public class RelayCommandTests

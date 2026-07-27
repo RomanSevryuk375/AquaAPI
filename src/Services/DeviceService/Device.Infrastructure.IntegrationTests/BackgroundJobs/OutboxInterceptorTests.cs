@@ -1,5 +1,5 @@
+using BuildingBlocks.Infrastructure.Data.Outbox;
 using Device.Domain.Events.ControllerEvents;
-using Device.Infrastructure.Persistence.Outbox;
 
 namespace Device.Infrastructure.IntegrationTests.BackgroundJobs;
 

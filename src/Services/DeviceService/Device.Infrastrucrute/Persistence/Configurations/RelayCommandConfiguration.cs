@@ -1,7 +1,6 @@
 namespace Device.Infrastructure.Persistence.Configurations;
 
-public sealed class RelayCommandConfiguration
-    : IEntityTypeConfiguration<RelayCommand>
+public sealed class RelayCommandConfiguration : IEntityTypeConfiguration<RelayCommand>
 {
     public void Configure(EntityTypeBuilder<RelayCommand> builder)
     {
@@ -10,7 +9,9 @@ public sealed class RelayCommandConfiguration
         builder.HasKey(x => x.Id);
         builder.Property(x => x.ControllerId).IsRequired();
         builder.Property(x => x.RelayId).IsRequired();
-        builder.Property(x => x.TargeState).IsRequired();
+        builder.Property(x => x.TargetState)
+            .HasColumnName("targe_state")
+            .IsRequired();
 
         builder.Property(x => x.Status)
             .HasConversion<int>()

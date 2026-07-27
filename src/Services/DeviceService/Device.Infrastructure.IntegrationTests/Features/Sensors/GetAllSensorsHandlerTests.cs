@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Sensors.Query.GetAllSensors;
 using Device.Application.Features.Sensors.Query.Shared;
 using Device.Domain.Entities.Sensors;

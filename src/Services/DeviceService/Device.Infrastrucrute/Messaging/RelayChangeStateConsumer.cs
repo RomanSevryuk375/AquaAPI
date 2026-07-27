@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.RelayEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Device.Application.Features.RelayCommands.Command.SetRelayState;
 using MediatR;
 

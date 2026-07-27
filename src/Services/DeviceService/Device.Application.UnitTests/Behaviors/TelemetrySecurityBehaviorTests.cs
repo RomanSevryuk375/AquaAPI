@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Device.Application.Behaviors;
 
 namespace Device.Application.UnitTests.Behaviors;

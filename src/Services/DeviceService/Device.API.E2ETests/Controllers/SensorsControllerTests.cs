@@ -1,4 +1,6 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Presentation.Constants;
 using Device.Application.Features.Sensors.Command.AddSensor;
 using Device.Domain.Entities;
 using Device.Domain.Entities.Sensors;

@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Device.Application.Features.Sensors.Command.SetSensorState;
 using MediatR;
 

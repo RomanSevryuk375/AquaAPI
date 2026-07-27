@@ -1,12 +1,12 @@
-using Device.Application.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Device.Domain.Factories;
 using MassTransit;
 
 namespace Device.Application.Features.Sensors.Command.AddSensor;
 
-internal sealed class AddSensorHandler(
+public sealed class AddSensorHandler(
     ISensorRepository sensorRepository,
-    IUnitOfWork unitOfWork,
     IUserContext userContext,
     IMapper mapper) : IRequestHandler<AddSensorCommand, Result<SensorCreatedResponse>>
 {
@@ -25,7 +25,6 @@ internal sealed class AddSensorHandler(
         }
 
         await sensorRepository.AddAsync(sensor.Value, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<SensorCreatedResponse>.Success(
             mapper.Map<SensorCreatedResponse>(sensor.Value));

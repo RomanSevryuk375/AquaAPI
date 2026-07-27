@@ -1,4 +1,8 @@
-﻿using Device.Application.Features.RelayCommands.Command.MarkAsCompleted;
+﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
+using Device.Application.Features.RelayCommands.Command.MarkAsCompleted;
 using Device.Application.Features.RelayCommands.Command.MarkAsFailed;
 using Device.Application.Features.RelayCommands.Command.ToggleRelayMode;
 using Device.Application.Features.RelayCommands.Command.ToggleRelayState;

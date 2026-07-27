@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Domain.Entities.Sensors;
 
 public sealed class TemperatureSensor : Sensor

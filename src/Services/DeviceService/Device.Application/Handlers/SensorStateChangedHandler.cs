@@ -1,4 +1,4 @@
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Device.Domain.Events.SensorEvents;
 using MassTransit;
 

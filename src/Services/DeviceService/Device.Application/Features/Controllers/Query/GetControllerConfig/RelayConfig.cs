@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Application.Features.Controllers.Query.GetControllerConfig;
 
 public sealed record RelayConfig

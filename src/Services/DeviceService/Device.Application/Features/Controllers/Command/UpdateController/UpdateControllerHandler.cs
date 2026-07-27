@@ -1,8 +1,10 @@
-﻿namespace Device.Application.Features.Controllers.Command.UpdateController;
+﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 
-internal sealed class UpdateControllerHandler(
-    IControllerRepository controllerRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateControllerCommand, Result>
+namespace Device.Application.Features.Controllers.Command.UpdateController;
+
+internal sealed class UpdateControllerHandler(IControllerRepository controllerRepository)
+    : IRequestHandler<UpdateControllerCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateControllerCommand request,
@@ -16,16 +18,10 @@ internal sealed class UpdateControllerHandler(
                 string.Format(ErrorMessages.ControllerNotFound, request.ControllerId)));
         }
 
-        Result? result = controller.Update(
-            request.MacAddress,
-            request.Name);
-        if (result.IsFailure)
-        {
-            return Result.Failure(result.Error);
-        }
+        Result? result = controller.Update(request.MacAddress, request.Name);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
+        return result.IsFailure
+            ? Result.Failure(result.Error)
+            : Result.Success();
     }
 }

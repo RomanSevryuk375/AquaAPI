@@ -1,9 +1,10 @@
-using Device.Application.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using MassTransit;
 
 namespace Device.Application.Features.Relays.Command.AddRelay;
 
-internal class AddRelayHandler(
+internal sealed class AddRelayHandler(
     IRelayRepository relayRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork,

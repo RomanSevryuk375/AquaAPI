@@ -1,4 +1,6 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Sensors.Query.Shared;
 
 namespace Device.Application.Features.Sensors.Query.GetAllSensors;

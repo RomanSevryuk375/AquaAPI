@@ -1,4 +1,7 @@
 using System.Text.RegularExpressions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 
 namespace Device.Domain.ValueObjects;
 

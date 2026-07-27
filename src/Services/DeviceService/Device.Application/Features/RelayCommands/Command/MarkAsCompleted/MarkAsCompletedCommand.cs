@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using Device.Application.Interfaces;
 
 namespace Device.Application.Features.RelayCommands.Command.MarkAsCompleted;

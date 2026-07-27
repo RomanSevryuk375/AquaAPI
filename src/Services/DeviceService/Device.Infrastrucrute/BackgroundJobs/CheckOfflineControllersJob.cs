@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using Quartz;

@@ -1,4 +1,4 @@
-using Contracts.Events.ControllerEvents;
+using BuildingBlocks.IntegrationEvents.Events.Controllers;
 using Device.Domain.Events.ControllerEvents;
 
 namespace Device.Application.MapProfiles;

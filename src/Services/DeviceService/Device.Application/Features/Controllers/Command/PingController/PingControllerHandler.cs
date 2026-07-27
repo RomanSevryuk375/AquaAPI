@@ -1,8 +1,10 @@
-﻿namespace Device.Application.Features.Controllers.Command.PingController;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 
-internal sealed class PingControllerHandler(
-    IControllerRepository controllerRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<PingControllerCommand, Result<ControllerPingResponse>>
+namespace Device.Application.Features.Controllers.Command.PingController;
+
+public sealed class PingControllerHandler(IControllerRepository controllerRepository)
+    : IRequestHandler<PingControllerCommand, Result<ControllerPingResponse>>
 {
     public async Task<Result<ControllerPingResponse>> Handle(
         PingControllerCommand request,
@@ -17,8 +19,6 @@ internal sealed class PingControllerHandler(
         }
 
         controller.RecordPing();
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<ControllerPingResponse>.Success(new ControllerPingResponse());
     }

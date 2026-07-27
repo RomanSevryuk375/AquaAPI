@@ -1,8 +1,11 @@
-﻿namespace Device.Application.Features.RelayCommands.Command.MarkAsFailed;
+﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 
-internal sealed class MarkAsFailedHandler(
-    IRelayCommandsRepository queueRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<MarkAsFailedCommand, Result>
+namespace Device.Application.Features.RelayCommands.Command.MarkAsFailed;
+
+internal sealed class MarkAsFailedHandler(IRelayCommandsRepository queueRepository)
+    : IRequestHandler<MarkAsFailedCommand, Result>
 {
     public async Task<Result> Handle(
         MarkAsFailedCommand request,
@@ -22,8 +25,6 @@ internal sealed class MarkAsFailedHandler(
         }
 
         command.MarkAsFailed(request.ErrorMessage);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

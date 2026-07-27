@@ -1,5 +1,7 @@
 // Ignore Spelling: Dto
 
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Application.Features.Sensors.Query.Shared;
 
 public sealed record SensorDto

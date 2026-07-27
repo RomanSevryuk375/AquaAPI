@@ -1,9 +1,10 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
 using Device.Domain.ValueObjects;
 
 namespace Device.Infrastructure.Persistence.Configurations;
 
-public sealed class SensorConfiguration
-    : IEntityTypeConfiguration<Sensor>
+public sealed class SensorConfiguration : IEntityTypeConfiguration<Sensor>
 {
     public void Configure(EntityTypeBuilder<Sensor> builder)
     {

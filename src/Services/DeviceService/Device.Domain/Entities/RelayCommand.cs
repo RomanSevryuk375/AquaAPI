@@ -1,3 +1,8 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Domain.Entities;
 
 public sealed class RelayCommand : AggregateRoot, IEntity
@@ -6,7 +11,7 @@ public sealed class RelayCommand : AggregateRoot, IEntity
         Guid id,
         Guid controllerId,
         Guid relayId,
-        bool targeState,
+        bool targetState,
         CommandStatus status,
         DateTime? expireAt,
         int attemptCount,
@@ -17,7 +22,7 @@ public sealed class RelayCommand : AggregateRoot, IEntity
         Id = id;
         ControllerId = controllerId;
         RelayId = relayId;
-        TargeState = targeState;
+        TargetState = targetState;
         Status = status;
         ExpireAt = expireAt;
         AttemptCount = attemptCount;
@@ -28,12 +33,12 @@ public sealed class RelayCommand : AggregateRoot, IEntity
 
 #pragma warning disable CS8618
     private RelayCommand() { }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
     public Guid Id { get; private set; }
     public Guid ControllerId { get; private set; }
     public Guid RelayId { get; private set; }
-    public bool TargeState { get; private set; }
+    public bool TargetState { get; private set; }
     public CommandStatus Status { get; private set; }
     public DateTime? ExpireAt { get; private set; }
     public int AttemptCount { get; private set; }

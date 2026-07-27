@@ -1,10 +1,10 @@
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Device.Domain.Events.SensorEvents;
 using MassTransit;
 
 namespace Device.Application.Handlers;
 
-internal class SensorUpdatedHandler(
+internal sealed class SensorUpdatedHandler(
     IPublishEndpoint publishEndpoint,
     IMapper mapper) : INotificationHandler<SensorUpdatedDomainEvent>
 {

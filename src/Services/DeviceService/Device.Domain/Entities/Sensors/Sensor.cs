@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Domain.Events.SensorEvents;
 
 namespace Device.Domain.Entities.Sensors;

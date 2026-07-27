@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.RelayCommands.Command.DeleteCompleted;
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -1,3 +1,7 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Domain.Events.RelayEvents;
 
 namespace Device.Domain.Entities;
@@ -60,10 +64,10 @@ public sealed class Relay : AggregateRoot, IEntity
         bool isManual)
     {
         var errors = new List<string>();
-        Result<DeviceName> nameResut = DeviceName.Create(rawName);
-        if (nameResut.IsFailure)
+        Result<DeviceName> nameResult = DeviceName.Create(rawName);
+        if (nameResult.IsFailure)
         {
-            errors.Add(nameResut.Error.Message);
+            errors.Add(nameResult.Error.Message);
         }
 
         Result<ConnectionAddress> addressResult = ConnectionAddress.Create(
@@ -81,7 +85,7 @@ public sealed class Relay : AggregateRoot, IEntity
 
         var relay = new Relay(
             id, controllerId, userId, powerSensorId,
-            nameResut.Value, addressResult.Value, isNormallyOpen, purpose,
+            nameResult.Value, addressResult.Value, isNormallyOpen, purpose,
             isActive, isManual,
             createdAt: DateTime.UtcNow);
 
@@ -138,13 +142,13 @@ public sealed class Relay : AggregateRoot, IEntity
 
     public Result SetName(string rawName)
     {
-        Result<DeviceName> nameResut = DeviceName.Create(rawName);
-        if (nameResut.IsFailure)
+        Result<DeviceName> nameResult = DeviceName.Create(rawName);
+        if (nameResult.IsFailure)
         {
-            return Result<Relay>.Failure(nameResut.Error);
+            return Result<Relay>.Failure(nameResult.Error);
         }
 
-        Name = nameResut.Value;
+        Name = nameResult.Value;
 
         IncrementVersion();
 

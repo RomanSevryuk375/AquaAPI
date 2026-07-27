@@ -1,11 +1,11 @@
+using BuildingBlocks.Domain.Results;
 using Device.Application.Interfaces;
 
 namespace Device.Application.Features.Sensors.Command.UpdateSensor;
 
 public sealed class UpdateSensorHandler(
     ISensorRepository sensorRepository,
-    IDeviceSecurityService securityService,
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateSensorCommand, Result>
+    IDeviceSecurityService securityService) : IRequestHandler<UpdateSensorCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateSensorCommand request,
@@ -27,13 +27,9 @@ public sealed class UpdateSensorHandler(
         Result result = existingSensor.Update(
             request.ControllerId,
             request.Name, request.ConnectionProtocol, request.ConnectionAddress);
-        if (result.IsFailure)
-        {
-            return Result.Failure(result.Error);
-        }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
+        return result.IsFailure
+            ? Result.Failure(result.Error)
+            : Result.Success();
     }
 }

@@ -1,4 +1,5 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Presentation.Constants;
 using Device.Application.Features.Relays.Command.AddRelay;
 using Device.Application.Features.Relays.Command.UpdateRelay;
 using Device.Application.Features.Relays.Query.Shared;

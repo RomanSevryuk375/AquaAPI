@@ -1,7 +1,9 @@
+using BuildingBlocks.Infrastructure.Data;
+
 namespace Device.Infrastructure.Persistence.Repositories;
 
 public sealed class RelayRepository(DeviceDbContext dbContext)
-    : BaseRepository<Relay>(dbContext), IRelayRepository
+    : BaseRepository<DeviceDbContext, Relay>(dbContext), IRelayRepository
 {
     public async Task<bool> ExistsAsync(
         Guid relayId,

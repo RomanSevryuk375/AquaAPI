@@ -1,7 +1,9 @@
+using BuildingBlocks.Infrastructure.Data;
+
 namespace Device.Infrastructure.Persistence.Repositories;
 
 public sealed class SensorRepository(DeviceDbContext dbContext)
-    : BaseRepository<Sensor>(dbContext), ISensorRepository
+    : BaseRepository<DeviceDbContext, Sensor>(dbContext), ISensorRepository
 {
     public async Task<bool> ExistsAsync(
         Guid sensorId,

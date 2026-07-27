@@ -1,5 +1,7 @@
 // Ignore Spelling: Validator
 
+using BuildingBlocks.Domain.Constants;
+
 namespace Device.Application.Features.Controllers.Command.UpdateController;
 
 internal sealed class UpdateControllerValidator

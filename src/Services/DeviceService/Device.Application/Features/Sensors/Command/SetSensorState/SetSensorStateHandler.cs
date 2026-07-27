@@ -1,8 +1,9 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Application.Features.Sensors.Command.SetSensorState;
 
-internal sealed class SetSensorStateHandler(
-    ISensorRepository sensorRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<SetSensorStateCommand, Result>
+public sealed class SetSensorStateHandler(ISensorRepository sensorRepository)
+    : IRequestHandler<SetSensorStateCommand, Result>
 {
     public async Task<Result> Handle(
         SetSensorStateCommand request,
@@ -12,8 +13,6 @@ internal sealed class SetSensorStateHandler(
             request.SensorId, cancellationToken);
 
         existingSensor!.SetState(request.SensorState);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

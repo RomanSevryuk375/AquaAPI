@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Domain.ValueObjects;
 
 public sealed record DeviceName

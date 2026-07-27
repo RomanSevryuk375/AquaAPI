@@ -1,5 +1,4 @@
 using Device.Infrastructure.IntegrationTests.Infrastructure;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -21,8 +20,6 @@ public sealed class E2ETestWebAppFactory : IntegrationTestWebAppFactory
                 options.DefaultChallengeScheme = "Test";
             })
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
-
-            services.AddMassTransitTestHarness();
         });
     }
 }

@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.TestShared.Builders;
 
 public class ControllerBuilder

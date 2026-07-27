@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Extesions;
 using Device.Application.Features.RelayCommands.Query.GetPending;
 

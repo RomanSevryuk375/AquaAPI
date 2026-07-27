@@ -1,10 +1,12 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Features.Sensors.Query.Shared;
 
 namespace Device.Application.Features.Sensors.Query.GetAllSensors;
 
-internal sealed class GetAllSensorsHandler(
+public sealed class GetAllSensorsHandler(
     ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetAllSensorsQuery, Result<IReadOnlyList<SensorDto>>>
 {
@@ -14,11 +16,11 @@ internal sealed class GetAllSensorsHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
-            SELECT 
-                id, controller_id, name, 
-                split_part(connection_address, '_', 1) AS ConnectionProtocol, 
-                split_part(connection_address, '_', 2) AS ConnectionAddress, 
+        const string Sql = """
+            SELECT
+                id, controller_id, name,
+                split_part(connection_address, '_', 1) AS ConnectionProtocol,
+                split_part(connection_address, '_', 2) AS ConnectionAddress,
                 type, state, unit, created_at
             FROM sensors
             WHERE user_id = @UserId
@@ -29,7 +31,7 @@ internal sealed class GetAllSensorsHandler(
             LIMIT @Take OFFSET @Skip
             """;
 
-        IEnumerable<SensorDto> sensors = await connection.QueryAsync<SensorDto>(SQL,
+        IEnumerable<SensorDto> sensors = await connection.QueryAsync<SensorDto>(Sql,
             new
             {
                 request.UserId,

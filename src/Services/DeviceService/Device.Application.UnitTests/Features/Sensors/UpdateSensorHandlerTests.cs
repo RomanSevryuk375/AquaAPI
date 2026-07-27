@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Sensors.Command.UpdateSensor;
 
 namespace Device.Application.UnitTests.Features.Sensors;
@@ -6,12 +9,11 @@ public class UpdateSensorHandlerTests
 {
     private readonly ISensorRepository _sensorRepoMock = Substitute.For<ISensorRepository>();
     private readonly IDeviceSecurityService _securityServiceMock = Substitute.For<IDeviceSecurityService>();
-    private readonly IUnitOfWork _unitOfWorkMock = Substitute.For<IUnitOfWork>();
     private readonly UpdateSensorHandler _handler;
 
     public UpdateSensorHandlerTests()
     {
-        _handler = new UpdateSensorHandler(_sensorRepoMock, _securityServiceMock, _unitOfWorkMock);
+        _handler = new UpdateSensorHandler(_sensorRepoMock, _securityServiceMock);
     }
 
     [Fact]
@@ -46,7 +48,6 @@ public class UpdateSensorHandlerTests
         sensor.ControllerId.Should().Be(newControllerId);
 
         await _securityServiceMock.Received(1).EnsureUserOwnsControllerAsync(newControllerId, Arg.Any<CancellationToken>());
-        await _unitOfWorkMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -78,7 +79,5 @@ public class UpdateSensorHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().BeEquivalentTo(expectedError);
-
-        await _unitOfWorkMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

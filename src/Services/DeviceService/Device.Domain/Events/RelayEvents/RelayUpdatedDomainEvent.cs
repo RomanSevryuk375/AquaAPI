@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Domain.Events.RelayEvents;
 
 public sealed record RelayUpdatedDomainEvent : IDomainEvent

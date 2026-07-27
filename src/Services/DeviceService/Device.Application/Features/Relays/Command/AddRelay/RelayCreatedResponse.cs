@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Application.Features.Relays.Command.AddRelay;
 
 public sealed record RelayCreatedResponse

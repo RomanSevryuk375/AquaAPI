@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Domain.Entities.Sensors;
 
 public sealed class PressureSensor : Sensor

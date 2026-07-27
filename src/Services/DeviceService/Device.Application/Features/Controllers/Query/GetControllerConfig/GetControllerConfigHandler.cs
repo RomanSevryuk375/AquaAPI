@@ -1,4 +1,7 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Extesions;
 using Device.Application.Interfaces;
@@ -6,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Device.Application.Features.Controllers.Query.GetControllerConfig;
 
-internal sealed class GetControllerConfigHandler(
+public sealed class GetControllerConfigHandler(
     ISqlConnectionFactory sqlConnectionFactory,
     IOptions<DeviceSettings> deviceOptions,
     IMyHasher myHasher)
@@ -18,32 +21,32 @@ internal sealed class GetControllerConfigHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
+        const string Sql = """
             SELECT id AS Id, device_token_hash AS DeviceTokenHash
             FROM controllers
             WHERE mac_address = @MacAddress
             LIMIT 1;
 
             SELECT
-                id AS relay_id, 
-                name, 
-                split_part(connection_address, '_', 1) AS connection_protocol, 
+                id AS relay_id,
+                name,
+                split_part(connection_address, '_', 1) AS connection_protocol,
                 split_part(connection_address, '_', 2) AS connection_address,
                 is_normally_open, purpose, is_active, is_manual
             FROM relays
             WHERE controller_id = (SELECT id FROM controllers WHERE mac_address = @MacAddress LIMIT 1);
 
             SELECT
-                id AS sensor_id, 
-                name, 
-                split_part(connection_address, '_', 1) AS connection_protocol, 
-                split_part(connection_address, '_', 2) AS connection_address, 
+                id AS sensor_id,
+                name,
+                split_part(connection_address, '_', 1) AS connection_protocol,
+                split_part(connection_address, '_', 2) AS connection_address,
                 type, unit
             FROM sensors
             WHERE controller_id = (SELECT id FROM controllers WHERE mac_address = @MacAddress LIMIT 1);
             """;
 
-        using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(SQL, new { request.MacAddress });
+        await using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(Sql, new { request.MacAddress });
 
         ControllerAuthInfo? controllerAuth = await multi.ReadSingleOrDefaultAsync<ControllerAuthInfo>();
         if (controllerAuth is null ||

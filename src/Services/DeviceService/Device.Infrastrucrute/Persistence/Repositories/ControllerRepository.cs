@@ -1,10 +1,11 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data;
 using Device.Domain.ValueObjects;
 
 namespace Device.Infrastructure.Persistence.Repositories;
 
 public sealed class ControllerRepository(DeviceDbContext dbContext)
-    : BaseRepository<Controller>(dbContext), IControllerRepository
+    : BaseRepository<DeviceDbContext, Controller>(dbContext), IControllerRepository
 {
     public async Task<Controller?> GetByMacAddressAsync(
         string macAddress,

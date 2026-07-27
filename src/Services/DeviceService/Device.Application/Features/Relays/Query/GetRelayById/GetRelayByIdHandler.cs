@@ -1,11 +1,13 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Features.Relays.Query.Shared;
 
 namespace Device.Application.Features.Relays.Query.GetRelayById;
 
-internal sealed class GetRelayByIdHandler(
-    ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetRelayByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetRelayByIdQuery, Result<RelayDto>>
 {
     public async Task<Result<RelayDto>> Handle(
@@ -14,21 +16,20 @@ internal sealed class GetRelayByIdHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQl = """
-            SELECT 
+        const string Sql = """
+            SELECT
                 id, controller_id, power_sensor_id, name,
-                split_part(connection_address, '_', 1) AS ConnectionProtocol, 
-                split_part(connection_address, '_', 2) AS ConnectionAddress, 
-                is_normally_open, purpose, is_active, 
+                split_part(connection_address, '_', 1) AS ConnectionProtocol,
+                split_part(connection_address, '_', 2) AS ConnectionAddress,
+                is_normally_open, purpose, is_active,
                 is_manual, created_at
             FROM relays
             WHERE id = @RelayId AND user_id = @UserId
             LIMIT 1
             """;
 
-        RelayDto? relay = await connection.QueryFirstOrDefaultAsync<RelayDto>(SQl,
+        RelayDto? relay = await connection.QueryFirstOrDefaultAsync<RelayDto>(Sql,
             new { request.RelayId, request.UserId });
-
         if (relay is null)
         {
             return Result<RelayDto>.Failure(Error.NotFound<Relay>(

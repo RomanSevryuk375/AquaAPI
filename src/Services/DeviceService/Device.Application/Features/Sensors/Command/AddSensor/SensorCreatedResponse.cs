@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Application.Features.Sensors.Command.AddSensor;
 
 public sealed record SensorCreatedResponse

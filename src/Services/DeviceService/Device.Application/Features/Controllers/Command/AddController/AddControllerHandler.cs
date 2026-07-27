@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Interfaces;
 using MassTransit;
 
@@ -6,8 +8,7 @@ namespace Device.Application.Features.Controllers.Command.AddController;
 public sealed class AddControllerHandler(
     IUserContext userContext,
     IMyHasher myHasher,
-    IControllerRepository controllerRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<AddControllerCommand, Result<ControllerRegisteredResponse>>
+    IControllerRepository controllerRepository) : IRequestHandler<AddControllerCommand, Result<ControllerRegisteredResponse>>
 {
     public async Task<Result<ControllerRegisteredResponse>> Handle(
         AddControllerCommand request,
@@ -29,7 +30,6 @@ public sealed class AddControllerHandler(
         }
 
         await controllerRepository.AddAsync(controller.Value, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<ControllerRegisteredResponse>.Success(
             new ControllerRegisteredResponse

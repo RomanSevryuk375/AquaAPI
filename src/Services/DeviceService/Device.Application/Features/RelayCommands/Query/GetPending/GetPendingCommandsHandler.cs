@@ -1,12 +1,14 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Interfaces;
 
 namespace Device.Application.Features.RelayCommands.Query.GetPending;
 
-internal sealed class GetPendingCommandsHandler(
-    ISqlConnectionFactory sqlConnectionFactory,
-    IMyHasher hasher)
+internal sealed class GetPendingCommandsHandler(ISqlConnectionFactory sqlConnectionFactory, IMyHasher hasher)
     : IRequestHandler<GetPendingCommandsQuery, Result<IReadOnlyList<RelayCommandDto>>>
 {
     public async Task<Result<IReadOnlyList<RelayCommandDto>>> Handle(
@@ -48,8 +50,8 @@ internal sealed class GetPendingCommandsHandler(
                         AND processed_at < @RetryThreshold))
                 ORDER BY created_at
                 FOR UPDATE SKIP LOCKED)
-            RETURNING 
-                id, controller_id, relay_id, targe_state, status, 
+            RETURNING
+                id, controller_id, relay_id, targe_state, status,
                 expire_at, attempt_count, processed_at, error_message, created_at;
             """;
 

@@ -1,9 +1,9 @@
+using BuildingBlocks.Domain.Constants;
 using Device.Domain.ValueObjects;
 
 namespace Device.Infrastructure.Persistence.Configurations;
 
-public sealed class RelayConfiguration
-    : IEntityTypeConfiguration<Relay>
+public sealed class RelayConfiguration : IEntityTypeConfiguration<Relay>
 {
     public void Configure(EntityTypeBuilder<Relay> builder)
     {

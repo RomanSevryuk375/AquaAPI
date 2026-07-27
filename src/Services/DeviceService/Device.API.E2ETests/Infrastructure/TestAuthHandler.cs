@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using Contracts.Authorization;
+using BuildingBlocks.Presentation.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,12 +19,12 @@ public sealed class TestAuthHandler(
             return Task.FromResult(AuthenticateResult.NoResult());
         }
 
-        Claim[] claims = new[]
-        {
+        Claim[] claims =
+        [
             new Claim(ClaimTypes.NameIdentifier, TestConstants.UserId.ToString()),
             new Claim(CustomClaims.Permissions, SubPermissions.DeviceControl),
             new Claim(CustomClaims.Permissions, SubPermissions.TankRead)
-        };
+        ];
 
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);

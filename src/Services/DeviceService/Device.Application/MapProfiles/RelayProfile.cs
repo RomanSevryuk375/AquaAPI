@@ -1,4 +1,4 @@
-using Contracts.Events.RelayEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Device.Application.Features.Controllers.Query.GetControllerConfig;
 using Device.Application.Features.RelayCommands.Command.SetRelayState;
 using Device.Application.Features.RelayCommands.Query.GetPending;

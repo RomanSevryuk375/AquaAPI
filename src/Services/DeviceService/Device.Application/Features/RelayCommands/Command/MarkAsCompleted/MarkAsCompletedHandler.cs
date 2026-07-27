@@ -1,9 +1,12 @@
-﻿namespace Device.Application.Features.RelayCommands.Command.MarkAsCompleted;
+﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
+namespace Device.Application.Features.RelayCommands.Command.MarkAsCompleted;
 
 internal sealed class MarkAsCompletedHandler(
     IRelayCommandsRepository queueRepository,
-    IRelayRepository relayRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<MarkAsCompletedCommand, Result>
+    IRelayRepository relayRepository) : IRequestHandler<MarkAsCompletedCommand, Result>
 {
     public async Task<Result> Handle(
         MarkAsCompletedCommand request,
@@ -25,15 +28,13 @@ internal sealed class MarkAsCompletedHandler(
                     string.Format(ErrorMessages.RelayNotFound, command.RelayId)));
         }
 
-        existingRelay.SetState(command.TargeState);
+        existingRelay.SetState(command.TargetState);
         if (command.Status == CommandStatus.Completed)
         {
             return Result.Success();
         }
 
         command.MarkAsCompleted();
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

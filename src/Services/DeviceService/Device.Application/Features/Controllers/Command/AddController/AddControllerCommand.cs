@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Device.Application.Features.Controllers.Command.AddController;
 

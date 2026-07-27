@@ -1,4 +1,5 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 
 namespace Device.Application.Features.RelayCommands.Query.GetPending;
 
