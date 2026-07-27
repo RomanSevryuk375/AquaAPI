@@ -1,12 +1,12 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
 
 namespace Control.Application.Features.VacationModes.Commands.CreateVacationMode;
 
-public sealed class CreateVacationModeHandler(
-    IVacationModeRepository vacationModeRepository) : IRequestHandler<CreateVacationModeCommand, Result<Guid>>
+public sealed class CreateVacationModeHandler(IVacationModeRepository vacationModeRepository)
+    : IRequestHandler<CreateVacationModeCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateVacationModeCommand request, CancellationToken cancellationToken)
     {

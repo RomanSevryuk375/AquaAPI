@@ -1,4 +1,6 @@
-using Control.Application.DTOs.Ecosystem;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
+using Control.Application.DTOs.Ecosystems;
 using Control.Application.Features.Ecosystems.Commands.CreateEcosystem;
 using Control.Application.Features.Ecosystems.Commands.DeleteEcosystem;
 using Control.Application.Features.Ecosystems.Commands.UpdateEcosystem;
@@ -34,7 +36,7 @@ public sealed class EcosystemController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        GetEcosystemByIdQuery query = new GetEcosystemByIdQuery { EcosystemId = id, UserId = userContext.UserId };
+        GetEcosystemByIdQuery query = new() { EcosystemId = id, UserId = userContext.UserId };
         Result<EcosystemDto> result = await sender.Send(query, cancellationToken);
 
         return this.ToActionResult(result);
@@ -46,7 +48,7 @@ public sealed class EcosystemController(
         [FromBody] EcosystemRequestDto request,
         CancellationToken cancellationToken)
     {
-        CreateEcosystemCommand command = new CreateEcosystemCommand
+        CreateEcosystemCommand command = new()
         {
             Type = request.Type,
             Name = request.Name,
@@ -74,7 +76,7 @@ public sealed class EcosystemController(
         [FromBody] EcosystemUpdateRequestDto request,
         CancellationToken cancellationToken)
     {
-        UpdateEcosystemCommand command = new UpdateEcosystemCommand
+        UpdateEcosystemCommand command = new()
         {
             EcosystemId = id,
             Name = request.Name,
@@ -92,7 +94,7 @@ public sealed class EcosystemController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        DeleteEcosystemCommand command = new DeleteEcosystemCommand { EcosystemId = id };
+        DeleteEcosystemCommand command = new() { EcosystemId = id };
         Result result = await sender.Send(command, cancellationToken);
 
         return this.ToActionResult(result);

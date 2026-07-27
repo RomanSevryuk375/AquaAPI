@@ -1,14 +1,13 @@
 using AutoMapper;
-using Contracts.Events.EcosystemEvents;
+using BuildingBlocks.IntegrationEvents.Events.Ecosystems;
 using Control.Domain.Events;
 using MassTransit;
 using MediatR;
 
 namespace Control.Application.Handlers;
 
-public sealed class EcosystemDeletedHandler(
-    IPublishEndpoint publishEndpoint,
-    IMapper mapper) : INotificationHandler<EcosystemDeletedDomainEvent>
+public sealed class EcosystemDeletedHandler(IPublishEndpoint publishEndpoint, IMapper mapper)
+    : INotificationHandler<EcosystemDeletedDomainEvent>
 {
     public async Task Handle(
         EcosystemDeletedDomainEvent notification,

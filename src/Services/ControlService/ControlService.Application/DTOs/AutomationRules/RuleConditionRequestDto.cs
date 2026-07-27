@@ -1,12 +1,11 @@
 // Ignore Spelling: Dto
 
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
-namespace Control.Application.DTOs.AutomationRule;
+namespace Control.Application.DTOs.AutomationRules;
 
-public record RuleConditionResponseDto
+public sealed record RuleConditionRequestDto
 {
-    public Guid Id { get; init; }
     public Guid SensorId { get; init; }
     public Condition Condition { get; init; }
     public double Threshold { get; init; }

@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -5,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Control.Infrastructure.Persistence.Repositories;
 
 public sealed class SensorRepository(ControlDbContext dbContext)
-    : BaseRepository<Sensor>(dbContext), ISensorRepository
+    : BaseRepository<ControlDbContext, Sensor>(dbContext), ISensorRepository
 {
     public async Task<bool> ExistsAsync(
         Guid sensorId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await Context.Sensors
             .AsNoTracking()
@@ -18,7 +19,7 @@ public sealed class SensorRepository(ControlDbContext dbContext)
 
     public async Task<IReadOnlyList<Sensor>> GetManyByIdsAsync(
         IEnumerable<Guid> sensorIds,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await Context.Sensors
             .AsNoTracking()

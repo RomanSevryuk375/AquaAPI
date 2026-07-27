@@ -1,6 +1,6 @@
 using AutoMapper;
-using Contracts.Abstractions;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using MassTransit;
 using MediatR;
 

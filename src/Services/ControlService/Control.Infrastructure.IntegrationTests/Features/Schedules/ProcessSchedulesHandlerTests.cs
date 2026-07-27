@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Schedules.Commands.ProcessSchedules;
 
 namespace Control.Infrastructure.IntegrationTests.Features.Schedules;

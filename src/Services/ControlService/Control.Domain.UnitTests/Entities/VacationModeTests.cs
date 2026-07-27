@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Control.Domain.UnitTests.Entities;
 
 public class VacationModeTests

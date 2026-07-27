@@ -1,39 +1,43 @@
-using Contracts.Middlewares;
+using BuildingBlocks.Infrastructure.Extensions;
+using BuildingBlocks.Presentation.Extensions;
 using Control.API.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
+string appName = "AquaSmart.ControlService";
+
 try
 {
-    Log.Information("Starting ControlService application");
+    Log.Information("Starting {Name}", appName);
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-    builder.AddElkLogging();
+
+    builder.AddGlobalElkLogging(appName);
     builder.Services.AddConfiguration(builder.Configuration);
 
     WebApplication app = builder.Build();
-    app.UseGlobalExceptionHandler();
-    app.AddConfiguration();
+
+    app.AddGlobalConfiguration();
 
     await app.RunAsync();
 }
-#pragma warning disable S2139
+#pragma warning disable S2139 
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "ControlService terminated unexpectedly");
+    Log.Fatal(ex, "{Name} terminated unexpectedly", appName);
     throw;
 }
 #pragma warning restore S2139
 finally
 {
-#pragma warning disable S6966 
-    Log.CloseAndFlush();
-#pragma warning restore S6966 
+    await Log.CloseAndFlushAsync();
 }
 
-#pragma warning disable S1118 
-public partial class Program { }
-#pragma warning restore S1118 
+public partial class Program
+{
+    protected Program() { }
+}

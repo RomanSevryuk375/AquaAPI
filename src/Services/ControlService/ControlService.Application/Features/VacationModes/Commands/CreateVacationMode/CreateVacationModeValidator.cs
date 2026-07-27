@@ -9,9 +9,17 @@ public sealed class CreateVacationModeValidator
 {
     public CreateVacationModeValidator()
     {
-        RuleFor(x => x.EcosystemId).NotEmpty();
-        RuleFor(x => x.StartDate).NotEmpty();
-        RuleFor(x => x.EndDate).NotEmpty().GreaterThan(x => x.StartDate);
-        RuleFor(x => x.CalculatedFeed).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.EcosystemId)
+            .NotEmpty();
+
+        RuleFor(x => x.StartDate)
+            .NotEmpty();
+
+        RuleFor(x => x.EndDate)
+            .NotEmpty()
+            .GreaterThan(x => x.StartDate);
+
+        RuleFor(x => x.CalculatedFeed)
+            .GreaterThanOrEqualTo(0);
     }
 }

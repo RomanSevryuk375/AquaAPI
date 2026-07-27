@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Relays.Commands.SyncRelayState;
 
 namespace Control.Application.UnitTests.Features.Relays;

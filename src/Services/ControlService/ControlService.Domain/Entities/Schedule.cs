@@ -1,8 +1,8 @@
 // Ignore Spelling: Cron Validator
 
-using Contracts.Abstractions;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Interfaces;
 using Control.Domain.ValueObjects;
 

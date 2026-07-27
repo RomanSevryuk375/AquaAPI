@@ -1,3 +1,4 @@
+using BuildingBlocks.Presentation.Constants;
 using Control.API.Controllers;
 using Control.Application.Features.Schedules.Commands.CreateSchedule;
 using Control.Application.Features.Schedules.Commands.UpdateSchedule;
@@ -42,7 +43,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -77,7 +78,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -123,7 +124,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -170,7 +171,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -220,7 +221,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         await DbContext.SaveChangesAsync();
 
@@ -265,7 +266,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         await DbContext.SaveChangesAsync();
 
@@ -300,7 +301,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         await DbContext.SaveChangesAsync();
 
@@ -362,7 +363,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -428,7 +429,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -484,7 +485,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithIsEnabled(true)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -536,7 +537,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -584,7 +585,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();
@@ -631,7 +632,7 @@ public class SchedulesControllerTests(E2ETestWebAppFactory factory) : BaseE2ETes
             .WithRelayId(relay.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Relays.Add(relay);
         DbContext.Schedules.Add(schedule);
         await DbContext.SaveChangesAsync();

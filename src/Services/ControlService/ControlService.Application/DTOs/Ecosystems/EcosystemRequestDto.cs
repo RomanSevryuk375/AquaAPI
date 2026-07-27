@@ -1,6 +1,8 @@
-using Contracts.Enums;
+// Ignore Spelling: Dto
 
-namespace Control.Application.DTOs.Ecosystem;
+using BuildingBlocks.Domain.Enums;
+
+namespace Control.Application.DTOs.Ecosystems;
 
 public sealed record EcosystemRequestDto
 {

@@ -1,5 +1,6 @@
 using System.Data;
-using Contracts.Results;
+using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Interfaces;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;

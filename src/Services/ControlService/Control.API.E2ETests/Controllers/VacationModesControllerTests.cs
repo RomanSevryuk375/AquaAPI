@@ -1,3 +1,4 @@
+using BuildingBlocks.Presentation.Constants;
 using Control.Application.Features.VacationModes.Commands.CreateVacationMode;
 using Control.Application.Features.VacationModes.Commands.UpdateVacationMode;
 using Control.Application.Features.VacationModes.Queries.Shared;
@@ -36,7 +37,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -65,7 +66,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -105,7 +106,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -145,7 +146,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -189,7 +190,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var command = new CreateVacationModeCommand
@@ -228,7 +229,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var command = new CreateVacationModeCommand
@@ -257,7 +258,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithUserId(Guid.NewGuid())
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var command = new CreateVacationModeCommand
@@ -311,7 +312,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -368,7 +369,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -416,7 +417,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithIsActive(false)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -457,7 +458,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -497,7 +498,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 
@@ -538,7 +539,7 @@ public class VacationModesControllerTests(E2ETestWebAppFactory factory) : BaseE2
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Vacations.Add(vacation);
         await DbContext.SaveChangesAsync();
 

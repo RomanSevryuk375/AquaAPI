@@ -1,5 +1,5 @@
 using AutoMapper;
-using Control.Application.DTOs.AutomationRule;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.CreateRule;
 using Control.Application.Features.AutomationRules.Queries;
 using Control.Domain.Entities;
@@ -16,6 +16,6 @@ public sealed class AutomationRuleProfile : Profile
 
         CreateMap<AutomationRule, AutomationRuleDto>()
             .ForMember(dest => dest.Conditions,
-            opt => opt.MapFrom(src => src.Conditions));
+                        opt => opt.MapFrom(src => src.Conditions));
     }
 }

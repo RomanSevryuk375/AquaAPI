@@ -1,7 +1,7 @@
 // Ignore Spelling: Cron Validator
 
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Interfaces;
 
 namespace Control.Domain.ValueObjects;
@@ -32,6 +32,6 @@ public sealed record CronSchedule
         return Result<CronSchedule>.Success(new CronSchedule(value));
     }
 
-    public static CronSchedule Load(string value) => new CronSchedule(value);
+    public static CronSchedule Load(string value) => new(value);
     public override string ToString() => Value;
 }

@@ -1,5 +1,5 @@
-using Contracts.Events.RelayEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using Cronos;

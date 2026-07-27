@@ -1,7 +1,7 @@
-using Contracts.Abstractions;
-using Contracts.Constants;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Factories;
 using Control.Domain.ValueObjects;
 

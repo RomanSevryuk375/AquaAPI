@@ -1,7 +1,7 @@
 using System.Reflection;
+using BuildingBlocks.Domain.Abstractions;
 using Control.API.Controllers;
 using Control.Domain.Entities;
-using Control.Domain.Interfaces;
 using Control.Infrastructure.Persistence;
 
 namespace Control.ArchitectureTests;

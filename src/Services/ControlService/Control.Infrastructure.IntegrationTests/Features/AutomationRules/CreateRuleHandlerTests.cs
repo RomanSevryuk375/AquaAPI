@@ -1,6 +1,8 @@
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data.Outbox;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.CreateRule;
-using Control.Infrastructure.Persistence.Outbox;
 
 namespace Control.Infrastructure.IntegrationTests.Features.AutomationRules;
 

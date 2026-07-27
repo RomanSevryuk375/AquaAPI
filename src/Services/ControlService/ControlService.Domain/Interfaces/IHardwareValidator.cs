@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 
 namespace Control.Domain.Interfaces;
 

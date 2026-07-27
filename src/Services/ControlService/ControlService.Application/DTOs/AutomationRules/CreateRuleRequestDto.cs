@@ -1,8 +1,8 @@
 // Ignore Spelling: Dto
 
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
-namespace Control.Application.DTOs.AutomationRule;
+namespace Control.Application.DTOs.AutomationRules;
 
 public sealed record CreateRuleRequestDto
 {

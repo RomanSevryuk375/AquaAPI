@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Control.Application.Features.Sensors.Commands.HandleSensorNoData;
 using Control.Application.Features.Sensors.Commands.SyncSensorCreated;
 using Control.Application.Features.Sensors.Commands.SyncSensorDeleted;

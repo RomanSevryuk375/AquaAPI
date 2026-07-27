@@ -4,7 +4,8 @@ using FluentValidation;
 
 namespace Control.Application.Features.VacationModes.Commands.UpdateVacationMode;
 
-public sealed class UpdateVacationModeValidator : AbstractValidator<UpdateVacationModeCommand>
+public sealed class UpdateVacationModeValidator
+    : AbstractValidator<UpdateVacationModeCommand>
 {
     public UpdateVacationModeValidator()
     {

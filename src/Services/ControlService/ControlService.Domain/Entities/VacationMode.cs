@@ -1,6 +1,6 @@
-using Contracts.Abstractions;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.ValueObjects;
 
 namespace Control.Domain.Entities;

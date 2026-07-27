@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;

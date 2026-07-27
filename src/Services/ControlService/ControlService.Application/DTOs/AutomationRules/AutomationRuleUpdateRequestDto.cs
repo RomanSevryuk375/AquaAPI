@@ -1,10 +1,10 @@
 // Ignore Spelling: Dto
 
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
-namespace Control.Application.DTOs.AutomationRule;
+namespace Control.Application.DTOs.AutomationRules;
 
-public record AutomationRuleUpdateRequestDto
+public sealed record AutomationRuleUpdateRequestDto
 {
     public string Name { get; init; } = string.Empty;
     public Guid RelayId { get; init; }

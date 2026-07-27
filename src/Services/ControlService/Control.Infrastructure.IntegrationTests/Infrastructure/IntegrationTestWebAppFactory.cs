@@ -1,4 +1,5 @@
-using Control.Application.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -83,8 +84,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     }
 }
 
-public sealed class TestUserContext : Control.Application.Interfaces.IUserContext
+public sealed class TestUserContext : IUserContext
 {
-    public Guid UserId { get; set; } = Guid.Parse("22222222-2222-2222-2222-222222222222"); // Defaults to ControlTestConstants.UserId
+    public Guid UserId { get; set; } = Guid.Parse("22222222-2222-2222-2222-222222222222");
     public bool IsAuthenticated { get; set; } = true;
 }

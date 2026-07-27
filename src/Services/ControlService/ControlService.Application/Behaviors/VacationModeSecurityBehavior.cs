@@ -1,9 +1,10 @@
 using System.Data;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Interfaces;
 using Control.Domain.Entities;
-using Control.Domain.Interfaces;
 using Dapper;
 using MediatR;
 

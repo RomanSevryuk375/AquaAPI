@@ -1,5 +1,6 @@
-using Contracts.Enums;
-using Control.Application.DTOs.Ecosystem;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Presentation.Constants;
+using Control.Application.DTOs.Ecosystems;
 using Control.Application.Features.Ecosystems.Queries;
 using Control.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         // Act
@@ -71,7 +72,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         // Act
@@ -107,7 +108,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(Guid.NewGuid())
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         // Act
@@ -165,7 +166,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
         Guid createdId = await response.Content.ReadFromJsonAsync<Guid>();
         createdId.Should().NotBeEmpty();
 
-        Ecosystem? dbEcosystem = await DbContext.Aquariums
+        Ecosystem? dbEcosystem = await DbContext.Ecosystems
             .AsNoTracking().FirstOrDefaultAsync(e => e.Id == createdId);
         dbEcosystem.Should().NotBeNull();
         dbEcosystem!.Name.Value.Should().Be(request.Name);
@@ -221,7 +222,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var request = new EcosystemUpdateRequestDto
@@ -237,7 +238,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        Ecosystem? dbEcosystem = await DbContext.Aquariums
+        Ecosystem? dbEcosystem = await DbContext.Ecosystems
             .AsNoTracking().FirstOrDefaultAsync(e => e.Id == ecosystem.Id);
         dbEcosystem!.Name.Value.Should().Be(request.Name);
         dbEcosystem.Volume!.Value.Should().Be(request.Volume);
@@ -252,7 +253,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var request = new EcosystemUpdateRequestDto
@@ -297,7 +298,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(Guid.NewGuid())
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var request = new EcosystemUpdateRequestDto
@@ -338,7 +339,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         // Act
@@ -348,7 +349,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        Ecosystem? dbEcosystem = await DbContext.Aquariums
+        Ecosystem? dbEcosystem = await DbContext.Ecosystems
             .AsNoTracking().FirstOrDefaultAsync(e => e.Id == ecosystem.Id);
         dbEcosystem.Should().BeNull();
     }
@@ -374,7 +375,7 @@ public class EcosystemsControllerTests(E2ETestWebAppFactory factory) : BaseE2ETe
             .WithUserId(Guid.NewGuid())
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         // Act

@@ -1,12 +1,12 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
 
 namespace Control.Application.Features.VacationModes.Commands.UpdateVacationMode;
 
-public sealed class UpdateVacationModeHandler(
-    IVacationModeRepository vacationModeRepository) : IRequestHandler<UpdateVacationModeCommand, Result>
+public sealed class UpdateVacationModeHandler(IVacationModeRepository vacationModeRepository)
+    : IRequestHandler<UpdateVacationModeCommand, Result>
 {
     public async Task<Result> Handle(UpdateVacationModeCommand request, CancellationToken cancellationToken)
     {

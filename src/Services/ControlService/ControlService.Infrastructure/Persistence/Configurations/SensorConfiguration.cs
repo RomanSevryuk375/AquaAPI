@@ -1,4 +1,4 @@
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using Control.Domain.Entities;
 using Control.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Control.Infrastructure.Persistence.Configurations;
 
-public sealed class SensorConfiguration
-    : IEntityTypeConfiguration<Sensor>
+public sealed class SensorConfiguration : IEntityTypeConfiguration<Sensor>
 {
     public void Configure(EntityTypeBuilder<Sensor> builder)
     {

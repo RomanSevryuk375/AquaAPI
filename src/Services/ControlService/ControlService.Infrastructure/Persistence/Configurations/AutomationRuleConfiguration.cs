@@ -1,4 +1,4 @@
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using Control.Domain.Entities;
 using Control.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;

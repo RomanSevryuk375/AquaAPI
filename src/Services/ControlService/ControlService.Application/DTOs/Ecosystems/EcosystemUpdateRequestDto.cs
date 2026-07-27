@@ -1,4 +1,6 @@
-﻿namespace Control.Application.DTOs.Ecosystem;
+// Ignore Spelling: Dto
+
+namespace Control.Application.DTOs.Ecosystems;
 
 public sealed record EcosystemUpdateRequestDto
 {

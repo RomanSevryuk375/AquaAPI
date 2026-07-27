@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.VacationModes.Queries.GetAllVacationModes;
 using Control.Application.Features.VacationModes.Queries.Shared;
 

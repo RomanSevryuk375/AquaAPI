@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Control.Application.Features.Sensors.Commands.SyncSensorDeleted;
 
