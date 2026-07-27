@@ -8,14 +8,14 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
-string appName = "AquaSmart.DeviceService";
+const string AppName = "AquaSmart.DeviceService";
 try
 {
-    Log.Information("Starting {Name}", appName);
+    Log.Information("Starting {Name}", AppName);
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-    builder.AddGlobalElkLogging(appName);
+    builder.AddGlobalElkLogging(AppName);
     builder.Services.AddConfiguration(builder.Configuration);
 
     WebApplication app = builder.Build();
@@ -27,7 +27,7 @@ try
 #pragma warning disable S2139
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "{Name} terminated unexpectedly", appName);
+    Log.Fatal(ex, "{Name} terminated unexpectedly", AppName);
     throw;
 }
 #pragma warning restore S2139

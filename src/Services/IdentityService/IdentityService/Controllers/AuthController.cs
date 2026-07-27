@@ -1,5 +1,6 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Auth.Commands.Login;
 using IdentityService.Application.Features.Auth.Commands.Logout;
@@ -71,7 +72,7 @@ public class AuthController(ISender sender) : ControllerBase
         if (string.IsNullOrWhiteSpace(refreshToken))
         {
             Request.Cookies.TryGetValue(
-                Contracts.Authorization.Extensions.RefreshTokenCookieName,
+                AuthConstants.RefreshTokenCookieName,
                 out refreshToken);
         }
 
@@ -99,11 +100,11 @@ public class AuthController(ISender sender) : ControllerBase
         Result result = await sender.Send(command, cancellationToken);
 
         Response.Cookies.Delete(
-            Contracts.Authorization.Extensions.AccessTokenCookieName,
+            AuthConstants.AccessTokenCookieName,
             CreateAccessTokenCookieOptions());
 
         Response.Cookies.Delete(
-            Contracts.Authorization.Extensions.RefreshTokenCookieName,
+            AuthConstants.RefreshTokenCookieName,
             CreateRefreshTokenCookieOptions());
 
         return this.ToActionResult(result);
@@ -112,12 +113,12 @@ public class AuthController(ISender sender) : ControllerBase
     private void AppendAuthCookies(LoginResponseDto token)
     {
         Response.Cookies.Append(
-            Contracts.Authorization.Extensions.AccessTokenCookieName,
+            AuthConstants.AccessTokenCookieName,
             token.AccessToken,
             CreateAccessTokenCookieOptions());
 
         Response.Cookies.Append(
-            Contracts.Authorization.Extensions.RefreshTokenCookieName,
+            AuthConstants.RefreshTokenCookieName,
             token.RefreshToken,
             CreateRefreshTokenCookieOptions());
     }

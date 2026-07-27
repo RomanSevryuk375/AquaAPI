@@ -1,10 +1,10 @@
 using System.Data;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using IdentityService.Application.DTOs;
 using IdentityService.Domain.Entities;
-using IdentityService.Domain.Interfaces;
 using MediatR;
 
 namespace IdentityService.Application.Features.Profile.Queries.GetMyProfile;

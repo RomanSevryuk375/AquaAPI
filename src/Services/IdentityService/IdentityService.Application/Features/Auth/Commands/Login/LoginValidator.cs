@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator
 
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using FluentValidation;
 
 namespace IdentityService.Application.Features.Auth.Commands.Login;

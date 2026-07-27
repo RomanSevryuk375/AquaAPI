@@ -1,4 +1,6 @@
-using Contracts.Events.UserEvents;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Users;
 using IdentityService.Application.Features.BackgroundJobs.Commands.ProcessExpiredSubscriptions;
 using MassTransit.Testing;
 

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Auth.Commands.Register;
 using Microsoft.AspNetCore.Identity;
@@ -81,7 +82,7 @@ public class RegisterHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Email.Busy");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.EmailBusy);
         result.Error.Message.Should().Be("Email is already in use.");
 
         await _userManagerMock.DidNotReceive().CreateAsync(Arg.Any<User>(), Arg.Any<string>());
@@ -112,7 +113,7 @@ public class RegisterHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Register.Failure");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.RegisterFailure);
         result.Error.Message.Should().Be("Password requires non-alphanumeric character.");
 
         await _tokenRepoMock.DidNotReceive().AddAsync(Arg.Any<RefreshToken>(), Arg.Any<CancellationToken>());

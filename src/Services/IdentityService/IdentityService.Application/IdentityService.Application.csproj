@@ -10,6 +10,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationEvents\BuildingBlocks.IntegrationEvents.csproj" />
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Presentation\BuildingBlocks.Presentation.csproj" />
         <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj" />
     </ItemGroup>

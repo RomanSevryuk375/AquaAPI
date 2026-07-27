@@ -1,5 +1,5 @@
 using System;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Identity.TestShared.Constants;
 using IdentityService.Domain.Entities;
 

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Identity.TestShared.Constants;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Profile.Queries.GetMyProfile;

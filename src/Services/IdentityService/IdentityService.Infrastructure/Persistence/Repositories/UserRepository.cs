@@ -1,12 +1,13 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Infrastructure.Data;
 using IdentityService.Domain.Entities;
 using IdentityService.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Infrastructure.Repositories;
+namespace IdentityService.Infrastructure.Persistence.Repositories;
 
 public sealed class UserRepository(IdentityDbContext dbContext)
-    : BaseRepository<User>(dbContext), IUserRepository
+    : BaseRepository<IdentityDbContext, User>(dbContext), IUserRepository
 {
     public async Task<IReadOnlyList<User>> GetWithExpiredSubscriptionAsync(
         CancellationToken cancellationToken = default)

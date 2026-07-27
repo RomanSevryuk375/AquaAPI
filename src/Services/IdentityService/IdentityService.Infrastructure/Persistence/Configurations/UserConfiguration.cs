@@ -1,4 +1,4 @@
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using IdentityService.Domain.Entities;
 using IdentityService.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;

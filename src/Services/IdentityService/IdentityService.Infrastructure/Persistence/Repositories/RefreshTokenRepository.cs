@@ -1,11 +1,12 @@
+using BuildingBlocks.Infrastructure.Data;
 using IdentityService.Domain.Entities;
 using IdentityService.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Infrastructure.Repositories;
+namespace IdentityService.Infrastructure.Persistence.Repositories;
 
 public sealed class RefreshTokenRepository(IdentityDbContext dbContext)
-    : BaseRepository<RefreshToken>(dbContext), IRefreshTokenRepository
+    : BaseRepository<IdentityDbContext,RefreshToken>(dbContext), IRefreshTokenRepository
 {
     public async Task DeleteTokensByUserIdAsync(
         Guid userId,

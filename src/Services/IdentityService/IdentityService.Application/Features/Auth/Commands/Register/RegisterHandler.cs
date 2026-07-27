@@ -1,6 +1,6 @@
-using Contracts.Constants;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Enums;
 using IdentityService.Application.DTOs;
 using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -33,8 +34,8 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         content.RefreshToken.Should().NotBeNullOrWhiteSpace();
 
         response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? cookies).Should().BeTrue();
-        cookies.Should().Contain(c => c.Contains("AccessToken="));
-        cookies.Should().Contain(c => c.Contains("RefreshToken="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.AccessTokenCookieName}="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.RefreshTokenCookieName}="));
 
         User? user = await DbContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         user.Should().NotBeNull();
@@ -49,7 +50,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         // Arrange
         User existingUser = new UserBuilder()
             .WithEmail("conflict@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(existingUser, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -98,7 +99,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         // Arrange
         User user = new UserBuilder()
             .WithEmail("login.success@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -121,8 +122,8 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         content.RefreshToken.Should().NotBeNullOrWhiteSpace();
 
         response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? cookies).Should().BeTrue();
-        cookies.Should().Contain(c => c.Contains("AccessToken="));
-        cookies.Should().Contain(c => c.Contains("RefreshToken="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.AccessTokenCookieName}="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.RefreshTokenCookieName}="));
     }
 
     [Fact]
@@ -132,7 +133,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         // Arrange
         User user = new UserBuilder()
             .WithEmail("login.wrongpass@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -175,7 +176,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         // Arrange
         User user = new UserBuilder()
             .WithEmail("refresh.success@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -209,8 +210,8 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         refreshDto.RefreshToken.Should().NotBe(loginDto.RefreshToken);
 
         refreshResponse.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? cookies).Should().BeTrue();
-        cookies.Should().Contain(c => c.Contains("AccessToken="));
-        cookies.Should().Contain(c => c.Contains("RefreshToken="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.AccessTokenCookieName}="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.RefreshTokenCookieName}="));
     }
 
     [Fact]
@@ -220,7 +221,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         // Arrange
         User user = new UserBuilder()
             .WithEmail("refresh.reuse@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -251,7 +252,7 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         secondRefreshResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
 
         string errorContent = await secondRefreshResponse.Content.ReadAsStringAsync();
-        errorContent.Should().Contain("Security.Breach");
+        errorContent.Should().Contain(ErrorCodes.Identity.TokenReuse);
     }
 
     [Fact]
@@ -265,8 +266,8 @@ public class AuthControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? cookies).Should().BeTrue();
-        cookies.Should().Contain(c => c.Contains("AccessToken="));
-        cookies.Should().Contain(c => c.Contains("RefreshToken="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.AccessTokenCookieName}="));
+        cookies.Should().Contain(c => c.Contains($"{AuthConstants.RefreshTokenCookieName}="));
     }
 
     [Fact]

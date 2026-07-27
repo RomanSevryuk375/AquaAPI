@@ -1,5 +1,5 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;

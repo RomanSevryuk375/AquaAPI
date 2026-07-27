@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.Auth.Commands.Logout;
 
 namespace Identity.Application.UnitTests.Features.Auth.Commands.Logout;

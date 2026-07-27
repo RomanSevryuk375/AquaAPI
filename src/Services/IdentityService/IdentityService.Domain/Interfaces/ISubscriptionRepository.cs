@@ -1,8 +1,6 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using IdentityService.Domain.Entities;
 
 namespace IdentityService.Domain.Interfaces;
 
-public interface ISubscriptionRepository : IRepository<Subscription>
-{
-}
+public interface ISubscriptionRepository : IRepository<Subscription>;

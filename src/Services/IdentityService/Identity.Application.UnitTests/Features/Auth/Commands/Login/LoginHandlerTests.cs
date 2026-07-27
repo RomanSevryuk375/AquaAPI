@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Auth.Commands.Login;
 using Microsoft.AspNetCore.Identity;
@@ -65,7 +66,7 @@ public class LoginHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Auth.Invalid");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.InvalidCredentials);
         result.Error.Message.Should().Be("Invalid credentials.");
 
         await _tokenRepoMock.DidNotReceive().AddAsync(Arg.Any<RefreshToken>(), Arg.Any<CancellationToken>());
@@ -87,7 +88,7 @@ public class LoginHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Auth.Invalid");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.InvalidCredentials);
         result.Error.Message.Should().Be("Invalid credentials.");
 
         await _tokenRepoMock.DidNotReceive().AddAsync(Arg.Any<RefreshToken>(), Arg.Any<CancellationToken>());

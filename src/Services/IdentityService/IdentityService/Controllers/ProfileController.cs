@@ -1,6 +1,7 @@
-using Contracts.Authorization;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Profile.Commands.ChangePassword;
 using IdentityService.Application.Features.Profile.Commands.UpdateProfile;

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Auth.Commands.Refresh;
 using Microsoft.AspNetCore.Identity;
@@ -71,7 +72,7 @@ public class RefreshHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Security.Breach");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.TokenReuse);
         result.Error.Message.Should().Be("Token reuse detected. All sessions revoked.");
 
         await _tokenRepoMock.Received(1).DeleteTokensByUserIdAsync(userId, Arg.Any<CancellationToken>());
@@ -156,7 +157,7 @@ public class RefreshHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("User.NotFound");
+        result.Error.Code.Should().Be(ErrorCodes.User.NotFound);
         result.Error.Message.Should().Be("User not found.");
     }
 

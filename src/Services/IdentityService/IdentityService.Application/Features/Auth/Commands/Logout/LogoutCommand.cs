@@ -1,7 +1,5 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace IdentityService.Application.Features.Auth.Commands.Logout;
 
-public sealed record LogoutCommand : ICommand
-{
-}
+public sealed record LogoutCommand : ICommand;

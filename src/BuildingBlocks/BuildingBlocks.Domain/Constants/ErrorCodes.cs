@@ -4,6 +4,11 @@ public static class ErrorCodes
 {
     public const string ValidationError = "Validation.Error";
 
+    public static class User
+    {
+        public const string NotFound = "User.NotFound";
+    }
+
     public static class Identity
     {
         public const string InvalidCredentials = "Auth.Invalid";
