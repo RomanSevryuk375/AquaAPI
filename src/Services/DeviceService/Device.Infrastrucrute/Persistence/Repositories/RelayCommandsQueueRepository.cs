@@ -1,7 +1,11 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Infrastructure.Data;
+
 namespace Device.Infrastructure.Persistence.Repositories;
 
 public sealed class RelayCommandsQueueRepository(DeviceDbContext dbContext)
-    : BaseRepository<RelayCommand>(dbContext), IRelayCommandsRepository
+    : BaseRepository<DeviceDbContext, RelayCommand>(dbContext), IRelayCommandsRepository
 {
     public async Task<IReadOnlyList<RelayCommand>> GetPendingByControllerIdAsync(
         Guid controllerId,

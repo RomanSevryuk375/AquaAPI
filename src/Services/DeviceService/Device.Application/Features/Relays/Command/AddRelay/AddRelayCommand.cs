@@ -1,4 +1,5 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
 using Device.Application.Interfaces;
 
 namespace Device.Application.Features.Relays.Command.AddRelay;

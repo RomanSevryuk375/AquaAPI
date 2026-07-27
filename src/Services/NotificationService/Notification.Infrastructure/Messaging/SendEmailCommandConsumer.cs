@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Notification.Application.InternalEvents;

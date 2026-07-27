@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.VacationModes.Commands.CreateVacationMode;
 using Control.Application.Features.VacationModes.Commands.DeleteVacationMode;
 using Control.Application.Features.VacationModes.Commands.ToggleVacationMode;
@@ -34,7 +36,7 @@ public class VacationModesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        GetVacationModeByIdQuery query = new GetVacationModeByIdQuery
+        GetVacationModeByIdQuery query = new()
         {
             VacationModeId = id,
             UserId = userContext.UserId
@@ -81,7 +83,7 @@ public class VacationModesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        ToggleVacationModeCommand command = new ToggleVacationModeCommand { VacationModeId = id };
+        ToggleVacationModeCommand command = new() { VacationModeId = id };
         Result result = await sender.Send(command, cancellationToken);
 
         return this.ToActionResult(result);
@@ -93,7 +95,7 @@ public class VacationModesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        DeleteVacationModeCommand command = new DeleteVacationModeCommand { VacationModeId = id };
+        DeleteVacationModeCommand command = new() { VacationModeId = id };
         Result result = await sender.Send(command, cancellationToken);
 
         return this.ToActionResult(result);

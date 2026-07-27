@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.Reminders.Commands.DeleteReminder;
 using Notification.Domain.Interfaces;

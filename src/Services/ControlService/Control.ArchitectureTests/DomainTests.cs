@@ -1,6 +1,6 @@
 // Ignore Spelling: Parameterless
 
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Control.ArchitectureTests;
 

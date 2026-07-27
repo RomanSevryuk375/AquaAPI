@@ -1,4 +1,5 @@
-using Contracts.Events.TelemetryEvents;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Features.Telemetry.Commands.AddTelemetryBatch;
 using Telemetry.Application.Interfaces;
@@ -310,7 +311,7 @@ public class AddTelemetryBatchHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Access.Denied");
+        result.Error.Code.Should().Be(ErrorCodes.Security.AccessDenied);
         result.Error.Type.Should().Be(ErrorType.Conflict);
     }
 }

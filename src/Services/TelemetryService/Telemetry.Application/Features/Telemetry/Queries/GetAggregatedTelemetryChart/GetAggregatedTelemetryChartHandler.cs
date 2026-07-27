@@ -1,12 +1,12 @@
 using System.Data;
-using Contracts.Constants;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using MediatR;
 using Telemetry.Application.DTOs;
 using Telemetry.Domain.Entities;
-using Telemetry.Domain.Interfaces;
 
 namespace Telemetry.Application.Features.Telemetry.Queries.GetAggregatedTelemetryChart;
 

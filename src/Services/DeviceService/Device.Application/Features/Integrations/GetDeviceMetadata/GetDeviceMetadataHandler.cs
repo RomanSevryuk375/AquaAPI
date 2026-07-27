@@ -1,4 +1,7 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 
 namespace Device.Application.Features.Integrations.GetDeviceMetadata;
@@ -10,14 +13,14 @@ public sealed class GetDeviceMetadataHandler(ISqlConnectionFactory sqlConnection
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
-            SELECT 
+        const string Sql = """
+            SELECT
                 (SELECT name FROM controllers WHERE id = @ControllerId) AS ControllerName,
                 (SELECT name FROM sensors WHERE id = @SensorId) AS SensorName,
                 (SELECT name FROM relays WHERE id = @RelayId) AS RelayName
             """;
 
-        DeviceMetadataDto? metadata = await connection.QuerySingleOrDefaultAsync<DeviceMetadataDto>(SQL, new
+        DeviceMetadataDto? metadata = await connection.QuerySingleOrDefaultAsync<DeviceMetadataDto>(Sql, new
         {
             ControllerId = request.ControllerId ?? Guid.Empty,
             SensorId = request.SensorId ?? Guid.Empty,

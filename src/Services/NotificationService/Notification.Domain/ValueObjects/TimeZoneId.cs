@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 
 namespace Notification.Domain.ValueObjects;
 

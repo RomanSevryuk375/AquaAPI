@@ -1,5 +1,6 @@
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data.Outbox;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -7,7 +8,6 @@ using Telemetry.Application.Features.BackgroundJobs.Commands.CompressToMinutes;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Events;
 using Telemetry.Infrastructure.IntegrationTests.Infrastructure;
-using Telemetry.Infrastructure.Persistence.Outbox;
 using Telemetry.TestShared.Builders;
 
 namespace Telemetry.Infrastructure.IntegrationTests.Features;

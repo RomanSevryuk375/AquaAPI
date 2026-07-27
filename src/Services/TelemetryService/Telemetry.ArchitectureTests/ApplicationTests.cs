@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator Validators
 
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using FluentValidation;
 using MediatR;
 

@@ -1,6 +1,7 @@
-using Contracts.Authorization;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

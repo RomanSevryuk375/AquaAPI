@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Notification.Application.Features.Alerts.Commands.SendSensorNoDataAlert;
 

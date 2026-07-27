@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using Notification.Domain.Entities;
 
 namespace Notification.Domain.Interfaces;

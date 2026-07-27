@@ -1,6 +1,7 @@
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data.Outbox;
 using Identity.TestShared.Constants;
 using IdentityService.Application.Features.Profile.Commands.UpdateProfile;
-using IdentityService.Infrastructure.Persistence.Outbox;
 
 namespace Identity.Infrastructure.IntegrationTests.Features.Profile.Commands.UpdateProfile;
 

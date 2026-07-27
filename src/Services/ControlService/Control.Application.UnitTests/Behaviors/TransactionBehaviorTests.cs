@@ -1,6 +1,7 @@
-using Contracts.Abstractions;
-using Control.Application.Behaviors;
-using Microsoft.EntityFrameworkCore;
+using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Exceptions;
+using BuildingBlocks.Domain.Results;
 using NSubstitute.ExceptionExtensions;
 
 namespace Control.Application.UnitTests.Behaviors;
@@ -104,8 +105,9 @@ public class TransactionBehaviorTests
     {
         // Arrange
         var behavior = new TransactionBehavior<TestCommand, Result>(_unitOfWorkMock);
-        var dbException = new DbUpdateConcurrencyException("Concurrency conflict");
-        _nextMock.Invoke().ThrowsAsync(dbException);
+
+        var customException = new ConcurrencyException("Concurrency conflict");
+        _nextMock.Invoke().ThrowsAsync(customException);
 
         // Act
         Result result = await behavior.Handle(new TestCommand(), _nextMock, CancellationToken.None);

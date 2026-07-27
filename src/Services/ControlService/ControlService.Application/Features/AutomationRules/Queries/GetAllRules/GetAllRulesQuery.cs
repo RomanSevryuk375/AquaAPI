@@ -1,6 +1,6 @@
-using Contracts.Abstractions;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Interfaces;
 
 namespace Control.Application.Features.AutomationRules.Queries.GetAllRules;

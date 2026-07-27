@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -5,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Control.Infrastructure.Persistence.Repositories;
 
 public sealed class RelayRepository(ControlDbContext dbContext)
-    : BaseRepository<Relay>(dbContext), IRelayRepository
+    : BaseRepository<ControlDbContext, Relay>(dbContext), IRelayRepository
 {
     public async Task<bool> ExistsAsync(
         Guid relayId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await Context.Relays
             .AsNoTracking()
@@ -18,7 +19,7 @@ public sealed class RelayRepository(ControlDbContext dbContext)
 
     public async Task<Relay?> GetByPowerSensorId(
         Guid powerSensorId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await Context.Relays
             .AsNoTracking()
@@ -27,7 +28,7 @@ public sealed class RelayRepository(ControlDbContext dbContext)
 
     public async Task<IReadOnlyList<Relay>> GetManyByIds(
         IEnumerable<Guid> relayIds,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await Context.Relays
             .Where(x => relayIds.Contains(x.Id))

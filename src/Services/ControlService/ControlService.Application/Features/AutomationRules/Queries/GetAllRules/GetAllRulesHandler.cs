@@ -1,15 +1,15 @@
 using System.Data;
-using Contracts.Enums;
-using Contracts.Results;
-using Control.Application.DTOs.AutomationRule;
-using Control.Domain.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using Control.Application.DTOs.AutomationRules;
 using Control.Domain.ValueObjects;
 using Dapper;
 using MediatR;
 
 namespace Control.Application.Features.AutomationRules.Queries.GetAllRules;
 
-internal class GetAllRulesHandler(ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetAllRulesHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetAllRulesQuery, Result<IReadOnlyList<AutomationRuleDto>>>
 {
     public async Task<Result<IReadOnlyList<AutomationRuleDto>>> Handle(

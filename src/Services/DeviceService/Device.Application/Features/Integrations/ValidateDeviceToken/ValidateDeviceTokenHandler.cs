@@ -1,5 +1,7 @@
 
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Interfaces;
 
@@ -13,10 +15,10 @@ public sealed class ValidateDeviceTokenHandler(ISqlConnectionFactory sqlConnecti
         CancellationToken cancellationToken)
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
-        const string SQL = """
-            SELECT 
-                id AS ControllerId, 
-                user_id AS UserId, 
+        const string Sql = """
+            SELECT
+                id AS ControllerId,
+                user_id AS UserId,
                 device_token_hash AS DeviceTokenHash
             FROM controllers
             WHERE mac_address = @MacAddress
@@ -24,7 +26,7 @@ public sealed class ValidateDeviceTokenHandler(ISqlConnectionFactory sqlConnecti
             """;
 
         ControllerAuthData? controllerData = await connection.QuerySingleOrDefaultAsync<ControllerAuthData>(
-            SQL, new { request.MacAddress });
+            Sql, new { request.MacAddress });
 
         if (controllerData is null ||
             !myHasher.Verify(request.RawDeviceToken, controllerData.DeviceTokenHash))

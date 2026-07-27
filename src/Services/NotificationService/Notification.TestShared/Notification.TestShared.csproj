@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
     </ItemGroup>
 </Project>

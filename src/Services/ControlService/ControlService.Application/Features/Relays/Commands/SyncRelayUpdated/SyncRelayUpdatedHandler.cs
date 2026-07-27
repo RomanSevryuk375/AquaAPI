@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Relays.Commands.SyncRelayCreated;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;

@@ -1,6 +1,6 @@
-using Contracts.Abstractions;
-using Contracts.Enums;
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Interfaces;
 
 namespace Control.Application.Features.AutomationRules.Commands.CreateRule;

@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Telemetry.Application.Features.BackgroundJobs.Commands.CompressToMinutes;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Interfaces;

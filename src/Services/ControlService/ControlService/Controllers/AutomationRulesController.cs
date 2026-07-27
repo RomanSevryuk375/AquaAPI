@@ -1,5 +1,7 @@
 using AutoMapper;
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.AddCondition;
 using Control.Application.Features.AutomationRules.Commands.CreateRule;
 using Control.Application.Features.AutomationRules.Commands.DeleteCondition;
@@ -39,7 +41,7 @@ public class AutomationRulesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        GetRuleByIdQuery query = new GetRuleByIdQuery { RuleId = id, UserId = userContext.UserId };
+        GetRuleByIdQuery query = new() { RuleId = id, UserId = userContext.UserId };
         Result<AutomationRuleDto> result = await sender.Send(query, cancellationToken);
 
         return this.ToActionResult(result);
@@ -72,7 +74,7 @@ public class AutomationRulesController(
         [FromBody] AutomationRuleUpdateRequestDto request,
         CancellationToken cancellationToken)
     {
-        UpdateRuleCommand command = new UpdateRuleCommand
+        UpdateRuleCommand command = new()
         {
             RuleId = id,
             Name = request.Name,
@@ -91,7 +93,7 @@ public class AutomationRulesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        DeleteRuleCommand command = new DeleteRuleCommand { RuleId = id };
+        DeleteRuleCommand command = new() { RuleId = id };
         Result result = await sender.Send(command, cancellationToken);
 
         return this.ToActionResult(result);
@@ -105,7 +107,7 @@ public class AutomationRulesController(
         [FromBody] RuleConditionRequestDto request,
         CancellationToken cancellationToken)
     {
-        AddConditionCommand command = new AddConditionCommand
+        AddConditionCommand command = new()
         {
             RuleId = ruleId,
             SensorId = request.SensorId,
@@ -126,7 +128,7 @@ public class AutomationRulesController(
         [FromBody] RuleConditionRequestDto request,
         CancellationToken cancellationToken)
     {
-        UpdateConditionCommand command = new UpdateConditionCommand
+        UpdateConditionCommand command = new()
         {
             RuleId = ruleId,
             ConditionId = conditionId,
@@ -147,7 +149,7 @@ public class AutomationRulesController(
         [FromRoute] Guid conditionId,
         CancellationToken cancellationToken)
     {
-        DeleteConditionCommand command = new DeleteConditionCommand
+        DeleteConditionCommand command = new()
         {
             ConditionId = conditionId,
             RuleId = ruleId,

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Enums;
 using IdentityService.Application.DTOs;
 using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +16,7 @@ public class ProfileControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(
         User user = new UserBuilder()
             .WithId(UserContext.UserId)
             .WithEmail("profile.me@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -56,7 +57,7 @@ public class ProfileControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(
         User user = new UserBuilder()
             .WithId(UserContext.UserId)
             .WithEmail("profile.update@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -90,7 +91,7 @@ public class ProfileControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(
         User user = new UserBuilder()
             .WithId(UserContext.UserId)
             .WithEmail("profile.update.val@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "Password123!");
         createResult.Succeeded.Should().BeTrue();
@@ -116,7 +117,7 @@ public class ProfileControllerTests(E2ETestWebAppFactory factory) : BaseE2ETest(
         User user = new UserBuilder()
             .WithId(UserContext.UserId)
             .WithEmail("profile.pwd@example.com")
-            .WithSubscriptionId(Guid.Parse(Contracts.Enums.SubscriptionType.Free))
+            .WithSubscriptionId(Guid.Parse(SubscriptionType.Free))
             .Build();
         IdentityResult createResult = await UserManager.CreateAsync(user, "CurrentPassword123!");
         createResult.Succeeded.Should().BeTrue();

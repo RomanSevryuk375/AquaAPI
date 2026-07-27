@@ -1,15 +1,15 @@
+using System.Text.Json;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data.Outbox;
 using Control.Domain.Events;
-using Control.Infrastructure.BackgroundJobs;
-using Control.Infrastructure.Persistence.Outbox;
-using Newtonsoft.Json;
 
 namespace Control.Infrastructure.IntegrationTests.BackgroundJobs;
 
-public class OutboxMessageProcessorServiceTests(
-    IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+public class OutboxMessageProcessorServiceTests(IntegrationTestWebAppFactory factory)
+    : BaseIntegrationTest(factory)
 {
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "")]
     public async Task ProcessAsync_ShouldProcessValidMessageSuccessfully()
     {
         // Arrange
@@ -26,16 +26,14 @@ public class OutboxMessageProcessorServiceTests(
             Id = Guid.NewGuid(),
             OccurredOnUtc = DateTime.UtcNow,
             Type = typeof(EcosystemCreatedDomainEvent).AssemblyQualifiedName!,
-            Content = JsonConvert.SerializeObject(
-                domainEvent,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All })
+            Content = JsonSerializer.Serialize(domainEvent)
         };
 
         DbContext.Set<OutboxMessage>().Add(outboxMessage);
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
-        OutboxMessageProcessorService service = GetRequiredService<OutboxMessageProcessorService>();
+        OutboxMessageProcessorService<ControlDbContext> service = GetRequiredService<OutboxMessageProcessorService<ControlDbContext>>();
 
         // Act
         Result result = await service.ProcessAsync(CancellationToken.None);
@@ -69,7 +67,7 @@ public class OutboxMessageProcessorServiceTests(
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
-        OutboxMessageProcessorService service = GetRequiredService<OutboxMessageProcessorService>();
+        OutboxMessageProcessorService<ControlDbContext> service = GetRequiredService<OutboxMessageProcessorService<ControlDbContext>>();
 
         // Act
         Result result = await service.ProcessAsync(CancellationToken.None);
@@ -84,7 +82,8 @@ public class OutboxMessageProcessorServiceTests(
         processedMessage.Should().NotBeNull();
         processedMessage!.ProcessedOnUtc.Should().NotBeNull();
         processedMessage.Error.Should().NotBeNull();
-        processedMessage.Error.Should().Contain("could not be resolved");
+
+        processedMessage.Error.Should().Contain("not found");
     }
 
     [Fact]
@@ -104,7 +103,7 @@ public class OutboxMessageProcessorServiceTests(
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
-        OutboxMessageProcessorService service = GetRequiredService<OutboxMessageProcessorService>();
+        OutboxMessageProcessorService<ControlDbContext> service = GetRequiredService<OutboxMessageProcessorService<ControlDbContext>>();
 
         // Act
         Result result = await service.ProcessAsync(CancellationToken.None);
@@ -138,7 +137,7 @@ public class OutboxMessageProcessorServiceTests(
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
-        OutboxMessageProcessorService service = GetRequiredService<OutboxMessageProcessorService>();
+        OutboxMessageProcessorService<ControlDbContext> service = GetRequiredService<OutboxMessageProcessorService<ControlDbContext>>();
 
         // Act
         Result result = await service.ProcessAsync(CancellationToken.None);
@@ -153,6 +152,7 @@ public class OutboxMessageProcessorServiceTests(
         processedMessage.Should().NotBeNull();
         processedMessage!.ProcessedOnUtc.Should().NotBeNull();
         processedMessage.Error.Should().NotBeNull();
-        processedMessage.Error.Should().Contain("Deserialization returned null");
+
+        processedMessage.Error.Should().Contain("Content is not an IDomainEvent");
     }
 }

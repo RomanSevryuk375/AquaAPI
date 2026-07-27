@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.BackgroundJobs.Commands.ProcessExpiredSubscriptions;
 using MediatR;
 using Quartz;
@@ -11,7 +11,6 @@ public class SubscriptionExpiredCheckerJob(
     public async Task Execute(IJobExecutionContext context)
     {
         Result result = await sender.Send(new ProcessExpiredSubscriptionsCommand(), context.CancellationToken);
-
         if (result.IsFailure)
         {
             throw new JobExecutionException(result.Error.Message);

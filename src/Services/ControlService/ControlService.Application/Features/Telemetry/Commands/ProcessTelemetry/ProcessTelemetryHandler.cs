@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
@@ -12,8 +12,7 @@ public sealed class ProcessTelemetryHandler(
 {
     public async Task<Result> Handle(ProcessTelemetryCommand request, CancellationToken cancellationToken)
     {
-        Sensor? triggerSensor = await sensorRepository.GetByIdAsync(
-            request.SensorId, cancellationToken);
+        Sensor? triggerSensor = await sensorRepository.GetByIdAsync(request.SensorId, cancellationToken);
         if (triggerSensor is null)
         {
             return Result.Failure(Error.NotFound<Sensor>(
@@ -24,7 +23,6 @@ public sealed class ProcessTelemetryHandler(
 
         IReadOnlyList<AutomationRule> rules = await ruleRepository.GetBySensorIdWithConditionsAsync(
             request.SensorId, cancellationToken);
-
         if (rules.Count == 0)
         {
             return Result.Success();

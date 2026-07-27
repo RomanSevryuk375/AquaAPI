@@ -1,5 +1,5 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 
 namespace Control.Domain.ValueObjects;
 

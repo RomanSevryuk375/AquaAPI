@@ -1,11 +1,13 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Features.Sensors.Query.Shared;
 
 namespace Device.Application.Features.Sensors.Query.GetSensorById;
 
-internal sealed class GetSensorByIdHandler(
-    ISqlConnectionFactory sqlConnectionFactory)
+internal sealed class GetSensorByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetSensorByIdQuery, Result<SensorDto>>
 {
     public async Task<Result<SensorDto>> Handle(
@@ -14,11 +16,11 @@ internal sealed class GetSensorByIdHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
-            SELECT 
+        const string Sql = """
+            SELECT
                 id, controller_id, name,
-                split_part(connection_address, '_', 1) AS ConnectionProtocol, 
-                split_part(connection_address, '_', 2) AS ConnectionAddress, 
+                split_part(connection_address, '_', 1) AS ConnectionProtocol,
+                split_part(connection_address, '_', 2) AS ConnectionAddress,
                 type, state, unit, created_at
             FROM sensors
             WHERE id = @SensorId
@@ -26,7 +28,7 @@ internal sealed class GetSensorByIdHandler(
             LIMIT 1
             """;
 
-        SensorDto? sensor = await connection.QueryFirstOrDefaultAsync<SensorDto>(SQL,
+        SensorDto? sensor = await connection.QueryFirstOrDefaultAsync<SensorDto>(Sql,
             new { request.SensorId, request.UserId });
         if (sensor is null)
         {

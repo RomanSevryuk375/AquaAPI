@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.Users.Commands.SyncUserCreated;
 using Notification.Domain.Entities;

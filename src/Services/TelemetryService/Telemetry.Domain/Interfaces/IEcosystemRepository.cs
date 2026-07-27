@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using Telemetry.Domain.Entities;
 
 namespace Telemetry.Domain.Interfaces;

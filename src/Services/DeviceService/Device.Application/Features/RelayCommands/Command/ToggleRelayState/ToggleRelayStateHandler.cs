@@ -1,13 +1,13 @@
+using BuildingBlocks.Domain.Results;
 using Device.Application.Extesions;
 using MassTransit;
 using Microsoft.Extensions.Options;
 
 namespace Device.Application.Features.RelayCommands.Command.ToggleRelayState;
 
-internal sealed class ToggleRelayStateHandler(
+public sealed class ToggleRelayStateHandler(
     IRelayRepository relayRepository,
     IRelayCommandsRepository queueRepository,
-    IUnitOfWork unitOfWork,
     IOptions<DeviceSettings> deviceOptions) : IRequestHandler<ToggleRelayStateCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(
@@ -29,7 +29,6 @@ internal sealed class ToggleRelayStateHandler(
         }
 
         await queueRepository.AddAsync(newCommand.Value, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<bool>.Success(existingRelay.IsActive);
     }

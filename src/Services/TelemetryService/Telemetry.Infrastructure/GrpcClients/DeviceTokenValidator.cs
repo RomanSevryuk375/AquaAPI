@@ -1,8 +1,8 @@
 // Ignore Spelling: Validator
 
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Contracts.gRPC.Devices;
-using Contracts.Results;
 using Grpc.Core;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;

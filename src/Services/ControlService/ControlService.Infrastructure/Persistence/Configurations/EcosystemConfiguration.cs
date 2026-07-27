@@ -1,5 +1,5 @@
 // src/Services/ControlService/ControlService.Infrastructure/Persistence/Configurations/EcosystemConfiguration.cs
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using Control.Domain.Entities;
 using Control.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Quartz;
 using Telemetry.Application.Features.BackgroundJobs.Commands.CompressToHours;

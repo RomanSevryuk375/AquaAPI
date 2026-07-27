@@ -1,8 +1,10 @@
-﻿namespace Device.Application.Features.Controllers.Command.ToggleCommandState;
+﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 
-internal sealed class ToggleControllerStateHandler(
-    IControllerRepository controllerRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<ToggleControllerStateCommand, Result<bool>>
+namespace Device.Application.Features.Controllers.Command.ToggleCommandState;
+
+public sealed class ToggleControllerStateHandler(IControllerRepository controllerRepository)
+    : IRequestHandler<ToggleControllerStateCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(
         ToggleControllerStateCommand request,
@@ -17,8 +19,6 @@ internal sealed class ToggleControllerStateHandler(
         }
 
         controller.ToggleState();
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<bool>.Success(controller.IsOnline);
     }

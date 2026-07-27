@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+
 namespace Device.Domain.Events.ControllerEvents;
 
 public sealed record ControllerNotOnlineDomainEvent : IDomainEvent

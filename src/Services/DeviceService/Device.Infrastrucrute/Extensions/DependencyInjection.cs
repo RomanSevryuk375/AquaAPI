@@ -1,16 +1,14 @@
 // Ignore Spelling: Mq
 
-using Contracts.Options;
-using Device.Application.Interfaces;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Infrastructure.Data.Outbox;
+using BuildingBlocks.Infrastructure.Extensions;
+using BuildingBlocks.IntegrationEvents;
 using Device.Infrastructure.BackgroundJobs;
-using Device.Infrastructure.Factories;
 using Device.Infrastructure.Messaging;
-using Device.Infrastructure.Persistence.Interceptors;
-using Device.Infrastructure.Persistence.Outbox;
 using Device.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Quartz;
 
 namespace Device.Infrastructure.Extensions;
@@ -19,54 +17,31 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        return services
-            .AddRepositories(configuration)
-            .AddQuartzJobs(configuration)
-            .AddRabbitMq(configuration);
+        return services.AddPostgresDbContext<DeviceDbContext>(configuration)
+                       .AddDapper<DeviceDbContext>()
+                       .AddRepositories()
+                       .AddRabbitMq(configuration)
+                       .AddOutboxProcessorQuartzJob<DeviceDbContext>()
+                       .AddQuartzJobs(configuration);
+
     }
 
-    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
-        services.AddScoped<OutboxMessageProcessorService>();
-
         services.AddScoped<IControllerRepository, ControllerRepository>();
-        services.AddScoped<IOutboxRepository, OutboxRepository>();
         services.AddScoped<IRelayRepository, RelayRepository>();
         services.AddScoped<IRelayCommandsRepository, RelayCommandsQueueRepository>();
         services.AddScoped<ISensorRepository, SensorRepository>();
-
-        string? connectionString = configuration.GetConnectionString(nameof(DeviceDbContext));
-        services.AddDbContext<DeviceDbContext>((sp, options) =>
-        {
-            ConvertDomainEventsToOutboxMessagesInterceptor interceptor =
-            sp.GetRequiredService<ConvertDomainEventsToOutboxMessagesInterceptor>();
-
-            options.UseNpgsql(connectionString)
-                   .UseSnakeCaseNamingConvention()
-                   .AddInterceptors(interceptor);
-        });
-        services.AddHealthChecks().AddNpgSql(connectionString!);
-
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IUserContext, UserContext>();
-
-        services.AddHttpContextAccessor();
-
-        services.AddHostedService<DatabaseMigrationService>();
-
+        
         return services;
     }
 
-    public static IServiceCollection AddQuartzJobs(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddQuartzJobs(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection backgroudSection = configuration.GetSection(BackgroundJobsOptions.SectionName);
-        BackgroundJobsOptions backgroudJobOptions = backgroudSection.Get<BackgroundJobsOptions>()
-            ?? throw new InvalidOperationException(DiErrors.BackgroundJobsConfiguration);
-        services.Configure<BackgroundJobsOptions>(backgroudSection);
+        BackgroundJobsOptions backgroundJobOptions = configuration
+            .GetSection(BackgroundJobsOptions.SectionName)
+            .Get<BackgroundJobsOptions>() ?? throw new InvalidOperationException(DiErrors.BackgroundJobsConfiguration);
+
         services.AddQuartz(opts =>
         {
             var deleteCompletedTaskAsync = new JobKey(nameof(DeleteCompletedCommandsJob));
@@ -75,7 +50,7 @@ public static class DependencyInjection
             opts.AddTrigger(triggerOpts => triggerOpts
                 .ForJob(deleteCompletedTaskAsync)
                 .WithIdentity($"{deleteCompletedTaskAsync}-trigger")
-                .WithSimpleSchedule(x => x.WithIntervalInHours(backgroudJobOptions.DeleteCompletedCommandsIntervalHours)
+                .WithSimpleSchedule(x => x.WithIntervalInHours(backgroundJobOptions.DeleteCompletedCommandsIntervalHours)
                 .RepeatForever()));
 
             var offlineControllerJobKey = new JobKey(nameof(CheckOfflineControllersJob));
@@ -84,16 +59,7 @@ public static class DependencyInjection
             opts.AddTrigger(triggerOpts => triggerOpts
                 .ForJob(offlineControllerJobKey)
                 .WithIdentity($"{offlineControllerJobKey}-trigger")
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(backgroudJobOptions.OfflineCheckerIntervalSeconds)
-                .RepeatForever()));
-
-            var outboxKey = new JobKey(nameof(OutboxMessageProcessorJob));
-            opts.AddJob<OutboxMessageProcessorJob>(jobOpts =>
-                jobOpts.WithIdentity(outboxKey));
-            opts.AddTrigger(triggerOpts => triggerOpts
-                .ForJob(outboxKey)
-                .WithIdentity($"{outboxKey}-trigger")
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(backgroudJobOptions.OutboxProcessorIntervalSeconds)
+                .WithSimpleSchedule(x => x.WithIntervalInSeconds(backgroundJobOptions.OfflineCheckerIntervalSeconds)
                 .RepeatForever()));
         });
 
@@ -103,47 +69,12 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection rabbitSection = configuration.GetSection(RabbitMqOptions.SectionName);
-        RabbitMqOptions rabbitOgtions = rabbitSection.Get<RabbitMqOptions>()
-            ?? throw new InvalidOperationException(DiErrors.RabbitMqConfiguration);
-
-        services.Configure<RabbitMqOptions>(rabbitSection);
-
-        services.AddMassTransit(busConfigurator =>
+        return services.AddGlobalMessaging(configuration, cfg =>
         {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
-
-            busConfigurator.AddConsumer<SensorNoDataConsumer>();
-            busConfigurator.AddConsumer<RelayChangeStateConsumer>();
-
-            busConfigurator.UsingRabbitMq((context, configurator) =>
-            {
-                configurator.Host(new Uri(rabbitOgtions.Host), h =>
-                {
-                    h.Username(rabbitOgtions.UserName);
-                    h.Password(rabbitOgtions.Password);
-                });
-
-                configurator.ConfigureEndpoints(context);
-            });
+            cfg.AddConsumer<SensorNoDataConsumer>();
+            cfg.AddConsumer<RelayChangeStateConsumer>();
         });
-        services.AddHealthChecks().AddRabbitMQ(new Uri(rabbitOgtions.Host));
-
-        return services;
     }
-}
-
-internal sealed class DatabaseMigrationService(IServiceProvider serviceProvider) : IHostedService
-{
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        using IServiceScope scope = serviceProvider.CreateScope();
-        DeviceDbContext context = scope.ServiceProvider.GetRequiredService<DeviceDbContext>();
-
-        await context.Database.MigrateAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

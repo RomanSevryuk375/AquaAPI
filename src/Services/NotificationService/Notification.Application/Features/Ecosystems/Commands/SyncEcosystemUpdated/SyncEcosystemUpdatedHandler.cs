@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Notification.Application.Features.Ecosystems.Commands.SyncEcosystemCreated;
 using Notification.Domain.Entities;
@@ -7,7 +7,7 @@ using Notification.Domain.Interfaces;
 
 namespace Notification.Application.Features.Ecosystems.Commands.SyncEcosystemUpdated;
 
-internal class SyncEcosystemUpdatedHandler(
+internal sealed class SyncEcosystemUpdatedHandler(
     IEcosystemRepository ecosystemRepository,
     IMapper mapper, ISender sender)
     : IRequestHandler<SyncEcosystemUpdatedCommand, Result>

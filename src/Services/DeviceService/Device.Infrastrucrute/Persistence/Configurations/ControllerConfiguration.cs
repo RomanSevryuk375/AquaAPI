@@ -1,9 +1,9 @@
+using BuildingBlocks.Domain.Constants;
 using Device.Domain.ValueObjects;
 
 namespace Device.Infrastructure.Persistence.Configurations;
 
-public sealed class ControllerConfiguration
-    : IEntityTypeConfiguration<Controller>
+public sealed class ControllerConfiguration    : IEntityTypeConfiguration<Controller>
 {
     public void Configure(EntityTypeBuilder<Controller> builder)
     {

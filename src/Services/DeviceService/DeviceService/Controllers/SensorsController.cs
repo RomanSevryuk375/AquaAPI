@@ -1,4 +1,9 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using Device.Application.Features.Sensors.Command.AddSensor;
 using Device.Application.Features.Sensors.Command.DeleteSensor;
 using Device.Application.Features.Sensors.Command.UpdateSensor;
@@ -66,7 +71,6 @@ public sealed class SensorsController(
         CancellationToken cancellationToken = default)
     {
         Result<SensorCreatedResponse> result = await sender.Send(command, cancellationToken);
-
         if (result.IsFailure)
         {
             return this.ToActionResult(result);

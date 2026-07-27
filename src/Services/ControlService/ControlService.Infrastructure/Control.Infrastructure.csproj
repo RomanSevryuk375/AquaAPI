@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-  </PropertyGroup>
-
   <ItemGroup>
 	<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
 	<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
@@ -17,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.GrpcContracts\BuildingBlocks.GrpcContracts.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Infrastructure\BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationEvents\BuildingBlocks.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Presentation\BuildingBlocks.Presentation.csproj" />
     <ProjectReference Include="..\ControlService.Application\Control.Application.csproj" />
     <ProjectReference Include="..\ControlService.Domain\Control.Domain.csproj" />
   </ItemGroup>

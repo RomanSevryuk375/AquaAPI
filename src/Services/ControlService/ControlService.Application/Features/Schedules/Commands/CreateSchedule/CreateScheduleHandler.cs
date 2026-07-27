@@ -1,6 +1,7 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
+using MassTransit;
 using MediatR;
 
 namespace Control.Application.Features.Schedules.Commands.CreateSchedule;
@@ -20,7 +21,7 @@ public sealed class CreateScheduleHandler(
         }
 
         Result<Schedule> scheduleResult = Schedule.Create(
-            Guid.NewGuid(), request.EcosystemId, request.RelayId,
+            NewId.NextGuid(), request.EcosystemId, request.RelayId,
             request.CronExpression, cronValidator, request.DurationMin,
             request.IsFadeMode, request.IsEnabled);
 

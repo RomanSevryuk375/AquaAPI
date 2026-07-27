@@ -1,6 +1,6 @@
 // Ignore Spelling: tg
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Notification.Domain.Entities;
 using Notification.TestShared.Constants;
 

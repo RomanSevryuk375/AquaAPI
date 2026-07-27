@@ -1,8 +1,8 @@
 using AutoMapper;
-using Contracts.Events.ControllerEvents;
-using Contracts.Events.SensorEvents;
-using Contracts.Events.TelemetryEvents;
-using Contracts.Events.UserEvents;
+using BuildingBlocks.IntegrationEvents.Events.Controllers;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
+using BuildingBlocks.IntegrationEvents.Events.Users;
 using Notification.Application.Features.Alerts.Commands.SendControllerOfflineAlert;
 using Notification.Application.Features.Alerts.Commands.SendSensorNoDataAlert;
 using Notification.Application.Features.Alerts.Commands.SendSubscriptionAlert;

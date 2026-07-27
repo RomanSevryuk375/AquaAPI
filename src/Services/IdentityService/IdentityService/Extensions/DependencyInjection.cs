@@ -1,10 +1,9 @@
-using Contracts.Authorization;
+using BuildingBlocks.Presentation.Extensions;
 using IdentityService.Application.Extensions;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using IdentityService.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
 
 namespace IdentityService.API.Extensions;
 
@@ -12,39 +11,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpContextAccessor();
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
-        {
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Enter a valid JWT access token."
-            });
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    []
-                }
-            });
-        });
-
+        services.AddGlobalApi(configuration);
         services.AddControllers();
-
-        services.AddServices(configuration);
+        services.AddApplication(configuration);
+        services.AddInfrastructure(configuration);
 
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
@@ -55,10 +25,6 @@ public static class DependencyInjection
         })
         .AddEntityFrameworkStores<IdentityDbContext>()
         .AddDefaultTokenProviders();
-
-        services.AddAquaAuthorizationPolicies();
-        services.AddCommonAuthentication(configuration);
-        services.AddInfrastructure(configuration);
 
         return services;
     }

@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using Control.Application.Interfaces;
 
 namespace Control.Application.Features.Schedules.Commands.DeleteSchedule;

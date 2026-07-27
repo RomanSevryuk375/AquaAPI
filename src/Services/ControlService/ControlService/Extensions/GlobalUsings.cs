@@ -1,7 +1,6 @@
-global using Contracts.Authorization;
-global using Contracts.Constants;
-global using Contracts.Results;
-global using Control.Application.Interfaces;
+global using BuildingBlocks.Presentation.Authorization;
+global using BuildingBlocks.Presentation.Constants;
+global using BuildingBlocks.Presentation.Results;
 global using MediatR;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;

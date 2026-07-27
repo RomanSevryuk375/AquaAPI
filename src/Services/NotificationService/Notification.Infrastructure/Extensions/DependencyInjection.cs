@@ -1,15 +1,13 @@
 // Ignore Spelling: Mq
 
+using BuildingBlocks.Infrastructure.Extensions;
+using BuildingBlocks.IntegrationEvents;
 using Contracts.Options;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Notification.Application.Interfaces;
 using Notification.Domain.Interfaces;
 using Notification.Infrastructure.BackgroundJob;
-using Notification.Infrastructure.Factories;
 using Notification.Infrastructure.GrpcClients;
 using Notification.Infrastructure.Messaging.Alert;
 using Notification.Infrastructure.Messaging.Ecosystem;
@@ -25,43 +23,27 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddRepositories(configuration)
-                .AddMessageProviders(configuration)
+        return services.AddPostgresDbContext<NotificationDbContext>(configuration)
+                .AddDapper<NotificationDbContext>()
+                .AddRepositories()
                 .AddRabbitMq(configuration)
-                .AddQuartzJobs();
+                .AddQuartzJobs()
+                .AddMessageProviders(configuration);
     }
 
-    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IDeviceMetadataEnricher, DeviceMetadataEnricher>();
-
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        string? connectionSting = configuration.GetConnectionString(nameof(NotificationDbContext));
-        services.AddDbContext<NotificationDbContext>(options =>
-        {
-            options.UseNpgsql(connectionSting)
-                   .UseSnakeCaseNamingConvention();
-        });
-        services.AddHealthChecks().AddNpgSql(connectionSting!);
-
         services.AddScoped<IEcosystemRepository, EcosystemRepository>();
         services.AddScoped<IMaintenanceLogRepository, MaintenanceLogRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IReminderRepository, ReminderRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IUserContext, UserContext>();
-        services.AddHttpContextAccessor();
-
-        services.AddHostedService<DatabaseMigrationService>();
-
         return services;
     }
 
-    public static IServiceCollection AddMessageProviders(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddMessageProviders(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<TelegramOptions>(configuration.GetSection(TelegramOptions.SectionName));
         services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
@@ -72,50 +54,27 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection rabbitSection = configuration.GetSection(RabbitMqOptions.SectionName);
-        RabbitMqOptions rabbitOgtions = rabbitSection.Get<RabbitMqOptions>()
-            ?? throw new InvalidOperationException("RabbitMQ configuration is missing.");
-
-        services.Configure<RabbitMqOptions>(rabbitSection);
-
-        services.AddMassTransit(busConfigurator =>
+        return services.AddGlobalMessaging(configuration, cfg =>
         {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
+            cfg.AddConsumer<EcosystemCreatedEventConsumer>();
+            cfg.AddConsumer<EcosystemDeletedEventConsumer>();
+            cfg.AddConsumer<EcosystemUpdatedEventConsumer>();
 
-            busConfigurator.AddConsumer<EcosystemCreatedEventConsumer>();
-            busConfigurator.AddConsumer<EcosystemDeletedEventConsumer>();
-            busConfigurator.AddConsumer<EcosystemUpdatedEventConsumer>();
+            cfg.AddConsumer<UserCreatedEventConsumer>();
+            cfg.AddConsumer<UserUpdatedEventConsumer>();
+            cfg.AddConsumer<SubscriptionDowngradedEventConsumer>();
 
-            busConfigurator.AddConsumer<UserCreatedEventConsumer>();
-            busConfigurator.AddConsumer<UserUpdatedEventConsumer>();
-            busConfigurator.AddConsumer<SubscriptionDowngradedEventConsumer>();
+            cfg.AddConsumer<CriticalTelemetryThresholdAlertEventConsumer>();
 
-            busConfigurator.AddConsumer<CriticalTelemetryThresholdAlertEventConsumer>();
+            cfg.AddConsumer<SensorNoDataAlertEventConsumer>();
 
-            busConfigurator.AddConsumer<SensorNoDataAlertEventConsumer>();
-
-            busConfigurator.AddConsumer<ControllerNotOnlineEventConsumer>();
-
-            busConfigurator.UsingRabbitMq((context, configurator) =>
-            {
-                configurator.Host(new Uri(rabbitOgtions.Host), h =>
-                {
-                    h.Username(rabbitOgtions.UserName);
-                    h.Password(rabbitOgtions.Password);
-                });
-
-                configurator.ConfigureEndpoints(context);
-            });
+            cfg.AddConsumer<ControllerNotOnlineEventConsumer>();
         });
-
-        services.AddHealthChecks().AddRabbitMQ(new Uri(rabbitOgtions.Host));
-
-        return services;
     }
 
-    public static IServiceCollection AddQuartzJobs(this IServiceCollection services)
+    private static IServiceCollection AddQuartzJobs(this IServiceCollection services)
     {
         services.AddQuartz(opts =>
         {
@@ -141,17 +100,4 @@ public static class DependencyInjection
 
         return services;
     }
-}
-
-internal sealed class DatabaseMigrationService(IServiceProvider serviceProvider) : IHostedService
-{
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        using IServiceScope scope = serviceProvider.CreateScope();
-        NotificationDbContext context = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-
-        await context.Database.MigrateAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

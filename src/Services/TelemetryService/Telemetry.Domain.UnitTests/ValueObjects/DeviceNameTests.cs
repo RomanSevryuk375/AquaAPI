@@ -1,5 +1,8 @@
 // Ignore Spelling: Telemetry Device
 
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.Domain.UnitTests.ValueObjects;
 
 public class DeviceNameTests

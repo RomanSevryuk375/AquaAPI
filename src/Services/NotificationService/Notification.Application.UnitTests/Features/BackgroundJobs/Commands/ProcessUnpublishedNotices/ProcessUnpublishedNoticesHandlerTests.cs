@@ -1,5 +1,5 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using MassTransit;
 using Notification.Application.Features.BackgroundJobs.Commands.ProcessUnpublishedNotices;

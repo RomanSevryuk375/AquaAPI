@@ -1,11 +1,11 @@
 using System.Data;
 using System.Text.Json;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using MediatR;
 using Notification.Application.Features.MaintenanceLogs.Queries.GetAllMaintenanceLogs;
 using Notification.Application.Features.MaintenanceLogs.Queries.Shared;
-using Notification.Domain.Interfaces;
 
 namespace Notification.Application.Features.MaintenanceLogs.Queries.GetMaintenanceLogById;
 

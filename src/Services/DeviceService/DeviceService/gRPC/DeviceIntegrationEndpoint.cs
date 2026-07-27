@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Contracts.gRPC.Devices;
 using Device.Application.Features.Integrations.GetDeviceMetadata;
 using Device.Application.Features.Integrations.ValidateDeviceToken;
@@ -22,7 +23,6 @@ public sealed class DeviceIntegrationEndpoint(ISender sender)
         };
 
         Result<DeviceMetadataDto> result = await sender.Send(query, context.CancellationToken);
-
         if (result.IsFailure)
         {
             throw new RpcException(new Status(StatusCode.NotFound, result.Error.Message));

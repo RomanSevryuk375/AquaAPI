@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Schedules.Commands.CreateSchedule;
 using Control.Application.Features.Schedules.Commands.DeleteSchedule;
 using Control.Application.Features.Schedules.Commands.SetIsActiveSchedule;
@@ -34,7 +36,7 @@ public class SchedulesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        GetScheduleByIdQuery query = new GetScheduleByIdQuery
+        GetScheduleByIdQuery query = new()
         {
             ScheduleId = id,
             UserId = userContext.UserId
@@ -82,7 +84,7 @@ public class SchedulesController(
         [FromBody] SetIsActiveScheduleRequest request,
         CancellationToken cancellationToken)
     {
-        SetIsActiveScheduleCommand command = new SetIsActiveScheduleCommand
+        SetIsActiveScheduleCommand command = new()
         {
             ScheduleId = id,
             IsActive = request.IsActive
@@ -98,7 +100,7 @@ public class SchedulesController(
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        DeleteScheduleCommand command = new DeleteScheduleCommand { ScheduleId = id };
+        DeleteScheduleCommand command = new() { ScheduleId = id };
         Result result = await sender.Send(command, cancellationToken);
 
         return this.ToActionResult(result);

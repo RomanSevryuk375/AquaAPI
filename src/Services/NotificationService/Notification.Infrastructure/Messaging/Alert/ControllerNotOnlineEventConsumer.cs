@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.ControllerEvents;
+using BuildingBlocks.IntegrationEvents.Events.Controllers;
 using MediatR;
 using Notification.Application.Features.Alerts.Commands.SendControllerOfflineAlert;
 

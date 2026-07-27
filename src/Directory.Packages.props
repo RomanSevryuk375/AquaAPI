@@ -4,6 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <!-- Code Analyzers -->
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
         <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.27.0.93347" />
         <!-- Microsoft / Entity Framework -->
         <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.25" />
@@ -22,7 +23,7 @@
         <!-- Message Broker / CQRS -->
         <PackageVersion Include="MassTransit" Version="8.2.2" />
         <PackageVersion Include="MassTransit.RabbitMQ" Version="8.2.2" />
-        <PackageVersion Include="MediatR" Version="14.1.0" />
+        <PackageVersion Include="MediatR" Version="14.2.0" />
         <!-- Background Jobs -->
         <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.17.1" />
         <PackageVersion Include="Cronos" Version="0.12.0" />
@@ -30,19 +31,23 @@
         <PackageVersion Include="AutoMapper" Version="16.1.1" />
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
+        <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.11" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
         <!-- API / Gateway / Diagnostics -->
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-        <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+        <PackageVersion Include="Yarp.ReverseProxy" Version="2.1.0" />
         <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
         <PackageVersion Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.2" />
         <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.5.0" />
         <!-- gRPC -->
+        <PackageVersion Include="Google.Protobuf" Version="3.26.1" />
         <PackageVersion Include="Grpc.AspNetCore" Version="2.62.0" />
         <PackageVersion Include="Grpc.Net.Client" Version="2.62.0" />
-        <PackageVersion Include="Google.Protobuf" Version="3.26.1" />
-        <PackageVersion Include="Grpc.Tools" Version="2.62.0"/>
+        <PackageVersion Include="Grpc.Tools" Version="2.62.0" />
         <!-- Tests -->
         <PackageVersion Include="NSubstitute" Version="5.3.0" />
         <PackageVersion Include="FluentAssertions" Version="6.12.0" />

@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator Validators
 
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using FluentValidation;
 using MediatR;
 
@@ -14,8 +14,6 @@ public class ApplicationTests : BaseArchitectureTest
         TestResult result = Types.InAssembly(ApplicationAssembly)
             .That()
             .ImplementInterface(typeof(IRequestHandler<,>))
-            .Or()
-            .ImplementInterface(typeof(IRequestHandler<>))
             .Should()
             .BeSealed()
             .GetResult();
@@ -29,8 +27,6 @@ public class ApplicationTests : BaseArchitectureTest
         TestResult result = Types.InAssembly(ApplicationAssembly)
             .That()
             .ImplementInterface(typeof(IRequestHandler<,>))
-            .Or()
-            .ImplementInterface(typeof(IRequestHandler<>))
             .Should()
             .HaveNameEndingWith("Handler")
             .GetResult();

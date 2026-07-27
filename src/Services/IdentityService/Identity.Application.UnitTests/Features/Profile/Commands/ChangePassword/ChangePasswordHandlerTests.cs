@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.Profile.Commands.ChangePassword;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,7 +38,7 @@ public class ChangePasswordHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("User.NotFound");
+        result.Error.Code.Should().Be(ErrorCodes.User.NotFound);
         result.Error.Message.Should().Be("User not found.");
 
         await _userManagerMock.DidNotReceive()
@@ -94,7 +96,7 @@ public class ChangePasswordHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Password.ChangeFailed");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.PasswordChangeFailed);
         result.Error.Message.Should().Be("Password must contain at least one digit.");
 
         await _userManagerMock.Received(1).ChangePasswordAsync(user, "OldPassword123!", "weakpassword");

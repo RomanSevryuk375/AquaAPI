@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
@@ -5,7 +6,7 @@ using Telemetry.Domain.Interfaces;
 namespace Telemetry.Infrastructure.Persistence.Repositories;
 
 public sealed class EcosystemRepository(TelemetryDbContext dbContext)
-    : BaseRepository<Ecosystem>(dbContext), IEcosystemRepository
+    : BaseRepository<TelemetryDbContext, Ecosystem>(dbContext), IEcosystemRepository
 {
     public async Task<Ecosystem?> GetByControllerIdAsync(
         Guid controllerId,

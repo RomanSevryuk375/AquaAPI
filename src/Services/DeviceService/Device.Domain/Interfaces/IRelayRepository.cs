@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+
 namespace Device.Domain.Interfaces;
 
 public interface IRelayRepository : IRepository<Relay>

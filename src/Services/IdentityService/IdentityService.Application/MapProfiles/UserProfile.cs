@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.UserEvents;
+using BuildingBlocks.IntegrationEvents.Events.Users;
 using IdentityService.Domain.Events;
 
 namespace IdentityService.Application.MapProfiles;

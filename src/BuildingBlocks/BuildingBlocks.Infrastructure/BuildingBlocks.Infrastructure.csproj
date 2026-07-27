@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+        <PackageReference Include="EFCore.NamingConventions" />
+        <PackageReference Include="Dapper" />
+        <PackageReference Include="MassTransit.RabbitMQ" />
+        <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+        <PackageReference Include="Quartz.Extensions.Hosting" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
+        <ProjectReference Include="..\BuildingBlocks.Presentation\BuildingBlocks.Presentation.csproj" />
+    </ItemGroup>
+    
+</Project>

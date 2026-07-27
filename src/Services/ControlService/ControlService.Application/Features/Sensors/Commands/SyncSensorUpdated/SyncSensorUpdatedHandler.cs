@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Sensors.Commands.SyncSensorCreated;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
@@ -15,7 +15,6 @@ public sealed class SyncSensorUpdatedHandler(
     public async Task<Result> Handle(SyncSensorUpdatedCommand request, CancellationToken cancellationToken)
     {
         Sensor? sensor = await sensorRepository.GetByIdAsync(request.SensorId, cancellationToken);
-
         if (sensor is null)
         {
             SyncSensorCreatedCommand createCommand = mapper.Map<SyncSensorCreatedCommand>(request);

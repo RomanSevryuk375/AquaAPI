@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Enums;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.ValueObjects;
 

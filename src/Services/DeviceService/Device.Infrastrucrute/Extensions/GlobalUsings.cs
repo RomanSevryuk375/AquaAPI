@@ -1,5 +1,3 @@
-global using Contracts.Constants;
-global using Contracts.Enums;
 global using Device.Domain.Entities;
 global using Device.Domain.Entities.Sensors;
 global using Device.Domain.Interfaces;

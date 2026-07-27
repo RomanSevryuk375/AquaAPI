@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using MassTransit;
 
 namespace Device.Application.Features.RelayCommands.Command.SetRelayState;
@@ -5,8 +7,7 @@ namespace Device.Application.Features.RelayCommands.Command.SetRelayState;
 public sealed class SetRelayStateHandler(
     IRelayRepository relayRepository,
     IControllerRepository controllerRepository,
-    IRelayCommandsRepository queueRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<SetRelayStateCommand, Result>
+    IRelayCommandsRepository queueRepository) : IRequestHandler<SetRelayStateCommand, Result>
 {
     public async Task<Result> Handle(
         SetRelayStateCommand request,
@@ -28,7 +29,7 @@ public sealed class SetRelayStateHandler(
                 string.Format(ErrorMessages.ControllerNotFound, request.ControllerId)));
         }
 
-        if (UnavalibleCommand(request, existingRelay))
+        if (UnavailableCommand(request, existingRelay))
         {
             return Result.Failure(Error.Conflict<RelayCommand>(
                 ErrorMessages.CommandUnavailable));
@@ -45,7 +46,6 @@ public sealed class SetRelayStateHandler(
         try
         {
             await queueRepository.AddAsync(newCommand.Value, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }
@@ -56,7 +56,7 @@ public sealed class SetRelayStateHandler(
         }
     }
 
-    private static bool UnavalibleCommand(
+    private static bool UnavailableCommand(
         SetRelayStateCommand request, Relay existingRelay)
     {
         return existingRelay.IsManual ||

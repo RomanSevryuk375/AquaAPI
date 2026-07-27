@@ -1,9 +1,9 @@
 using System.Data;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using MediatR;
 using Notification.Application.Features.Reminders.Queries.Shared;
-using Notification.Domain.Interfaces;
 
 namespace Notification.Application.Features.Reminders.Queries.GetAllReminders;
 

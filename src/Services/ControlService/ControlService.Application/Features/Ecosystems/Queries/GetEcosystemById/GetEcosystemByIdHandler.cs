@@ -1,13 +1,13 @@
 using System.Data;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
-using Control.Domain.Interfaces;
 using Dapper;
 using MediatR;
 
 namespace Control.Application.Features.Ecosystems.Queries.GetEcosystemById;
 
-internal class GetEcosystemByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetEcosystemByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetEcosystemByIdQuery, Result<EcosystemDto>>
 {
     public async Task<Result<EcosystemDto>> Handle(

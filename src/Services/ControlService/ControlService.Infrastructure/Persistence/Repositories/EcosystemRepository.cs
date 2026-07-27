@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -5,22 +6,22 @@ using Microsoft.EntityFrameworkCore;
 namespace Control.Infrastructure.Persistence.Repositories;
 
 public sealed class EcosystemRepository(ControlDbContext dbContext)
-    : BaseRepository<Ecosystem>(dbContext), IEcosystemRepository
+    : BaseRepository<ControlDbContext, Ecosystem>(dbContext), IEcosystemRepository
 {
     public async Task<bool> ExistsAsync(
         Guid ecosystemId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        return await Context.Aquariums
+        return await Context.Ecosystems
             .AsNoTracking()
             .AnyAsync(x => x.Id == ecosystemId, cancellationToken);
     }
 
     public async Task<Ecosystem?> GetByControllerIdAsync(
         Guid controllerId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        return await Context.Aquariums
+        return await Context.Ecosystems
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ControllerId == controllerId, cancellationToken);
     }

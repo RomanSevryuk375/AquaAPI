@@ -1,5 +1,5 @@
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Features.Telemetry.Queries.GetAggregatedTelemetryChart;

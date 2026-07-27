@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Device.Domain.Events.ControllerEvents;
 
 namespace Device.Domain.Entities;
@@ -24,14 +27,14 @@ public sealed class Controller : AggregateRoot, IEntity
         CreatedAt = createdAt;
     }
 
-#pragma warning disable CS8618 
+#pragma warning disable CS8618
     private Controller() { }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
     public Guid Id { get; init; }
     public Guid UserId { get; private set; }
     public MacAddress MacAddress { get; private set; }
-    public string DeviceTokenHash { get; private set; } = string.Empty;
+    public string DeviceTokenHash { get; private set; }
     public DeviceName Name { get; private set; }
     public bool IsOnline { get; private set; }
     public DateTime LastSeenAt { get; private set; }
@@ -53,10 +56,10 @@ public sealed class Controller : AggregateRoot, IEntity
             errors.Add(macAddressResult.Error.Message);
         }
 
-        Result<DeviceName> nameResut = DeviceName.Create(rawName);
-        if (nameResut.IsFailure)
+        Result<DeviceName> nameResult = DeviceName.Create(rawName);
+        if (nameResult.IsFailure)
         {
-            errors.Add(nameResut.Error.Message);
+            errors.Add(nameResult.Error.Message);
         }
 
         if (errors.Count != 0)
@@ -70,7 +73,7 @@ public sealed class Controller : AggregateRoot, IEntity
             userId,
             macAddressResult.Value,
             deviceTokenHash.Trim(),
-            nameResut.Value,
+            nameResult.Value,
             isOnline,
             lastSeenAt: DateTime.UtcNow,
             createdAt: DateTime.UtcNow);

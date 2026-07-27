@@ -1,7 +1,6 @@
 namespace Device.Application.Interfaces;
 
-public interface IDeviceBoundRequest
+public interface IDeviceBoundRequest : IControllerBoundRequest
 {
-    public Guid ControllerId { get; }
     public string DeviceToken { get; }
 }

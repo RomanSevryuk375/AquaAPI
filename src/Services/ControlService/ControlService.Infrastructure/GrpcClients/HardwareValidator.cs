@@ -1,8 +1,8 @@
 // Ignore Spelling: Validator
 
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Contracts.gRPC.Devices;
-using Contracts.Results;
 using Control.Domain.Interfaces;
 using Grpc.Core;
 

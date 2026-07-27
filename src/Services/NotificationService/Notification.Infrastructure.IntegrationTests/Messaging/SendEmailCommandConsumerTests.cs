@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using MassTransit;
 using Notification.Application.InternalEvents;

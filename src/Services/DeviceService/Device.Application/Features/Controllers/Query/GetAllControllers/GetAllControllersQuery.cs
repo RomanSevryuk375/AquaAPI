@@ -1,4 +1,5 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Controllers.Query.Shared;
 
 namespace Device.Application.Features.Controllers.Query.GetAllControllers;

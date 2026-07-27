@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.BackgroundJobs.Commands.ProcessReminders;
 using Notification.Domain.Entities;

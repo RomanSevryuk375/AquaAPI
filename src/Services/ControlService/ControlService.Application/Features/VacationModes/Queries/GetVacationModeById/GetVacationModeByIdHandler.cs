@@ -1,14 +1,14 @@
 using System.Data;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.VacationModes.Queries.Shared;
 using Control.Domain.Entities;
-using Control.Domain.Interfaces;
 using Dapper;
 using MediatR;
 
 namespace Control.Application.Features.VacationModes.Queries.GetVacationModeById;
 
-internal sealed class GetVacationModeByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetVacationModeByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetVacationModeByIdQuery, Result<VacationModeDto>>
 {
     public async Task<Result<VacationModeDto>> Handle(

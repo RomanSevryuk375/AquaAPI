@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Contracts.Enums;
-using Contracts.Events.TelemetryEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

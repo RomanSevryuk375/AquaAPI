@@ -1,8 +1,9 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Application.Features.Sensors.Command.DeleteSensor;
 
-internal sealed class DeleteSensorHandler(
-    ISensorRepository sensorRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<DeleteSensorCommand, Result>
+public sealed class DeleteSensorHandler(ISensorRepository sensorRepository)
+    : IRequestHandler<DeleteSensorCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteSensorCommand request,
@@ -14,7 +15,6 @@ internal sealed class DeleteSensorHandler(
         existingSensor!.MarkAsDeleted();
 
         await sensorRepository.DeleteAsync(request.SensorId, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

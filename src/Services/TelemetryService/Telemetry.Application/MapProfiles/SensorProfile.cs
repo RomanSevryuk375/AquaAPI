@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Telemetry.Application.Features.Sensors.Commands.SyncSensorCreated;
 using Telemetry.Application.Features.Sensors.Commands.SyncSensorDeleted;
 using Telemetry.Application.Features.Sensors.Commands.SyncSensorNameChanged;

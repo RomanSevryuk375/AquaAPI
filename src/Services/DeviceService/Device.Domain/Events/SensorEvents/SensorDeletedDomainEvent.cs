@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+
 namespace Device.Domain.Events.SensorEvents;
 
 public sealed record SensorDeletedDomainEvent : IDomainEvent

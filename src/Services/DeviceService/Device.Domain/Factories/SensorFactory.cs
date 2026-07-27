@@ -1,3 +1,7 @@
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Domain.Factories;
 
 public static class SensorFactory
@@ -54,13 +58,12 @@ public static class SensorFactory
             SensorType.Voltage => new VoltageSensor(
                 id, controllerId, userId, nameResult.Value, addressResult.Value, now),
 
-            _ => null!
+            _ => null
         };
 
         if (sensor is null)
         {
-            return Result<Sensor>.Failure(Error.Validation<Sensor>(
-                SensorErrors.InvalidType));
+            return Result<Sensor>.Failure(Error.Validation<Sensor>(SensorErrors.InvalidType));
         }
 
         sensor.RaiseCreatedEvent();

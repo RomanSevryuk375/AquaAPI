@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
@@ -6,7 +7,7 @@ using Telemetry.Domain.ValueObjects;
 namespace Telemetry.Infrastructure.Persistence.Repositories;
 
 public sealed class TelemetryRawDataRepository(TelemetryDbContext dbContext)
-    : BaseRepository<RawTelemetry>(dbContext), ITelemetryRawDataRepository
+    : BaseRepository<TelemetryDbContext, RawTelemetry>(dbContext), ITelemetryRawDataRepository
 {
     public async Task<RawTelemetry?> GetByExternalMessageIdAsync(
         string externalMessageId,

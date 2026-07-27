@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Domain.UnitTests.Entities;
 
 public class ControllerTests

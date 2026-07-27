@@ -1,5 +1,7 @@
 // Ignore Spelling: Dto
 
+using BuildingBlocks.Domain.Enums;
+
 namespace Device.Application.Features.RelayCommands.Query.GetPending;
 
 public sealed record RelayCommandDto

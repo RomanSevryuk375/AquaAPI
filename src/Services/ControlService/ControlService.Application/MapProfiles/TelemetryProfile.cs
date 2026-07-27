@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.TelemetryEvents;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using Control.Application.Features.Telemetry.Commands.ProcessTelemetry;
 
 namespace Control.Application.MapProfiles;

@@ -1,5 +1,7 @@
 // Ignore Spelling: Telemetry
 
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.Domain.UnitTests.ValueObjects;
 
 public class TelemetrySummaryTests

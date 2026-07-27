@@ -1,14 +1,13 @@
 using AutoMapper;
-using Contracts.Events.RelayEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Control.Domain.Events;
 using MassTransit;
 using MediatR;
 
 namespace Control.Application.Handlers;
 
-public sealed class RelayModeChangedHandler(
-    IPublishEndpoint publishEndpoint,
-    IMapper mapper) : INotificationHandler<RelayModeChangedDomainEvent>
+public sealed class RelayModeChangedHandler(IPublishEndpoint publishEndpoint, IMapper mapper)
+    : INotificationHandler<RelayModeChangedDomainEvent>
 {
     public async Task Handle(
         RelayModeChangedDomainEvent notification,

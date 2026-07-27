@@ -1,4 +1,5 @@
 using System.Reflection;
+using BuildingBlocks.Application.Extensions;
 using Control.Application.Behaviors;
 using FluentValidation;
 using MediatR;
@@ -12,18 +13,17 @@ public static class DependencyInjection
     {
         Assembly assembly = typeof(DependencyInjection).Assembly;
 
+        services.AddGlobalBehaviors();
+
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(assembly);
 
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ConditionOwnsSensorBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(VacationModeSecurityBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ScheduleSecurityBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(EcosystemSecurityBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AutomationRuleSecurityBehavior<,>));
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);

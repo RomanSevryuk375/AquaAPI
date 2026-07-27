@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.RelayEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Control.Application.Features.Relays.Commands.SyncRelayCreated;
 using Control.Application.Features.Relays.Commands.SyncRelayDeleted;
 using Control.Application.Features.Relays.Commands.SyncRelayMode;

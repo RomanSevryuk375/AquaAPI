@@ -1,7 +1,7 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Domain.Entities;
-using IdentityService.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

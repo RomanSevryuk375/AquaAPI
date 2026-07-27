@@ -1,6 +1,6 @@
-using Contracts.Enums;
-using Contracts.Events.UserEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Users;
 using IdentityService.Domain.Entities;
 using IdentityService.Domain.Interfaces;
 using MassTransit;
@@ -8,7 +8,7 @@ using MediatR;
 
 namespace IdentityService.Application.Features.BackgroundJobs.Commands.ProcessExpiredSubscriptions;
 
-internal class ProcessExpiredSubscriptionsHandler(
+internal sealed class ProcessExpiredSubscriptionsHandler(
     IUserRepository userRepository,
     IPublishEndpoint publishEndpoint) : IRequestHandler<ProcessExpiredSubscriptionsCommand, Result>
 {

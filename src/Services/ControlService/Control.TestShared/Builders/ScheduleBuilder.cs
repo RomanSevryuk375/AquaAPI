@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Interfaces;
 using Control.TestShared.Constants;
 using NSubstitute;

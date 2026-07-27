@@ -1,4 +1,4 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 using Control.Domain.Interfaces;
 using Control.Domain.Strategies;
 

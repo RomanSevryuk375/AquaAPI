@@ -1,6 +1,6 @@
-using Contracts.Constants;
-using Contracts.Events.TelemetryEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using MassTransit;
 using MediatR;
 using Telemetry.Application.DTOs;

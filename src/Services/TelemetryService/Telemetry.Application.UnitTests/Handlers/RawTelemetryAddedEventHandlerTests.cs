@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.TelemetryEvents;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using MassTransit;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Handlers;

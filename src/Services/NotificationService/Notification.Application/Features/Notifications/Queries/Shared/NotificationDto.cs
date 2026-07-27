@@ -1,6 +1,6 @@
 // Ignore Spelling: Dto
 
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
 namespace Notification.Application.Features.Notifications.Queries.Shared;
 

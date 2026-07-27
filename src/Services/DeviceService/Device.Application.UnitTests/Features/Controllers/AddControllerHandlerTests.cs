@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Controllers.Command.AddController;
 
 namespace Device.Application.UnitTests.Features.Controllers;
@@ -7,12 +9,11 @@ public class AddControllerHandlerTests
     private readonly IUserContext _userContextMock = Substitute.For<IUserContext>();
     private readonly IMyHasher _hasherMock = Substitute.For<IMyHasher>();
     private readonly IControllerRepository _controllerRepoMock = Substitute.For<IControllerRepository>();
-    private readonly IUnitOfWork _unitOfWorkMock = Substitute.For<IUnitOfWork>();
     private readonly AddControllerHandler _handler;
 
     public AddControllerHandlerTests()
     {
-        _handler = new AddControllerHandler(_userContextMock, _hasherMock, _controllerRepoMock, _unitOfWorkMock);
+        _handler = new AddControllerHandler(_userContextMock, _hasherMock, _controllerRepoMock);
     }
 
     [Fact]
@@ -46,8 +47,6 @@ public class AddControllerHandlerTests
             Arg.Is<Controller>(c => c.DeviceTokenHash == expectedHash &&
                                     c.MacAddress.Value == TestConstants.ValidMacAddress),
             Arg.Any<CancellationToken>());
-
-        await _unitOfWorkMock.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -69,6 +68,5 @@ public class AddControllerHandlerTests
         result.IsFailure.Should().BeTrue();
 
         await _controllerRepoMock.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await _unitOfWorkMock.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

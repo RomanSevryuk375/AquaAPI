@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.Profile.Commands.UpdateProfile;
 using Microsoft.AspNetCore.Identity;
 
@@ -32,7 +34,7 @@ public class UpdateProfileHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("User.NotFound");
+        result.Error.Code.Should().Be(ErrorCodes.User.NotFound);
         result.Error.Message.Should().Be("User not found.");
 
         await _userManagerMock.DidNotReceive().UpdateAsync(Arg.Any<User>());
@@ -102,7 +104,7 @@ public class UpdateProfileHandlerTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("Profile.UpdateFailed");
+        result.Error.Code.Should().Be(ErrorCodes.Identity.ProfileUpdateFailed);
         result.Error.Message.Should().Be("Database error updating user.");
 
         await _userManagerMock.Received(1).UpdateAsync(user);

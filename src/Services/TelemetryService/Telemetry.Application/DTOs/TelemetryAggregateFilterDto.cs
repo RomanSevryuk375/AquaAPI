@@ -1,4 +1,4 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
 namespace Telemetry.Application.DTOs;
 

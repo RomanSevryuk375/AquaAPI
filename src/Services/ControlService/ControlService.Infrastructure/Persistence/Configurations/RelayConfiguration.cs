@@ -1,4 +1,4 @@
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using Control.Domain.Entities;
 using Control.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Control.Infrastructure.Persistence.Configurations;
 
-public sealed class RelayConfiguration
-    : IEntityTypeConfiguration<Relay>
+public sealed class RelayConfiguration : IEntityTypeConfiguration<Relay>
 {
     public void Configure(EntityTypeBuilder<Relay> builder)
     {

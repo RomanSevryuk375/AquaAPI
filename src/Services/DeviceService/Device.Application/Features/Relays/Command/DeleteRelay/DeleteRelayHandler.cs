@@ -1,8 +1,9 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Application.Features.Relays.Command.DeleteRelay;
 
-internal sealed class DeleteRelayHandler(
-    IRelayRepository relayRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<DeleteRelayCommand, Result>
+public sealed class DeleteRelayHandler(IRelayRepository relayRepository)
+    : IRequestHandler<DeleteRelayCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteRelayCommand request,
@@ -14,7 +15,6 @@ internal sealed class DeleteRelayHandler(
         existingRelay!.MarkAsDeleted();
 
         await relayRepository.DeleteAsync(request.RelayId, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

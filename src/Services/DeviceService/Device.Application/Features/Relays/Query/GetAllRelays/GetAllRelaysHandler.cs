@@ -1,4 +1,6 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Features.Relays.Query.Shared;
 
@@ -14,12 +16,12 @@ internal sealed class GetAllRelaysHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
-            SELECT 
+        const string Sql = """
+            SELECT
                 id, controller_id, power_sensor_id, name,
-                split_part(connection_address, '_', 1) AS ConnectionProtocol, 
-                split_part(connection_address, '_', 2) AS ConnectionAddress, 
-                is_normally_open, purpose, is_active, 
+                split_part(connection_address, '_', 1) AS ConnectionProtocol,
+                split_part(connection_address, '_', 2) AS ConnectionAddress,
+                is_normally_open, purpose, is_active,
                 is_manual, created_at
             FROM relays
             WHERE user_id = @UserId
@@ -31,7 +33,7 @@ internal sealed class GetAllRelaysHandler(
             LIMIT @Take OFFSET @Skip
             """;
 
-        IEnumerable<RelayDto> relays = await connection.QueryAsync<RelayDto>(SQL,
+        IEnumerable<RelayDto> relays = await connection.QueryAsync<RelayDto>(Sql,
             new
             {
                 request.UserId,

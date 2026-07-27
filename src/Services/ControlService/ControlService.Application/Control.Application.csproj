@@ -8,17 +8,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationEvents\BuildingBlocks.IntegrationEvents.csproj" />
         <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\ControlService.Domain\Control.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Features\Schedules\Queries\GetAllSchedules\" />
-      <Folder Include="Features\Schedules\Queries\GetScheduleById\" />
-      <Folder Include="Features\Schedules\Queries\Shared\" />
-      <Folder Include="Features\VacationModes\Queries\GetAllVacationModes\" />
-      <Folder Include="Features\VacationModes\Queries\GetVacationModeById\" />
-      <Folder Include="Features\VacationModes\Queries\Shared\" />
     </ItemGroup>
 
 </Project>

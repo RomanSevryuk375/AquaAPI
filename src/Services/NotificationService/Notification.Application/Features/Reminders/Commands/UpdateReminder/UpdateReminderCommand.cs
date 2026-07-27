@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using Notification.Application.Interfaces;
 
 namespace Notification.Application.Features.Reminders.Commands.UpdateReminder;

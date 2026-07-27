@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Device.Application.Interfaces;
 
 public interface IDeviceSecurityService

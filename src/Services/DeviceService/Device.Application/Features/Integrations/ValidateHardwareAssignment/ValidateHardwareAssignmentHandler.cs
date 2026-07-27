@@ -1,4 +1,6 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 
 namespace Device.Application.Features.Integrations.ValidateHardwareAssignment;
@@ -12,7 +14,7 @@ public sealed class ValidateHardwareAssignmentHandler(ISqlConnectionFactory sqlC
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
+        const string Sql = """
             SELECT EXISTS (
                 SELECT 1
                 FROM sensors s
@@ -21,7 +23,7 @@ public sealed class ValidateHardwareAssignmentHandler(ISqlConnectionFactory sqlC
             );
             """;
 
-        bool isValid = await connection.QuerySingleAsync<bool>(SQL, new
+        bool isValid = await connection.QuerySingleAsync<bool>(Sql, new
         {
             request.SensorId,
             request.RelayId

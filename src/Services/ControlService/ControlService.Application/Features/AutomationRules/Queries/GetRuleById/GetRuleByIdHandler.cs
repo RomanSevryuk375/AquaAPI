@@ -1,14 +1,15 @@
 using System.Data;
-using Contracts.Results;
-using Control.Application.DTOs.AutomationRule;
-using Control.Domain.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using Control.Application.DTOs.AutomationRules;
 using Control.Domain.ValueObjects;
 using Dapper;
 using MediatR;
 
 namespace Control.Application.Features.AutomationRules.Queries.GetRuleById;
 
-internal class GetRuleByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetRuleByIdHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetRuleByIdQuery, Result<AutomationRuleDto>>
 {
     public async Task<Result<AutomationRuleDto>> Handle(
@@ -83,7 +84,7 @@ internal sealed record RuleConditionFlat
 {
     public Guid Id { get; init; }
     public Guid SensorId { get; init; }
-    public Contracts.Enums.Condition Condition { get; init; }
+    public Condition Condition { get; init; }
     public string ConditionThreshold { get; init; } = string.Empty;
     public Guid AutomationRuleId { get; init; }
 }

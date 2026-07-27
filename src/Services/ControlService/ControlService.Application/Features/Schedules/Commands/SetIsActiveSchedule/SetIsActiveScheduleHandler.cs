@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
@@ -11,8 +11,13 @@ public sealed class SetIsActiveScheduleHandler(IScheduleRepository scheduleRepos
     public async Task<Result> Handle(SetIsActiveScheduleCommand request, CancellationToken cancellationToken)
     {
         Schedule? schedule = await scheduleRepository.GetByIdAsync(request.ScheduleId, cancellationToken);
+        if (schedule is null)
+        {
+            return Result.Failure(Error.NotFound<Schedule>(
+                $"Schedule {request.ScheduleId}not found."));
+        }
 
-        schedule!.SetIsActive(request.IsActive);
+        schedule.SetIsActive(request.IsActive);
 
         return Result.Success();
     }

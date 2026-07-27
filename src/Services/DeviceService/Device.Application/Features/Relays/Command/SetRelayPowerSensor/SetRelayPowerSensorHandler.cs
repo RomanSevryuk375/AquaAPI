@@ -1,9 +1,11 @@
-﻿namespace Device.Application.Features.Relays.Command.SetRelayPowerSensor;
+﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 
-internal sealed class SetRelayPowerSensorHandler(
+namespace Device.Application.Features.Relays.Command.SetRelayPowerSensor;
+
+public sealed class SetRelayPowerSensorHandler(
     IRelayRepository relayRepository,
-    ISensorRepository sensorRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<SetRelayPowerSensorCommand, Result>
+    ISensorRepository sensorRepository) : IRequestHandler<SetRelayPowerSensorCommand, Result>
 {
     public async Task<Result> Handle(
         SetRelayPowerSensorCommand request,
@@ -27,8 +29,6 @@ internal sealed class SetRelayPowerSensorHandler(
         }
 
         existingRelay.SetPowerSensor(powerSensor);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

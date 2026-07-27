@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.UserEvents;
+using BuildingBlocks.IntegrationEvents.Events.Users;
 using MediatR;
 using Notification.Application.Features.Alerts.Commands.SendSubscriptionAlert;
 

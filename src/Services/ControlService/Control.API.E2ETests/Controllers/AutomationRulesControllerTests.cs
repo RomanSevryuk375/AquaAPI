@@ -1,5 +1,6 @@
-using Contracts.Enums;
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Presentation.Constants;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Queries;
 using Control.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -35,12 +36,13 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
         // Act
-        HttpResponseMessage response = await Client.GetAsync($"{ApiConstants.Routes.AutomationRules}?ecosystemId={ecosystem.Id}");
+        HttpResponseMessage response = await Client.GetAsync(
+            $"{ApiConstants.Routes.AutomationRules}?ecosystemId={ecosystem.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -62,7 +64,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -102,7 +104,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -143,7 +145,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -189,7 +191,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithUserId(ControlTestConstants.UserId)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var request = new CreateRuleRequestDto
@@ -253,7 +255,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithUserId(Guid.NewGuid())
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         await DbContext.SaveChangesAsync();
 
         var request = new CreateRuleRequestDto
@@ -310,7 +312,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -348,7 +350,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -402,7 +404,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -450,7 +452,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -490,7 +492,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         await DbContext.SaveChangesAsync();
 
@@ -541,7 +543,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         await DbContext.SaveChangesAsync();
@@ -592,7 +594,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystemSensor.Id)
             .Build();
 
-        DbContext.Aquariums.AddRange(ecosystemRule, ecosystemSensor);
+        DbContext.Ecosystems.AddRange(ecosystemRule, ecosystemSensor);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         await DbContext.SaveChangesAsync();
@@ -672,7 +674,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         await DbContext.SaveChangesAsync();
@@ -737,7 +739,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithSensorId(sensor.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         DbContext.RuleConditions.Add(condition);
@@ -807,7 +809,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithSensorId(sensor.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         DbContext.RuleConditions.Add(condition);
@@ -866,7 +868,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithSensorId(sensor.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         DbContext.RuleConditions.Add(condition);
@@ -918,7 +920,7 @@ public class AutomationRulesControllerTests(E2ETestWebAppFactory factory) : Base
             .WithSensorId(sensor.Id)
             .Build();
 
-        DbContext.Aquariums.Add(ecosystem);
+        DbContext.Ecosystems.Add(ecosystem);
         DbContext.Rules.Add(rule);
         DbContext.Sensors.Add(sensor);
         DbContext.RuleConditions.Add(condition);

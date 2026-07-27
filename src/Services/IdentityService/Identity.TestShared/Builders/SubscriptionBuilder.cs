@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Identity.TestShared.Constants;
 using IdentityService.Domain.Entities;
 

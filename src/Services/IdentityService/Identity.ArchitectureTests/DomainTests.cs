@@ -1,7 +1,7 @@
 // Ignore Spelling: Parameterless
 
 using System.Reflection;
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Identity.ArchitectureTests;
 

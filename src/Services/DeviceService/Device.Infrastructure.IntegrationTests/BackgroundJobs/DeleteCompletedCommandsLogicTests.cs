@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Device.Application.Features.RelayCommands.Command.DeleteCompleted;
 
 namespace Device.Infrastructure.IntegrationTests.BackgroundJobs;

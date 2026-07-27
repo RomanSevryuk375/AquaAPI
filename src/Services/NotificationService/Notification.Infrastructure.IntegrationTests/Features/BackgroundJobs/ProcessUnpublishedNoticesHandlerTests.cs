@@ -1,13 +1,13 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
+using MassTransit.Testing;
 using Microsoft.EntityFrameworkCore;
 using Notification.Application.Features.BackgroundJobs.Commands.ProcessUnpublishedNotices;
 using Notification.Application.InternalEvents;
 using Notification.Domain.Entities;
 using Notification.Infrastructure.IntegrationTests.Infrastructure;
 using Notification.TestShared.Builders;
-using NSubstitute;
 using DomainNotification = Notification.Domain.Entities.Notification;
 
 namespace Notification.Infrastructure.IntegrationTests.Features.BackgroundJobs;
@@ -43,6 +43,7 @@ public class ProcessUnpublishedNoticesHandlerTests(IntegrationTestWebAppFactory 
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
+        ITestHarness harness = GetRequiredService<ITestHarness>();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
@@ -60,12 +61,12 @@ public class ProcessUnpublishedNoticesHandlerTests(IntegrationTestWebAppFactory 
         updatedNotification.FailureReason.Should().BeNull();
         updatedNotification.RetryCount.Should().Be(0);
 
-        await Factory.PublishEndpointMock.Received(1).Publish(
-            Arg.Is<SendEmailCommand>(cmd =>
-                cmd.NotificationId == notificationId &&
-                cmd.Email == "user@example.com" &&
-                cmd.Message == "Success notification message"),
-            Arg.Any<CancellationToken>());
+        bool published = await harness.Published.Any<SendEmailCommand>(x =>
+            x.Context.Message.NotificationId == notificationId &&
+            x.Context.Message.Email == "user@example.com" &&
+            x.Context.Message.Message == "Success notification message");
+
+        published.Should().BeTrue();
     }
 
     [Fact]
@@ -95,6 +96,7 @@ public class ProcessUnpublishedNoticesHandlerTests(IntegrationTestWebAppFactory 
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
+        ITestHarness harness = GetRequiredService<ITestHarness>();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
@@ -112,6 +114,7 @@ public class ProcessUnpublishedNoticesHandlerTests(IntegrationTestWebAppFactory 
         updatedNotification.RetryCount.Should().Be(1);
         updatedNotification.FailureReason.Should().Be(ErrorMessages.NotificationProvider.UserDisabledOrNotFound);
 
-        await Factory.PublishEndpointMock.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
+        bool published = await harness.Published.Any<SendEmailCommand>(x => x.Context.Message.NotificationId == notificationId);
+        published.Should().BeFalse();
     }
 }

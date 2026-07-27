@@ -1,5 +1,7 @@
-using Contracts.Events.RelayEvents;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Control.Application.Features.Sensors.Commands.HandleSensorNoData;
 using MassTransit;
 

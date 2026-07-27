@@ -1,6 +1,11 @@
-using IdentityService.Domain.Interfaces;
+using BuildingBlocks.Domain.Abstractions;
+using IdentityService.Infrastructure;
 using MassTransit;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
 namespace Identity.Infrastructure.IntegrationTests.Infrastructure;
@@ -36,28 +41,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         builder.UseSetting("RabbitMqOptions:UserName", "guest");
         builder.UseSetting("RabbitMqOptions:Password", "guest");
 
-        builder.ConfigureServices(services =>
+        builder.ConfigureTestServices(services =>
         {
-            var massTransitDescriptors = services.Where(d =>
-                d.ServiceType.Namespace?.StartsWith("MassTransit") == true ||
-                d.ImplementationType?.Namespace?.StartsWith("MassTransit") == true).ToList();
-
-            foreach (ServiceDescriptor descriptor in massTransitDescriptors)
+            services.AddMassTransitTestHarness(x =>
             {
-                services.Remove(descriptor);
-            }
-
-            services.AddMassTransit(x =>
-            {
-                x.AddDelayedMessageScheduler();
                 x.UsingInMemory((context, cfg) =>
                 {
-                    cfg.UseDelayedMessageScheduler();
                     cfg.ConfigureEndpoints(context);
                 });
             });
-
-            services.AddMassTransitTestHarness();
 
             ServiceDescriptor? quartzHostedService = services.FirstOrDefault(d =>
                 d.ImplementationType?.Name == "QuartzHostedService");

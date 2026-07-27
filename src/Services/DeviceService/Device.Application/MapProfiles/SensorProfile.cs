@@ -1,5 +1,5 @@
-using Contracts.Events.RelayEvents;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Device.Application.Features.Controllers.Query.GetControllerConfig;
 using Device.Application.Features.Sensors.Command.AddSensor;
 using Device.Application.Features.Sensors.Command.SetSensorState;

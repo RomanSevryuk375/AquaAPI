@@ -1,4 +1,5 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.Reminders.Commands.CompleteReminder;
 using Notification.Domain.Entities;

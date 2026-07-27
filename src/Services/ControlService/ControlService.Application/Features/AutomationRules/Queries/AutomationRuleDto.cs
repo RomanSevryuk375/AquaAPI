@@ -1,7 +1,7 @@
 // Ignore Spelling: Dto
 
-using Contracts.Enums;
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Enums;
+using Control.Application.DTOs.AutomationRules;
 
 namespace Control.Application.Features.AutomationRules.Queries;
 

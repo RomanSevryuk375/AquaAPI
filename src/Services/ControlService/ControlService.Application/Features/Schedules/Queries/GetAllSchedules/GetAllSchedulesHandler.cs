@@ -1,13 +1,13 @@
 using System.Data;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Control.Application.Features.Schedules.Queries.Shared;
-using Control.Domain.Interfaces;
 using Dapper;
 using MediatR;
 
 namespace Control.Application.Features.Schedules.Queries.GetAllSchedules;
 
-internal sealed class GetAllSchedulesHandler(ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetAllSchedulesHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetAllSchedulesQuery, Result<IReadOnlyList<ScheduleDto>>>
 {
     public async Task<Result<IReadOnlyList<ScheduleDto>>> Handle(

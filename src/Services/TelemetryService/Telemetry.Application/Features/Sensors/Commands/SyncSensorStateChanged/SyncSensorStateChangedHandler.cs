@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;

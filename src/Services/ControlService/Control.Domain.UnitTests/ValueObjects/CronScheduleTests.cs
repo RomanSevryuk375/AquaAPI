@@ -1,5 +1,7 @@
 // Ignore Spelling: Cron
 
+using BuildingBlocks.Domain.Results;
+
 namespace Control.Domain.UnitTests.ValueObjects;
 
 public class CronScheduleTests

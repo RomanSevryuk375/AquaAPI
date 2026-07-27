@@ -1,5 +1,7 @@
 // Ignore Spelling: Validator
 
+using BuildingBlocks.Domain.Constants;
+
 namespace Device.Application.Features.Relays.Command.UpdateRelay;
 
 internal sealed class UpdateRelayValidator : AbstractValidator<UpdateRelayCommand>

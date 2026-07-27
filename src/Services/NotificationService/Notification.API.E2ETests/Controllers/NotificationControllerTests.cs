@@ -1,3 +1,4 @@
+using BuildingBlocks.Presentation.Constants;
 using Microsoft.EntityFrameworkCore;
 using Notification.Application.Features.Notifications.Queries.Shared;
 using Notification.Domain.Entities;

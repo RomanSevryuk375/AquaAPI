@@ -1,7 +1,4 @@
 global using System;
-global using Contracts.Constants;
-global using Contracts.Enums;
-global using Contracts.Results;
 global using Control.Domain.Entities;
 global using Control.Domain.Events;
 global using Control.Domain.Interfaces;

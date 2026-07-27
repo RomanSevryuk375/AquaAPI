@@ -1,5 +1,7 @@
 // Ignore Spelling: Validator
 
+using BuildingBlocks.Domain.Constants;
+
 namespace Device.Application.Features.Sensors.Command.AddSensor;
 
 internal sealed class AddSensorValidator

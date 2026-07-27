@@ -1,4 +1,5 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using IdentityService.Domain.Interfaces;
 using MediatR;
 

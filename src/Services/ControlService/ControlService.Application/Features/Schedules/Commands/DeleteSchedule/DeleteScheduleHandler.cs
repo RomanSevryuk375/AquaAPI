@@ -1,11 +1,11 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Control.Domain.Interfaces;
 using MediatR;
 
 namespace Control.Application.Features.Schedules.Commands.DeleteSchedule;
 
-public sealed class DeleteScheduleHandler(
-    IScheduleRepository scheduleRepository) : IRequestHandler<DeleteScheduleCommand, Result>
+public sealed class DeleteScheduleHandler(IScheduleRepository scheduleRepository)
+    : IRequestHandler<DeleteScheduleCommand, Result>
 {
     public async Task<Result> Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
     {

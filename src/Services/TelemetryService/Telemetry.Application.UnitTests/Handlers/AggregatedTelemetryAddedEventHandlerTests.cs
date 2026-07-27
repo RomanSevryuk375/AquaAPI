@@ -1,4 +1,5 @@
 using AutoMapper;
+using BuildingBlocks.Domain.Enums;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Handlers;
 using Telemetry.Application.Interfaces;

@@ -1,11 +1,12 @@
 using System.Data;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using Device.Application.Features.Controllers.Query.Shared;
 
 namespace Device.Application.Features.Controllers.Query.GetAllControllers;
 
-internal class GetAllControllersHandler(
-    ISqlConnectionFactory sqlConnectionFactory)
+public sealed class GetAllControllersHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IRequestHandler<GetAllControllersQuery, Result<IReadOnlyList<ControllerDto>>>
 {
     public async Task<Result<IReadOnlyList<ControllerDto>>> Handle(
@@ -14,7 +15,7 @@ internal class GetAllControllersHandler(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = """
+        const string Sql = """
             SELECT id, mac_address, name, is_online, last_seen_at
             FROM controllers
             WHERE user_id = @UserId
@@ -26,7 +27,7 @@ internal class GetAllControllersHandler(
             LIMIT @Take OFFSET @Skip
             """;
 
-        IEnumerable<ControllerDto> controllerList = await connection.QueryAsync<ControllerDto>(SQL,
+        IEnumerable<ControllerDto> controllerList = await connection.QueryAsync<ControllerDto>(Sql,
             new
             {
                 request.UserId,

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Results;
 using Device.Application.Interfaces;
 
 namespace Device.Infrastructure.IntegrationTests.BackgroundJobs;

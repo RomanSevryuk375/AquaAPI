@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using MassTransit;
 using MediatR;
 using Telemetry.Domain.Events;

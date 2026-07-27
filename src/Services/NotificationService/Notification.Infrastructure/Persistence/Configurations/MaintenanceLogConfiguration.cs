@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

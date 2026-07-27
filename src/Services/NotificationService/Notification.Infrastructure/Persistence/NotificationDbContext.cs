@@ -5,14 +5,16 @@ namespace Notification.Infrastructure.Persistence;
 
 public sealed class NotificationDbContext(DbContextOptions<NotificationDbContext> options) : DbContext(options)
 {
-    public DbSet<Ecosystem> Aquariums { get; set; }
-    public DbSet<MaintenanceLog> MaintenanceLogs { get; set; }
-    public DbSet<Domain.Entities.Notification> Notifications { get; set; }
-    public DbSet<Reminder> Reminders { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<Ecosystem> Aquariums =>  Set<Ecosystem>();
+    public DbSet<MaintenanceLog> MaintenanceLogs =>  Set<MaintenanceLog>();
+    public DbSet<Domain.Entities.Notification> Notifications =>  Set<Domain.Entities.Notification>();
+    public DbSet<Reminder> Reminders =>  Set<Reminder>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<BuildingBlocks.Infrastructure.Data.Outbox.OutboxMessage> OutboxMessages => Set<BuildingBlocks.Infrastructure.Data.Outbox.OutboxMessage>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(NotificationDbContext).Assembly);
+
+        base.OnModelCreating(modelBuilder);
     }
 }

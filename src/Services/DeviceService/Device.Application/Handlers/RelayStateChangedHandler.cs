@@ -1,4 +1,4 @@
-using Contracts.Events.RelayEvents;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
 using Device.Domain.Events.RelayEvents;
 using MassTransit;
 

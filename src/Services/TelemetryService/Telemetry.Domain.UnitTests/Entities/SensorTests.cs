@@ -1,5 +1,9 @@
 // Ignore Spelling: Telemetry
 
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 #pragma warning disable IDE1006 // Naming Styles
 
 namespace Telemetry.Domain.UnitTests.Entities;

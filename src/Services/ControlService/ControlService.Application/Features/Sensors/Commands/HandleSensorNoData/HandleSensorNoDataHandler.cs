@@ -1,7 +1,7 @@
-using Contracts.Enums;
-using Contracts.Events.RelayEvents;
-using Contracts.Events.SensorEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.IntegrationEvents.Events.Relays;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MassTransit;

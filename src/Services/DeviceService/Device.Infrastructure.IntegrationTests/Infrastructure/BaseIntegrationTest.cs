@@ -10,6 +10,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     private readonly IServiceScope _scope;
     protected readonly ISender Sender;
     protected readonly DeviceDbContext DbContext;
+    protected readonly TestUserContext UserContext;
     private readonly string _dbConnectionString;
 
     private Respawner _respawner = default!;
@@ -20,8 +21,14 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
 
         Sender = _scope.ServiceProvider.GetRequiredService<ISender>();
         DbContext = _scope.ServiceProvider.GetRequiredService<DeviceDbContext>();
+        UserContext = _scope.ServiceProvider.GetRequiredService<TestUserContext>();
 
         _dbConnectionString = DbContext.Database.GetConnectionString()!;
+    }
+
+    protected T GetRequiredService<T>() where T : notnull
+    {
+        return _scope.ServiceProvider.GetRequiredService<T>();
     }
 
     public async Task InitializeAsync()

@@ -1,4 +1,6 @@
-using Control.Application.DTOs.AutomationRule;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.CreateRule;
 
 namespace Control.Application.UnitTests.Features.AutomationRules;
