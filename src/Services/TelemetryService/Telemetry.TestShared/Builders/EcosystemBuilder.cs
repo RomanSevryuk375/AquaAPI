@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.TestShared.Builders;
 
 public class EcosystemBuilder

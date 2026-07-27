@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 
 namespace Telemetry.Domain.Entities;
 

@@ -21,5 +21,4 @@
     <Project Path="../Control.Infrastructure.IntegrationTests/Control.Infrastructure.IntegrationTests.csproj" Id="eeb6c682-690e-4403-9442-fbe7742a58e1" />
     <Project Path="../Control.TestShared/Control.TestShared.csproj" Id="1abb8072-9e7f-48fe-b735-88101859c518" />
   </Folder>
-  <Project Path="../../../Contracts/Contracts/Contracts.csproj" />
 </Solution>

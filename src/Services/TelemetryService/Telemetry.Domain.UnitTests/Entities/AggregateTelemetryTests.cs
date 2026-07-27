@@ -1,5 +1,8 @@
 // Ignore Spelling: Telemetry
 
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.Domain.UnitTests.Entities;
 
 public class AggregateTelemetryTests

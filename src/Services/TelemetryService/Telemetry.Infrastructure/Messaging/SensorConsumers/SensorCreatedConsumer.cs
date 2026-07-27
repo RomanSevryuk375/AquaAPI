@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.SensorEvents;
+using BuildingBlocks.IntegrationEvents.Events.Sensors;
 using MediatR;
 using Telemetry.Application.Features.Sensors.Commands.SyncSensorCreated;
 

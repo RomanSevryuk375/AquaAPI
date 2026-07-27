@@ -1,5 +1,6 @@
-using Contracts.Events.TelemetryEvents;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Infrastructure.Data.Outbox;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -7,7 +8,6 @@ using Telemetry.Application.Features.Telemetry.Commands.AddTelemetryBatch;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Events;
 using Telemetry.Infrastructure.IntegrationTests.Infrastructure;
-using Telemetry.Infrastructure.Persistence.Outbox;
 using Telemetry.TestShared.Builders;
 using Telemetry.TestShared.Constants;
 

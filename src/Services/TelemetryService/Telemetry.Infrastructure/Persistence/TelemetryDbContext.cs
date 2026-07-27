@@ -1,16 +1,21 @@
+using BuildingBlocks.Infrastructure.Data.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Telemetry.Domain.Entities;
-using Telemetry.Infrastructure.Persistence.Outbox;
 
 namespace Telemetry.Infrastructure.Persistence;
 
 public class TelemetryDbContext(DbContextOptions<TelemetryDbContext> options) : DbContext(options)
 {
-    public DbSet<Ecosystem> Ecosystems { get; set; }
-    public DbSet<Sensor> Sensors { get; set; }
-    public DbSet<AggregateTelemetry> TelemetryAggregateData { get; set; }
-    public DbSet<RawTelemetry> TelemetryRawData { get; set; }
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+    public DbSet<Ecosystem> Ecosystems => Set<Ecosystem>();
+    public DbSet<Sensor> Sensors => Set<Sensor>();
+    public DbSet<AggregateTelemetry> TelemetryAggregateData => Set<AggregateTelemetry>();
+    public DbSet<RawTelemetry> TelemetryRawData => Set<RawTelemetry>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TelemetryDbContext).Assembly);
+
+        base.OnModelCreating(modelBuilder);
+    }
 }

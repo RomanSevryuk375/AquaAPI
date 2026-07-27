@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Telemetry.Application.DTOs;
 
 namespace Telemetry.Application.Features.Telemetry.Queries.GetRawTelemetryChart;

@@ -20,5 +20,4 @@
     <Project Path="../Identity.Infrastructure.IntegrationTests/Identity.Infrastructure.IntegrationTests.csproj" />
     <Project Path="../Identity.API.E2ETests/Identity.API.E2ETests.csproj" />
   </Folder>
-  <Project Path="../../../Contracts/Contracts/Contracts.csproj" />
 </Solution>

@@ -1,4 +1,5 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
@@ -7,7 +8,7 @@ using Telemetry.Domain.ValueObjects;
 namespace Telemetry.Infrastructure.Persistence.Repositories;
 
 public sealed class TelemetryAggregateDataRepository(TelemetryDbContext dbContext)
-    : BaseRepository<AggregateTelemetry>(dbContext), ITelemetryAggregateDataRepository
+    : BaseRepository<TelemetryDbContext, AggregateTelemetry>(dbContext), ITelemetryAggregateDataRepository
 {
     public async Task<IReadOnlyDictionary<Guid, TelemetrySummary>> GetSummaryForPeriodAsync(
         PeriodType sourcePeriod,

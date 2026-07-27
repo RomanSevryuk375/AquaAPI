@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Telemetry.Application.DTOs;
 
 namespace Telemetry.Application.Interfaces;

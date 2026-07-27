@@ -1,6 +1,6 @@
 // Ignore Spelling: Dto
 
-using Contracts.Events.TelemetryEvents;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 
 namespace Telemetry.Application.DTOs;
 

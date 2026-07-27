@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -26,8 +26,6 @@ public sealed class E2ETestWebAppFactory : IntegrationTestWebAppFactory
                 options.DefaultChallengeScheme = "Test";
             })
             .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
-
-            services.AddMassTransitTestHarness();
 
             IDeviceTokenValidator tokenValidatorMock = Substitute.For<IDeviceTokenValidator>();
             tokenValidatorMock.ValidateAsync(

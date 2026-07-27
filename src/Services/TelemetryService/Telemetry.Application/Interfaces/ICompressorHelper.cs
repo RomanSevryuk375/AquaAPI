@@ -1,4 +1,4 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 using Telemetry.Domain.ValueObjects;
 
 namespace Telemetry.Application.Interfaces;

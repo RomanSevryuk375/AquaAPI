@@ -1,6 +1,6 @@
 // Ignore Spelling: Validator
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Microsoft.Extensions.Caching.Memory;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;

@@ -1,5 +1,5 @@
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Interfaces;

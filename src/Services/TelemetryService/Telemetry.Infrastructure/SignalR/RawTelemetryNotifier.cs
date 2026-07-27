@@ -1,4 +1,4 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 using Microsoft.AspNetCore.SignalR;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;

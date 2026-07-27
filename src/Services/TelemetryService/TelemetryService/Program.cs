@@ -1,39 +1,42 @@
-using Contracts.Middlewares;
+using BuildingBlocks.Infrastructure.Extensions;
+using BuildingBlocks.Presentation.Extensions;
 using Serilog;
 using Telemetry.API.Extensions;
 
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
+const string AppName = "AquaSmart.TelemetryService";
 try
 {
-    Log.Information("Starting TelemetryService application");
+    Log.Information("Starting {Name}", AppName);
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-    builder.AddElkLogging();
-    builder.Services.AddIConfiguration(builder.Configuration);
+
+    builder.AddGlobalElkLogging(AppName);
+    builder.Services.AddConfiguration(builder.Configuration);
 
     WebApplication app = builder.Build();
-    app.UseGlobalExceptionHandler();
-    app.AddConfiguration();
+
+    app.AddGlobalConfiguration();
 
     await app.RunAsync();
 }
 #pragma warning disable S2139
 catch (Exception ex) when (ex is not HostAbortedException)
 {
-    Log.Fatal(ex, "TelemetryService terminated unexpectedly");
+    Log.Fatal(ex, "{Name} terminated unexpectedly", AppName);
     throw;
 }
 #pragma warning restore S2139
 finally
 {
-#pragma warning disable S6966 
-    Log.CloseAndFlush();
-#pragma warning restore S6966 
+    await Log.CloseAndFlushAsync();
 }
 
-#pragma warning disable S1118 
-public partial class Program { }
-#pragma warning restore S1118
+public partial class Program
+{
+    protected Program() { }
+}

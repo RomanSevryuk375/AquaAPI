@@ -1,5 +1,7 @@
 // Ignore Spelling: Telemetry
 
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.Domain.UnitTests.Entities;
 
 public class RawTelemetryTests

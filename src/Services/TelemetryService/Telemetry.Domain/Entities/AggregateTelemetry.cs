@@ -1,6 +1,6 @@
-using Contracts.Abstractions;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Telemetry.Domain.Events;
 using Telemetry.Domain.ValueObjects;
 
@@ -26,9 +26,9 @@ public sealed class AggregateTelemetry : AggregateRoot, IEntity
         IsAggregated = isAggregated;
     }
 
-#pragma warning disable CS8618 
+#pragma warning disable CS8618
     private AggregateTelemetry() { }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
     public Guid Id { get; private set; }
     public Guid SensorId { get; private set; }

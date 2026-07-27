@@ -1,23 +1,20 @@
 // Ignore Spelling: Mq
 
-using Contracts.Options;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
+using BuildingBlocks.Infrastructure.Data.Interceptors;
+using BuildingBlocks.Infrastructure.Data.Outbox;
+using BuildingBlocks.Infrastructure.Extensions;
+using BuildingBlocks.IntegrationEvents;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Quartz;
 using Telemetry.Application.Interfaces;
 using Telemetry.Domain.Interfaces;
 using Telemetry.Infrastructure.BackgroundJobs;
-using Telemetry.Infrastructure.Factories;
 using Telemetry.Infrastructure.GrpcClients;
 using Telemetry.Infrastructure.Messaging.EcosystemConsumers;
 using Telemetry.Infrastructure.Messaging.SensorConsumers;
 using Telemetry.Infrastructure.Persistence;
-using Telemetry.Infrastructure.Persistence.Interceptors;
-using Telemetry.Infrastructure.Persistence.Outbox;
 using Telemetry.Infrastructure.Persistence.Repositories;
 using Telemetry.Infrastructure.SignalR;
 using EcosystemCreatedConsumer = Telemetry.Infrastructure.Messaging.EcosystemConsumers.EcosystemCreatedConsumer;
@@ -28,13 +25,16 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddRepositories(configuration)
-                       .AddQuartzJob()
+        return services.AddPostgresDbContext<TelemetryDbContext>(configuration)
+                       .AddDapper<TelemetryDbContext>()
+                       .AddRepositories()
                        .AddRabbitMq(configuration)
+                       .AddOutboxProcessorQuartzJob<TelemetryDbContext>()
+                       .AddQuartzJob()
                        .AddMySignalR();
     }
 
-    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
@@ -42,33 +42,13 @@ public static class DependencyInjection
         services.AddScoped<ISensorRepository, SensorRepository>();
         services.AddScoped<ITelemetryRawDataRepository, TelemetryRawDataRepository>();
         services.AddScoped<ITelemetryAggregateDataRepository, TelemetryAggregateDataRepository>();
-        services.AddScoped<IOutboxRepository, OutboxRepository>();
 
-        services.AddScoped<OutboxMessageProcessorService>();
 
         services.AddMemoryCache();
         services.AddScoped<DeviceTokenValidator>();
         services.AddScoped<IDeviceTokenValidator>(sp => new CachedDeviceTokenValidator(
             sp.GetRequiredService<DeviceTokenValidator>(),
             sp.GetRequiredService<IMemoryCache>()));
-
-        services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
-
-        string? connectionString = configuration.GetConnectionString(nameof(TelemetryDbContext));
-        services.AddDbContext<TelemetryDbContext>((sp, options) =>
-        {
-            ConvertDomainEventsToOutboxMessagesInterceptor interceptor =
-            sp.GetRequiredService<ConvertDomainEventsToOutboxMessagesInterceptor>();
-
-            options.UseNpgsql(connectionString)
-                   .UseSnakeCaseNamingConvention()
-                   .AddInterceptors(interceptor);
-        });
-        services.AddHealthChecks().AddNpgSql(connectionString!);
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        services.AddHostedService<DatabaseMigrationService>();
 
         return services;
     }
@@ -111,13 +91,6 @@ public static class DependencyInjection
                 .ForJob(cleanupKey)
                 .WithIdentity("Cleanup-trigger")
                 .WithCronSchedule("0 0 3 * * ?"));
-
-            var outboxKey = new JobKey(nameof(OutboxMessageProcessorJob));
-            options.AddJob<OutboxMessageProcessorJob>(opts => opts.WithIdentity(outboxKey));
-            options.AddTrigger(triggerOptions => triggerOptions
-                .ForJob(outboxKey)
-                .WithIdentity($"{outboxKey}-trigger")
-                .WithSimpleSchedule(x => x.WithIntervalInSeconds(1).RepeatForever()));
         });
 
         services.AddQuartzHostedService(hostOptions
@@ -126,45 +99,22 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection rabbitSection = configuration.GetSection(RabbitMqOptions.SectionName);
-        RabbitMqOptions rabbitOptions = rabbitSection.Get<RabbitMqOptions>()
-            ?? throw new InvalidOperationException("RabbitMQ configuration is missing.");
-
-        services.Configure<RabbitMqOptions>(rabbitSection);
-
-        services.AddMassTransit(busConfigurator =>
+        return services.AddGlobalMessaging(configuration, cfg =>
         {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
+            cfg.AddConsumer<EcosystemCreatedConsumer>();
+            cfg.AddConsumer<EcosystemDeletedConsumer>();
 
-            busConfigurator.AddConsumer<EcosystemCreatedConsumer>();
-            busConfigurator.AddConsumer<EcosystemDeletedConsumer>();
-
-            busConfigurator.AddConsumer<SensorCreatedConsumer>();
-            busConfigurator.AddConsumer<SensorUpdatedConsumer>();
-            busConfigurator.AddConsumer<SensorDeletedConsumer>();
-            busConfigurator.AddConsumer<SensorRenamedConsumer>();
-            busConfigurator.AddConsumer<SensorStateChangedConsumer>();
-
-            busConfigurator.UsingRabbitMq((context, configurator) =>
-            {
-                configurator.Host(new Uri(rabbitOptions.Host), h =>
-                {
-                    h.Username(rabbitOptions.UserName);
-                    h.Password(rabbitOptions.Password);
-                });
-
-                configurator.ConfigureEndpoints(context);
-            });
+            cfg.AddConsumer<SensorCreatedConsumer>();
+            cfg.AddConsumer<SensorUpdatedConsumer>();
+            cfg.AddConsumer<SensorDeletedConsumer>();
+            cfg.AddConsumer<SensorRenamedConsumer>();
+            cfg.AddConsumer<SensorStateChangedConsumer>();
         });
-
-        services.AddHealthChecks().AddRabbitMQ(new Uri(rabbitOptions.Host));
-
-        return services;
     }
 
-    public static IServiceCollection AddMySignalR(this IServiceCollection services)
+    private static IServiceCollection AddMySignalR(this IServiceCollection services)
     {
         services.AddSignalR();
 
@@ -172,17 +122,4 @@ public static class DependencyInjection
 
         return services;
     }
-}
-
-internal sealed class DatabaseMigrationService(IServiceProvider serviceProvider) : IHostedService
-{
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        using IServiceScope scope = serviceProvider.CreateScope();
-        TelemetryDbContext context = scope.ServiceProvider.GetRequiredService<TelemetryDbContext>();
-
-        await context.Database.MigrateAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

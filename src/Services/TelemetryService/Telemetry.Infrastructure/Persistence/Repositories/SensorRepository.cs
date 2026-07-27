@@ -1,4 +1,5 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Telemetry.Domain.Entities;
 using Telemetry.Domain.Interfaces;
@@ -6,7 +7,7 @@ using Telemetry.Domain.Interfaces;
 namespace Telemetry.Infrastructure.Persistence.Repositories;
 
 public sealed class SensorRepository(TelemetryDbContext dbContext)
-    : BaseRepository<Sensor>(dbContext), ISensorRepository
+    : BaseRepository<TelemetryDbContext, Sensor>(dbContext), ISensorRepository
 {
     public async Task<bool> ExistsAsync(
         Guid sensorId,

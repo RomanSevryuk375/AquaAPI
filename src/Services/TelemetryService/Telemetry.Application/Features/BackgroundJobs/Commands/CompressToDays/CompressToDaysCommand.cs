@@ -1,4 +1,4 @@
-using Contracts.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 
 namespace Telemetry.Application.Features.BackgroundJobs.Commands.CompressToDays;
 

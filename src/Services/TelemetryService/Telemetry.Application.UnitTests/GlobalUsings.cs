@@ -1,5 +1,4 @@
-global using Contracts.Enums;
-global using Contracts.Results;
+global using BuildingBlocks.Domain.Constants;
 global using FluentAssertions;
 global using NSubstitute;
 global using Telemetry.Domain.Entities;

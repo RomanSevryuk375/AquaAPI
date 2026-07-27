@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.EcosystemEvents;
+using BuildingBlocks.IntegrationEvents.Events.Ecosystems;
 using Telemetry.Application.Features.Ecosystems.Commands.SyncEcosystemCreated;
 using Telemetry.Application.Features.Ecosystems.Commands.SyncEcosystemDeleted;
 

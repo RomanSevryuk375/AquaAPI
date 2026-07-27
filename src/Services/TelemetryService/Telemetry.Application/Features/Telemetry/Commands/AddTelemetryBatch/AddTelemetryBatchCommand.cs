@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Events.TelemetryEvents;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.IntegrationEvents.Events.Telemetrys;
 
 namespace Telemetry.Application.Features.Telemetry.Commands.AddTelemetryBatch;
 

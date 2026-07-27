@@ -1,3 +1,6 @@
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+
 namespace Telemetry.TestShared.Builders;
 
 public class SensorBuilder
