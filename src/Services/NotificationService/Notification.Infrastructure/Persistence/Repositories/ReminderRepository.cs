@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
@@ -5,7 +6,7 @@ using Notification.Domain.Interfaces;
 namespace Notification.Infrastructure.Persistence.Repositories;
 
 public sealed class ReminderRepository(NotificationDbContext dbContext)
-    : BaseRepository<Reminder>(dbContext), IReminderRepository
+    : BaseRepository<NotificationDbContext, Reminder>(dbContext), IReminderRepository
 {
     public async Task<IReadOnlyList<Reminder>> GetPendingRemindersAsync(
         DateTime now,

@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Notification.Application.Features.Notifications.Queries.Shared;
 
 namespace Notification.Application.Features.Notifications.Queries.GetNotificationById;

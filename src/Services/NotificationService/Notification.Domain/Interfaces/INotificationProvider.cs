@@ -1,6 +1,6 @@
 // Ignore Spelling: Tg
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Notification.Domain.ValueObjects;
 
 namespace Notification.Domain.Interfaces;

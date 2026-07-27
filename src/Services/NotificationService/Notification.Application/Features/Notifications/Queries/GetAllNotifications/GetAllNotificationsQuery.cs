@@ -1,6 +1,6 @@
-using Contracts.Abstractions;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using Notification.Application.Features.Notifications.Queries.Shared;
 
 namespace Notification.Application.Features.Notifications.Queries.GetAllNotifications;

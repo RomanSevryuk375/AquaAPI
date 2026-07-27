@@ -1,5 +1,5 @@
-using Contracts.Abstractions;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using Notification.Domain.ValueObjects;
 
 namespace Notification.Domain.Entities;

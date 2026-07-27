@@ -1,8 +1,12 @@
 // Ignore Spelling: Tg
 
+using BuildingBlocks.Domain.Abstractions;
 using MassTransit;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Notification.Domain.Interfaces;
 using Notification.Infrastructure.Persistence;
 using NSubstitute;
@@ -25,7 +29,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public IEmailProvider EmailProviderMock { get; } = Substitute.For<IEmailProvider>();
     public ITgProvider TgProviderMock { get; } = Substitute.For<ITgProvider>();
-    public IPublishEndpoint PublishEndpointMock { get; } = Substitute.For<IPublishEndpoint>();
 
     public async Task InitializeAsync() => await _dbContainer.StartAsync();
 
@@ -37,14 +40,16 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         builder.UseSetting("ConnectionStrings:NotificationDbContext", _dbContainer.GetConnectionString());
 
-        builder.ConfigureServices(services =>
+        builder.ConfigureTestServices(services =>
         {
-            ServiceDescriptor? massTransitHostedService = services.FirstOrDefault(d =>
-                d.ImplementationType?.Name == "MassTransitHostedService");
-            if (massTransitHostedService != null)
+            services.AddScoped<BuildingBlocks.Infrastructure.Data.Outbox.OutboxMessageProcessorService<NotificationDbContext>>();
+            services.AddMassTransitTestHarness(x =>
             {
-                services.Remove(massTransitHostedService);
-            }
+                x.UsingInMemory((context, cfg) =>
+                {
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
 
             ServiceDescriptor? quartzHostedService = services.FirstOrDefault(d =>
                 d.ImplementationType?.Name == "QuartzHostedService");
@@ -74,13 +79,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.AddSingleton<IEmailProvider>(EmailProviderMock);
             services.AddSingleton<ITgProvider>(TgProviderMock);
-
-            ServiceDescriptor? publishEndpointDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IPublishEndpoint));
-            if (publishEndpointDescriptor != null)
-            {
-                services.Remove(publishEndpointDescriptor);
-            }
-            services.AddSingleton<IPublishEndpoint>(PublishEndpointMock);
 
             ServiceDescriptor? userContextDescriptor = services.FirstOrDefault(d =>
                 d.ServiceType == typeof(IUserContext));

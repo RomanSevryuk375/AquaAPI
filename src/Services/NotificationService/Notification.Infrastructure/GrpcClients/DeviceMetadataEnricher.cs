@@ -1,7 +1,7 @@
 // Ignore Spelling: Enricher
 
+using BuildingBlocks.Domain.Results;
 using Contracts.gRPC.Devices;
-using Contracts.Results;
 using Grpc.Core;
 using Notification.Application.DTOs;
 using Notification.Application.Interfaces;

@@ -1,11 +1,11 @@
 using System.Data;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using MediatR;
 using Notification.Application.Features.Reminders.Queries.Shared;
 using Notification.Domain.Entities;
-using Notification.Domain.Interfaces;
 
 namespace Notification.Application.Features.Reminders.Queries.GetReminderById;
 

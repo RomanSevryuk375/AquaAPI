@@ -1,6 +1,8 @@
-using Contracts.Authorization;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,6 @@ using Notification.Application.Features.MaintenanceLogs.Commands.CreateMaintenan
 using Notification.Application.Features.MaintenanceLogs.Queries.GetAllMaintenanceLogs;
 using Notification.Application.Features.MaintenanceLogs.Queries.GetMaintenanceLogById;
 using Notification.Application.Features.MaintenanceLogs.Queries.Shared;
-using Notification.Domain.Interfaces;
 
 namespace Notification.API.Controllers;
 

@@ -1,6 +1,6 @@
 // Ignore Spelling: Enricher
 
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using Notification.Application.DTOs;
 
 namespace Notification.Application.Interfaces;

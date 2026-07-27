@@ -1,5 +1,5 @@
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.Alerts.Commands.SendSubscriptionAlert;
 using Notification.Domain.Entities;

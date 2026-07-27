@@ -1,10 +1,11 @@
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Notification.Domain.Interfaces;
 
 namespace Notification.Infrastructure.Persistence.Repositories;
 
 public sealed class NotificationRepository(NotificationDbContext dbContext)
-    : BaseRepository<Domain.Entities.Notification>(dbContext), INotificationRepository
+    : BaseRepository<NotificationDbContext, Domain.Entities.Notification>(dbContext), INotificationRepository
 {
     public async Task<IReadOnlyList<Domain.Entities.Notification>> GetUnpublishedNotificationsAsync(
         CancellationToken cancellationToken = default)

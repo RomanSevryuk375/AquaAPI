@@ -1,4 +1,4 @@
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Notification.Application.Features.MaintenanceLogs.Commands.CreateMaintenanceLog;

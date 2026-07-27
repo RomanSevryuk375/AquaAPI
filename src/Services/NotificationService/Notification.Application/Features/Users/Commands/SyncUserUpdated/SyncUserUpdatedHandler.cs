@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Results;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;

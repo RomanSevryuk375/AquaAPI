@@ -1,3 +1,4 @@
+using BuildingBlocks.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
@@ -5,7 +6,7 @@ using Notification.Domain.Interfaces;
 namespace Notification.Infrastructure.Persistence.Repositories;
 
 public sealed class EcosystemRepository(NotificationDbContext dbContext)
-    : BaseRepository<Ecosystem>(dbContext), IEcosystemRepository
+    : BaseRepository<NotificationDbContext,Ecosystem>(dbContext), IEcosystemRepository
 {
     public async Task<bool> ExistsAsync
         (Guid ecosystemId,

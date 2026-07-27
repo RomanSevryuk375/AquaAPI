@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Notification.Infrastructure.Persistence;
 using Npgsql;
 using NSubstitute;
@@ -31,6 +32,8 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         _dbConnectionString = DbContext.Database.GetConnectionString()!;
     }
 
+    protected T GetRequiredService<T>() where T : notnull => _scope.ServiceProvider.GetRequiredService<T>();
+
     public async Task InitializeAsync()
     {
         using var connection = new NpgsqlConnection(_dbConnectionString);
@@ -47,7 +50,6 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         UserContext.UserId = Guid.Parse("22222222-2222-2222-2222-222222222222");
         Factory.EmailProviderMock.ClearReceivedCalls();
         Factory.TgProviderMock.ClearReceivedCalls();
-        Factory.PublishEndpointMock.ClearReceivedCalls();
     }
 
     public Task DisposeAsync()

@@ -6,6 +6,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationEvents\BuildingBlocks.IntegrationEvents.csproj" />
         <ProjectReference Include="..\Notification.Domain\Notification.Domain.csproj" />
     </ItemGroup>
 

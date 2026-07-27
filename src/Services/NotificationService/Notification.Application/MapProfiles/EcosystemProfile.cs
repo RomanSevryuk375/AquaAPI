@@ -1,5 +1,5 @@
 using AutoMapper;
-using Contracts.Events.EcosystemEvents;
+using BuildingBlocks.IntegrationEvents.Events.Ecosystems;
 using Notification.Application.Features.Ecosystems.Commands.SyncEcosystemCreated;
 using Notification.Application.Features.Ecosystems.Commands.SyncEcosystemDeleted;
 using Notification.Application.Features.Ecosystems.Commands.SyncEcosystemUpdated;
@@ -10,7 +10,7 @@ public sealed class EcosystemProfile : Profile
 {
     public EcosystemProfile()
     {
-        CreateMap<Features.Ecosystems.Commands.SyncEcosystemUpdated.SyncEcosystemUpdatedCommand, SyncEcosystemCreatedCommand>();
+        CreateMap<SyncEcosystemUpdatedCommand, SyncEcosystemCreatedCommand>();
 
         CreateMap<EcosystemCreatedEvent, SyncEcosystemCreatedCommand>();
 

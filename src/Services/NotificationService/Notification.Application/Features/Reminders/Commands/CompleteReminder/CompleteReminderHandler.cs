@@ -1,5 +1,6 @@
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;

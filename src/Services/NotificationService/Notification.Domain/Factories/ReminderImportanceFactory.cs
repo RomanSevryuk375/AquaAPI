@@ -1,4 +1,4 @@
-using Contracts.Enums;
+using BuildingBlocks.Domain.Enums;
 
 namespace Notification.Domain.Factories;
 

@@ -1,11 +1,12 @@
 using System.Data;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Application.Behaviors;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Dapper;
 using MediatR;
 using Notification.Application.Interfaces;
 using Notification.Domain.Entities;
-using Notification.Domain.Interfaces;
 
 namespace Notification.Application.Behaviors;
 
@@ -22,9 +23,9 @@ public sealed class ReminderSecurityBehavior<TRequest, TResponse>(
     {
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
-        const string SQL = "SELECT user_id FROM reminders WHERE id = @ReminderId LIMIT 1";
+        const string Sql = "SELECT user_id FROM reminders WHERE id = @ReminderId LIMIT 1";
 
-        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(SQL, new { request.ReminderId });
+        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(Sql, new { request.ReminderId });
 
         if (ownerId is null)
         {

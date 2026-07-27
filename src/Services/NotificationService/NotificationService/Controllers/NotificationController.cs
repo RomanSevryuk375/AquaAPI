@@ -1,6 +1,8 @@
-using Contracts.Constants;
-using Contracts.Enums;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Enums;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,6 @@ using Notification.Application.Features.Notifications.Commands.MarkNotificationA
 using Notification.Application.Features.Notifications.Queries.GetAllNotifications;
 using Notification.Application.Features.Notifications.Queries.GetNotificationById;
 using Notification.Application.Features.Notifications.Queries.Shared;
-using Notification.Domain.Interfaces;
 
 namespace Notification.API.Controllers;
 

@@ -1,6 +1,8 @@
-using Contracts.Authorization;
-using Contracts.Constants;
-using Contracts.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Presentation.Authorization;
+using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,6 @@ using Notification.Application.Features.Reminders.Commands.UpdateReminder;
 using Notification.Application.Features.Reminders.Queries.GetAllReminders;
 using Notification.Application.Features.Reminders.Queries.GetReminderById;
 using Notification.Application.Features.Reminders.Queries.Shared;
-using Notification.Domain.Interfaces;
 
 namespace Notification.API.Controllers;
 

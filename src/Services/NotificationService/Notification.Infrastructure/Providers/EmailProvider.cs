@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Mail;
-using Contracts.Constants;
+using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Results;
 using Contracts.Options;
-using Contracts.Results;
 using Microsoft.Extensions.Options;
 using Notification.Domain.Interfaces;
 using Notification.Domain.ValueObjects;

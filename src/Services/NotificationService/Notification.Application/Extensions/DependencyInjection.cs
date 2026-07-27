@@ -1,4 +1,5 @@
 using System.Reflection;
+using BuildingBlocks.Application.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,19 +9,18 @@ namespace Notification.Application.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         Assembly assembly = typeof(DependencyInjection).Assembly;
+
+        services.AddGlobalBehaviors();
 
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(assembly);
 
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(EcosystemSecurityBehavior<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ReminderSecurityBehavior<,>));
-            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);
