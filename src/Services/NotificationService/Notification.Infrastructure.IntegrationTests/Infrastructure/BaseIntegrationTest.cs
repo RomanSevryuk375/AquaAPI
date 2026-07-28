@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Notification.Infrastructure.Persistence;
 using Npgsql;
 using NSubstitute;

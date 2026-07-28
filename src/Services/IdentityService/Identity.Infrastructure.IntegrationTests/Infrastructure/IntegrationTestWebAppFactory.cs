@@ -1,11 +1,7 @@
 using BuildingBlocks.Domain.Abstractions;
-using IdentityService.Infrastructure;
 using MassTransit;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
 namespace Identity.Infrastructure.IntegrationTests.Infrastructure;

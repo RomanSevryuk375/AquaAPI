@@ -1,5 +1,4 @@
 using BuildingBlocks.Domain.Results;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;

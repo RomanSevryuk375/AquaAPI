@@ -2,6 +2,7 @@
 
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.GrpcContracts;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.Extensions;
 using Contracts.gRPC.Devices;
 using Telemetry.Application.Extensions;
@@ -14,7 +15,8 @@ public static class DependencyInjection
     public static IServiceCollection AddConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddGlobalApi(configuration);
-        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddEndpoints(typeof(DependencyInjection).Assembly);
         services.AddApplication(configuration);
         services.AddInfrastructure(configuration);
         services.AddMyGrpcClient(configuration);

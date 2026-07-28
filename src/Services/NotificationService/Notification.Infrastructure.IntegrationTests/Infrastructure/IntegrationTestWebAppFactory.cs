@@ -2,11 +2,9 @@
 
 using BuildingBlocks.Domain.Abstractions;
 using MassTransit;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Notification.Domain.Interfaces;
 using Notification.Infrastructure.Persistence;
 using NSubstitute;

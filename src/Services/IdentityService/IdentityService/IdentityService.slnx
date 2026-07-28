@@ -7,6 +7,12 @@
     <Project Path="../../../BuildingBlocks/BuildingBlocks.IntegrationEvents/BuildingBlocks.IntegrationEvents.csproj" />
     <Project Path="../../../BuildingBlocks/BuildingBlocks.Presentation/BuildingBlocks.Presentation.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="../../../../src/.editorconfig" />
+    <File Path="../../../../src/Directory.Build.props" />
+    <File Path="../../../../src/Directory.Build.targets" />
+    <File Path="../../../../src/Directory.Packages.props" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="../IdentityService.Application/IdentityService.Application.csproj" />
     <Project Path="../IdentityService.Domain/IdentityService.Domain.csproj" />

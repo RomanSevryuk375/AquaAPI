@@ -8,7 +8,10 @@
     <Project Path="../../../BuildingBlocks/BuildingBlocks.Presentation/BuildingBlocks.Presentation.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
+    <File Path="../../../../src/.editorconfig" />
+    <File Path="../../../../src/Directory.Build.props" />
+    <File Path="../../../../src/Directory.Build.targets" />
+    <File Path="../../../../src/Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="../Telemetry.Application/Telemetry.Application.csproj" />

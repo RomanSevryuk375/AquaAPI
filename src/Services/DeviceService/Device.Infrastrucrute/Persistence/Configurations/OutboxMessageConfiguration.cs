@@ -1,6 +1,4 @@
 using BuildingBlocks.Infrastructure.Data.Outbox;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Device.Infrastructure.Persistence.Configurations;
 

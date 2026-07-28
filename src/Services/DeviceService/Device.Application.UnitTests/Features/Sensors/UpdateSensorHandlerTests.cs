@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Enums;
 using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Sensors.Command.UpdateSensor;
