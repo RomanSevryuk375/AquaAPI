@@ -1,5 +1,6 @@
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
+using BuildingBlocks.Presentation.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ public static class GlobalPresentationExtensions
         application.UseAuthentication();
         application.UseAuthorization();
         application.MapHealthChecks(ApiConstants.HealthRoute);
-        application.MapControllers();
+        application.MapEndpoints();
 
         return application;
     }

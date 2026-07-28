@@ -1,0 +1,28 @@
+﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Presentation.ResultExtensions;
+using Control.Application.Features.Schedules.Commands.DeleteSchedule;
+
+namespace Control.API.Endpoints.Schedules;
+
+public sealed class DeleteScheduleEndpoint : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapDelete($"{ApiConstants.Routes.Schedules}/{{id:guid}}", async (
+            Guid id,
+            ISender sender,
+            CancellationToken cancellationToken = default) =>
+        {
+            DeleteScheduleCommand command = new DeleteScheduleCommand { ScheduleId = id };
+
+            var result = await sender.Send(command, cancellationToken);
+
+            return result.ToIResult();
+        })
+        .WithTags("Schedules")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status409Conflict)
+        .RequireAuthorization(SubPermissions.AutoScheduleCreate);
+    }
+}

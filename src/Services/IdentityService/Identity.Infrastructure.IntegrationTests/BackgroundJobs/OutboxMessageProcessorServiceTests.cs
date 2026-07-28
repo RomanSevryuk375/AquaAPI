@@ -1,10 +1,7 @@
 using System.Text.Json;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Infrastructure.Data.Outbox;
-using Identity.Infrastructure.IntegrationTests.Infrastructure;
 using IdentityService.Domain.Events;
-using IdentityService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Infrastructure.IntegrationTests.BackgroundJobs;
 

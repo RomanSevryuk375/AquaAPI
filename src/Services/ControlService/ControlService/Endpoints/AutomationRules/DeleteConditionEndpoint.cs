@@ -1,0 +1,33 @@
+﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Presentation.ResultExtensions;
+using Control.Application.Features.AutomationRules.Commands.DeleteCondition;
+
+namespace Control.API.Endpoints.AutomationRules;
+
+public sealed class DeleteConditionEndpoint : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapDelete($"{ApiConstants.Routes.AutomationRules}/{{ruleId:guid}}/conditions/{{conditionId:guid}}", async (
+            Guid ruleId,
+            Guid conditionId,
+            ISender sender,
+            CancellationToken cancellationToken = default) =>
+        {
+            DeleteConditionCommand command = new DeleteConditionCommand
+            {
+                RuleId = ruleId,
+                ConditionId = conditionId,
+            };
+
+            var result = await sender.Send(command, cancellationToken);
+
+            return result.ToIResult();
+        })
+        .WithTags("Automation Rules Conditions")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status409Conflict)
+        .RequireAuthorization(SubPermissions.AutoRuleCreate);
+    }
+}

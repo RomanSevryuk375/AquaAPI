@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using Device.Application.Features.RelayCommands.Command.SetRelayState;
 
