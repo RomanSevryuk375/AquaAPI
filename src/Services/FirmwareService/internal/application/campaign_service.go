@@ -142,3 +142,22 @@ func (s *CampaignService) DeleteCampaign(ctx context.Context, campaignId uuid.UU
 	}
 	return nil
 }
+
+func (s *CampaignService) PauseCampaign(ctx context.Context, campaignId uuid.UUID) error {
+	rc, err := s.campaignRepo.GetById(ctx, campaignId)
+	if err != nil {
+		return fmt.Errorf("failed to get campaign: %w", err)
+	}
+	if rc == nil {
+		return nil
+	}
+
+	if err := rc.Pause(); err != nil {
+		return fmt.Errorf("failed to pause target status: %w", err)
+	}
+
+	if err = s.campaignRepo.Save(ctx, rc); err != nil {
+		return fmt.Errorf("failed to save campaign: %w:", err)
+	}
+	return nil
+}

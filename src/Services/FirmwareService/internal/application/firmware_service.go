@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 
@@ -45,4 +46,44 @@ func (s *FirmwareService) UploadNewRelease(ctx context.Context, hwId uuid.UUID, 
 		return uuid.Nil, fmt.Errorf("failed to save firmware release: %w", err)
 	}
 	return fw.ID(), nil
+}
+
+func (s *FirmwareService) PublishFirmware(ctx context.Context, hwId uuid.UUID) error {
+	fw, err := s.firmwareRepository.GetById(ctx, hwId)
+	if err != nil {
+		return fmt.Errorf("failed to get firmware: %w", err)
+	}
+	if fw == nil {
+		return errors.New("hardware profile not found")
+	}
+
+	if err = fw.Publish(); err != nil {
+		return fmt.Errorf("failed to publish firmware: %w", err)
+	}
+
+	if err = s.firmwareRepository.Save(ctx, fw); err != nil {
+		return fmt.Errorf("failed to save firmware release: %w", err)
+	}
+
+	return nil
+}
+
+func (s *FirmwareService) RevokeFirmware(ctx context.Context, hwId uuid.UUID, errorMsg string) error {
+	fw, err := s.firmwareRepository.GetById(ctx, hwId)
+	if err != nil {
+		return fmt.Errorf("failed to get firmware: %w", err)
+	}
+	if fw == nil {
+		return errors.New("hardware profile not found")
+	}
+
+	if err = fw.Revoke(errorMsg); err != nil {
+		return fmt.Errorf("failed to publish firmware: %w", err)
+	}
+
+	if err = s.firmwareRepository.Save(ctx, fw); err != nil {
+		return fmt.Errorf("failed to save firmware release: %w", err)
+	}
+
+	return nil
 }
