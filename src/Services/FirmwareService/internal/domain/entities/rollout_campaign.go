@@ -40,7 +40,7 @@ type RolloutCampaign struct {
 	name         string
 	status       RolloutCampaignStatus
 	cancelReason string
-	targets      []*RolloutTarget
+	targets      map[uuid.UUID]*RolloutTarget
 }
 
 func NewRolloutCampaign(id uuid.UUID, releaseId uuid.UUID, name string) (*RolloutCampaign, error) {
@@ -57,7 +57,7 @@ func NewRolloutCampaign(id uuid.UUID, releaseId uuid.UUID, name string) (*Rollou
 		firmwareId: releaseId,
 		name:       name,
 		status:     RolloutCampaignPending,
-		targets:    make([]*RolloutTarget, 0),
+		targets:    make(map[uuid.UUID]*RolloutTarget),
 	}, nil
 }
 
@@ -66,13 +66,11 @@ func (rc *RolloutCampaign) AddTarget(controllerId uuid.UUID) error {
 		return errors.New("can only add targets to pending campaign")
 	}
 
-	for _, t := range rc.targets {
-		if t.ControllerId() == controllerId {
-			return errors.New("controller is already in the campaign")
-		}
+	if _, exists := rc.targets[controllerId]; exists {
+		return errors.New("controller is already in the campaign")
 	}
 
-	rc.targets = append(rc.targets, NewRolloutTarget(controllerId))
+	rc.targets[controllerId] = NewRolloutTarget(controllerId)
 	return nil
 }
 
@@ -113,12 +111,9 @@ func (rc *RolloutCampaign) UpdateTargetStatus(controllerId uuid.UUID, newStatus 
 		return errors.New("can only update targets in active campaign")
 	}
 
-	var target *RolloutTarget
-	for _, t := range rc.targets {
-		if t.ControllerId() == controllerId {
-			target = t
-			break
-		}
+	target, exists := rc.targets[controllerId]
+	if !exists {
+		return errors.New("target not found in campaign")
 	}
 
 	if target == nil {
@@ -166,4 +161,16 @@ func (rc *RolloutCampaign) FirmwareId() uuid.UUID         { return rc.firmwareId
 func (rc *RolloutCampaign) Status() RolloutCampaignStatus { return rc.status }
 func (rc *RolloutCampaign) Name() string                  { return rc.name }
 func (rc *RolloutCampaign) CancelReason() string          { return rc.cancelReason }
-func (rc *RolloutCampaign) Targets() []*RolloutTarget     { return rc.targets }
+
+func (rc *RolloutCampaign) FindTargets(controllerId uuid.UUID) (*RolloutTarget, bool) {
+	target, exists := rc.targets[controllerId]
+	return target, exists
+}
+
+func (rc *RolloutCampaign) ListTargets() []*RolloutTarget {
+	list := make([]*RolloutTarget, 0, len(rc.targets))
+	for _, value := range rc.targets {
+		list = append(list, value)
+	}
+	return list
+}

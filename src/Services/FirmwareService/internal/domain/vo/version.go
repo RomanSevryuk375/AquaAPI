@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
 )
 
 var versionRegexCompiled = regexp.MustCompile(`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`)
@@ -28,6 +29,33 @@ func NewVersion(major int, minor int, patch int) (*Version, error) {
 
 	return &Version{
 		value: value,
+		major: major,
+		minor: minor,
+		patch: patch,
+	}, nil
+}
+
+func ParseVersion(s string) (*Version, error) {
+	matches := versionRegexCompiled.FindStringSubmatch(s)
+	if len(matches) == 0 {
+		return nil, fmt.Errorf("invalid semantic version format: %s", s)
+	}
+
+	major, err := strconv.Atoi(matches[1])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse major version: %w", err)
+	}
+	minor, err := strconv.Atoi(matches[2])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse minor version: %w", err)
+	}
+	patch, err := strconv.Atoi(matches[3])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse patch version: %w", err)
+	}
+
+	return &Version{
+		value: s,
 		major: major,
 		minor: minor,
 		patch: patch,

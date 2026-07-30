@@ -98,6 +98,14 @@ func (fw *Firmware) Revoke(reason string) error {
 	return nil
 }
 
+func (fw *Firmware) SetStorageKey(key string) error {
+	if key == "" {
+		return errors.New("key cannot be empty")
+	}
+
+	return nil
+}
+
 func (fw *Firmware) ID() uuid.UUID                { return fw.id }
 func (fw *Firmware) HardwareProfileId() uuid.UUID { return fw.hardwareProfileId }
 func (fw *Firmware) Version() vo.Version          { return fw.version }
