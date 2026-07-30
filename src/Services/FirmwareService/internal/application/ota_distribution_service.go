@@ -51,7 +51,7 @@ func (s *OtaDistributionService) CheckForUpdate(ctx context.Context, controllerI
 		}, nil
 	}
 
-	fw, err := s.firmwareRepository.GetByID(ctx, camp.FirmwareId())
+	fw, err := s.firmwareRepository.GetById(ctx, camp.FirmwareId())
 	if err != nil {
 		return nil, fmt.Errorf("failed to get firmware: %w", err)
 	}

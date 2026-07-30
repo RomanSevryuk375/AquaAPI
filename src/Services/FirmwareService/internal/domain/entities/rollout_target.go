@@ -51,6 +51,15 @@ func NewRolloutTarget(controllerId uuid.UUID) *RolloutTarget {
 	}
 }
 
+func LoadTargetFromDB(id uuid.UUID, controllerId uuid.UUID, status TargetStatus, errorMsg string) *RolloutTarget {
+	return &RolloutTarget{
+		id:           id,
+		controllerId: controllerId,
+		status:       status,
+		errorMessage: errorMsg,
+	}
+}
+
 func (t *RolloutTarget) MarkAsDownloading() error {
 	if t.status != TargetPending {
 		return errors.New("can only start downloading from pending state")

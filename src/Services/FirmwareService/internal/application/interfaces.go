@@ -9,7 +9,7 @@ import (
 )
 
 type FirmwareRepository interface {
-	GetByID(ctx context.Context, id uuid.UUID) (*entities.Firmware, error)
+	GetById(ctx context.Context, id uuid.UUID) (*entities.Firmware, error)
 	Save(ctx context.Context, fw *entities.Firmware) error
 	Delete(ctx context.Context, fw *entities.Firmware) error
 }

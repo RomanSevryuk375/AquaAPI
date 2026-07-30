@@ -43,7 +43,7 @@ type RolloutCampaign struct {
 	targets      map[uuid.UUID]*RolloutTarget
 }
 
-func NewRolloutCampaign(id uuid.UUID, releaseId uuid.UUID, name string) (*RolloutCampaign, error) {
+func NewRolloutCampaign(id uuid.UUID, firmwareId uuid.UUID, name string) (*RolloutCampaign, error) {
 	if name == "" {
 		return nil, errors.New("name cannot be empty")
 	}
@@ -54,11 +54,22 @@ func NewRolloutCampaign(id uuid.UUID, releaseId uuid.UUID, name string) (*Rollou
 
 	return &RolloutCampaign{
 		id:         id,
-		firmwareId: releaseId,
+		firmwareId: firmwareId,
 		name:       name,
 		status:     RolloutCampaignPending,
 		targets:    make(map[uuid.UUID]*RolloutTarget),
 	}, nil
+}
+
+func LoadCampaignFromDB(id, fwId uuid.UUID, name string, status RolloutCampaignStatus, cancelReason string, targets map[uuid.UUID]*RolloutTarget) *RolloutCampaign {
+	return &RolloutCampaign{
+		id:           id,
+		firmwareId:   fwId,
+		name:         name,
+		status:       status,
+		cancelReason: cancelReason,
+		targets:      targets,
+	}
 }
 
 func (rc *RolloutCampaign) AddTarget(controllerId uuid.UUID) error {

@@ -22,7 +22,7 @@ func NewCampaignService(fwRepo FirmwareRepository, campRepo CampaignRepository) 
 }
 
 func (s *CampaignService) CreateCampaign(ctx context.Context, releaseId uuid.UUID, name string) (*entities.RolloutCampaign, error) {
-	fw, err := s.firmwareRepo.GetByID(ctx, releaseId)
+	fw, err := s.firmwareRepo.GetById(ctx, releaseId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get firmware: %w", err)
 	}

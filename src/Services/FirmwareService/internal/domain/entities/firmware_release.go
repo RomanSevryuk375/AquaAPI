@@ -74,6 +74,19 @@ func NewFirmwareRelease(id uuid.UUID, hardwareProfileId uuid.UUID, version vo.Ve
 	}, nil
 }
 
+func LoadFirmwareFromDB(id, hwId uuid.UUID, version vo.Version, fileHash string, sizeBytes int, storageKey string, status FirmwareStatus, revokeReason string) *Firmware {
+	return &Firmware{
+		id:                id,
+		hardwareProfileId: hwId,
+		version:           version,
+		fileHash:          fileHash,
+		sizeBytes:         sizeBytes,
+		storageKey:        storageKey,
+		status:            status,
+		revokeReason:      revokeReason,
+	}
+}
+
 func (fw *Firmware) Publish() error {
 	if fw.status != FirmwareDraft {
 		return errors.New("only draft firmware can be published")

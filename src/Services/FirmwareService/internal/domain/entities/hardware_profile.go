@@ -37,6 +37,15 @@ func NewHardwareProfile(id uuid.UUID, name string, boardRevision string) (*Hardw
 	}, nil
 }
 
+func LoadHardwareProfileFromDB(id uuid.UUID, name string, boardRevision string, isDepricated bool) *HardwareProfile {
+	return &HardwareProfile{
+		id:            id,
+		name:          name,
+		boardRevision: boardRevision,
+		isDeprecated:  isDepricated,
+	}
+}
+
 func (hp *HardwareProfile) UpdateName(name string) error {
 	if name == "" {
 		return errors.New("name can not be empty")
