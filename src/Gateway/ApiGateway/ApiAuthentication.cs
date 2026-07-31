@@ -1,7 +1,5 @@
-using Contracts.Authorization;
-using Contracts.Options;
+using BuildingBlocks.Presentation.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
 
 namespace ApiGateway;
 
@@ -41,39 +39,6 @@ public static class ApiAuthentication
                 };
                 Extensions.ConfigureJwtBearer(options, jwtOptions);
             });
-
-        return services;
-    }
-
-    public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
-    {
-        services.AddSwaggerGen(options =>
-        {
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Enter a valid JWT access token."
-            });
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    []
-                }
-            });
-        });
 
         return services;
     }

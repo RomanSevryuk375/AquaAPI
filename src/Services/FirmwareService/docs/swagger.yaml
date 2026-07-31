@@ -1,0 +1,521 @@
+definitions:
+  internal_presentation.AddTargetsRequest:
+    properties:
+      controller_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_presentation.CancelCampaignRequest:
+    properties:
+      reason:
+        type: string
+    type: object
+  internal_presentation.CreateCampaignRequest:
+    properties:
+      firmware_id:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_presentation.CreateProfileRequest:
+    properties:
+      board_revision:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_presentation.IDResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  internal_presentation.OTAResponse:
+    properties:
+      download_url:
+        type: string
+      file_hash:
+        type: string
+      has_update:
+        type: boolean
+      version:
+        type: string
+    type: object
+  internal_presentation.RevokeFirmwareRequest:
+    properties:
+      error_message:
+        type: string
+    type: object
+  internal_presentation.UpdateProfileRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  internal_presentation.UpdateTargetStatusRequest:
+    properties:
+      campaign_id:
+        type: string
+      controller_id:
+        type: string
+      error_message:
+        type: string
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/firmware/v1/campaigns:
+    post:
+      consumes:
+      - application/json
+      description: Создает новую кампанию OTA-обновления для указанной прошивки со
+        статусом Pending.
+      parameters:
+      - description: Данные для создания кампании
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.CreateCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает ID созданной кампании
+          schema:
+            $ref: '#/definitions/internal_presentation.IDResponse'
+        "400":
+          description: Неверный формат запроса
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Создать кампанию
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/campaigns/{id}:
+    delete:
+      description: Полностью удаляет кампанию и все связанные с ней таргеты из базы
+        данных (Каскадное удаление).
+      parameters:
+      - description: UUID кампании
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Кампания успешно удалена
+        "400":
+          description: Неверный ID кампании
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Удалить кампанию
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/campaigns/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Переводит кампанию в статус Canceled (Аварийная остановка развертывания
+        из-за багов или ошибок).
+      parameters:
+      - description: UUID кампании
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Указание причины отмены
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.CancelCampaignRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Кампания успешно отменена
+        "400":
+          description: Неверный формат запроса или ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Отменить кампанию
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/campaigns/{id}/pause:
+    post:
+      description: Переводит кампанию из статуса Active в Paused. Выдача новых ссылок
+        на обновление останавливается.
+      parameters:
+      - description: UUID кампании
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Кампания успешно приостановлена
+        "400":
+          description: Неверный ID кампании
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Приостановить кампанию
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/campaigns/{id}/start:
+    post:
+      description: Переводит кампанию в статус Active. ESP32-устройства начинают получать
+        обновления.
+      parameters:
+      - description: UUID кампании
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Кампания успешно запущена
+        "400":
+          description: Неверный ID кампании
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Запустить кампанию
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/campaigns/{id}/targets:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет список контроллеров ESP32 в кампанию. Доступно только
+        для кампаний в статусе Pending.
+      parameters:
+      - description: UUID кампании
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Список ID контроллеров
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.AddTargetsRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Устройства успешно добавлены
+        "400":
+          description: Неверный формат запроса или ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Добавить устройства (Таргеты)
+      tags:
+      - Rollout Campaigns
+  /api/firmware/v1/firmwares:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Создает новый релиз прошивки в статусе Draft и загружает бинарный
+        файл в S3.
+      parameters:
+      - description: UUID профиля оборудования
+        in: formData
+        name: hardware_id
+        required: true
+        type: string
+      - description: Семантическая версия (например, 1.0.0)
+        in: formData
+        name: version
+        required: true
+        type: string
+      - description: SHA-256 хэш файла (64 символа)
+        in: formData
+        name: file_hash
+        required: true
+        type: string
+      - description: Бинарный файл прошивки (.bin)
+        in: formData
+        name: firmware_file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает ID созданного релиза
+          schema:
+            $ref: '#/definitions/internal_presentation.IDResponse'
+        "400":
+          description: Неверный формат запроса или слишком большой файл
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Загрузить новую прошивку
+      tags:
+      - Firmware Releases
+  /api/firmware/v1/firmwares/{id}/publish:
+    post:
+      description: Переводит прошивку из статуса Draft в Published. После этого её
+        можно использовать в кампаниях.
+      parameters:
+      - description: UUID прошивки
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Прошивка успешно опубликована
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Опубликовать прошивку
+      tags:
+      - Firmware Releases
+  /api/firmware/v1/firmwares/{id}/revoke:
+    post:
+      consumes:
+      - application/json
+      description: Экстренно переводит прошивку в статус Revoked с указанием причины
+        (например, найден баг).
+      parameters:
+      - description: UUID прошивки
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Причина отзыва
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.RevokeFirmwareRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Прошивка успешно отозвана
+        "400":
+          description: Неверный формат запроса или ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Отозвать прошивку
+      tags:
+      - Firmware Releases
+  /api/firmware/v1/hardware-profiles:
+    post:
+      consumes:
+      - application/json
+      description: Создает профиль для новой ревизии платы (железа). К этому профилю
+        будут привязываться релизы прошивок.
+      parameters:
+      - description: Данные для создания профиля
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.CreateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает ID созданного профиля
+          schema:
+            $ref: '#/definitions/internal_presentation.IDResponse'
+        "400":
+          description: Неверный формат запроса
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Создать аппаратный профиль
+      tags:
+      - Hardware Profiles
+  /api/firmware/v1/hardware-profiles/{id}/deprecate:
+    post:
+      description: Помечает профиль как устаревший. Для таких профилей больше нельзя
+        выпускать новые прошивки.
+      parameters:
+      - description: UUID аппаратного профиля
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Профиль успешно списан
+        "400":
+          description: Неверный формат ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Списать аппаратный профиль (Deprecate)
+      tags:
+      - Hardware Profiles
+  /api/firmware/v1/hardware-profiles/{id}/name:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет имя профиля оборудования.
+      parameters:
+      - description: UUID аппаратного профиля
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Новое имя профиля
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Имя успешно обновлено
+        "400":
+          description: Неверный формат запроса или ID
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Переименовать аппаратный профиль
+      tags:
+      - Hardware Profiles
+  /api/firmware/v1/ota/check:
+    get:
+      description: Ищет активную кампанию обновления для переданного контроллера.
+        Возвращает ссылку на скачивание бинарника из S3.
+      parameters:
+      - description: UUID контроллера
+        in: query
+        name: controller_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает статус обновления и метаданные
+          schema:
+            $ref: '#/definitions/internal_presentation.OTAResponse'
+        "400":
+          description: Неверный формат controller_id
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Проверка обновлений (OTA)
+      tags:
+      - Device API
+  /api/firmware/v1/ota/status:
+    post:
+      consumes:
+      - application/json
+      description: Вызывается ESP32 для сообщения о начале скачивания, успешной прошивке
+        или ошибке обновления.
+      parameters:
+      - description: Данные о статусе обновления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_presentation.UpdateTargetStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Статус успешно обновлен
+        "400":
+          description: Неверный формат запроса
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Обновить статус прошивки устройства
+      tags:
+      - Device API
+swagger: "2.0"

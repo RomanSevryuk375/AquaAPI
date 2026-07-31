@@ -27,6 +27,17 @@ func NewHardwareProfileHandler(profileService application.HardwareProfileService
 	return &HardwareProfileHandler{profileService: profileService}
 }
 
+// @Summary      Создать аппаратный профиль
+// @Description  Создает профиль для новой ревизии платы (железа). К этому профилю будут привязываться релизы прошивок.
+// @Tags         Hardware Profiles
+// @Accept       json
+// @Produce      json
+// @Param        request body CreateProfileRequest true "Данные для создания профиля"
+// @Success      201 {object} IDResponse "Возвращает ID созданного профиля"
+// @Failure      400 {string} string "Неверный формат запроса"
+// @Failure      500 {string} string "Внутренняя ошибка сервера"
+// @Router       /api/firmware/v1/hardware-profiles [post]
+// @Security     Bearer
 func (h *HardwareProfileHandler) HandleCreateProfile(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 1*1024*1024)
 
@@ -54,10 +65,23 @@ func (h *HardwareProfileHandler) HandleCreateProfile(w http.ResponseWriter, r *h
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, `{"id":"%s"}`, id)
 }
 
+// @Summary      Переименовать аппаратный профиль
+// @Description  Обновляет имя профиля оборудования.
+// @Tags         Hardware Profiles
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "UUID аппаратного профиля"
+// @Param        request body UpdateProfileRequest true "Новое имя профиля"
+// @Success      204 "Имя успешно обновлено"
+// @Failure      400 {string} string "Неверный формат запроса или ID"
+// @Failure      500 {string} string "Внутренняя ошибка сервера"
+// @Router       /api/firmware/v1/hardware-profiles/{id}/name [put]
+// @Security     Bearer
 func (h *HardwareProfileHandler) HandleRenameProfile(w http.ResponseWriter, r *http.Request) {
 	profileIdStr := r.PathValue("id")
 	if profileIdStr == "" {
@@ -95,6 +119,16 @@ func (h *HardwareProfileHandler) HandleRenameProfile(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// @Summary      Списать аппаратный профиль (Deprecate)
+// @Description  Помечает профиль как устаревший. Для таких профилей больше нельзя выпускать новые прошивки.
+// @Tags         Hardware Profiles
+// @Produce      json
+// @Param        id path string true "UUID аппаратного профиля"
+// @Success      204 "Профиль успешно списан"
+// @Failure      400 {string} string "Неверный формат ID"
+// @Failure      500 {string} string "Внутренняя ошибка сервера"
+// @Router       /api/firmware/v1/hardware-profiles/{id}/deprecate [post]
+// @Security     Bearer
 func (h *HardwareProfileHandler) HandleProfileDeprecate(w http.ResponseWriter, r *http.Request) {
 	profileIdStr := r.PathValue("id")
 	if profileIdStr == "" {
@@ -109,7 +143,7 @@ func (h *HardwareProfileHandler) HandleProfileDeprecate(w http.ResponseWriter, r
 	}
 
 	if err := h.profileService.DeprecateProfile(r.Context(), profileId); err != nil {
-		log.Printf("[ERROR] Failed to вeprecate profile %s: %v", profileId, err)
+		log.Printf("[ERROR] Failed to deprecate profile %s: %v", profileId, err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}

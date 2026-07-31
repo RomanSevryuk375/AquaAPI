@@ -1,0 +1,9 @@
+**/.git
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/TestResults
+**/*.dbmdl
+docker-compose*.yml
+firmware-service/migrations

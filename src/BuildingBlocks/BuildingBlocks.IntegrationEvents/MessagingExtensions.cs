@@ -21,6 +21,8 @@ public static class MessagingExtensions
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
 
+            busConfigurator.AddDelayedMessageScheduler();
+
             configureConsumers?.Invoke(busConfigurator);
 
             busConfigurator.UsingRabbitMq((context, cfg) =>
@@ -30,6 +32,7 @@ public static class MessagingExtensions
                     h.Username(rabbitOptions.UserName);
                     h.Password(rabbitOptions.Password);
                 });
+                cfg.UseDelayedMessageScheduler();
                 cfg.ConfigureEndpoints(context);
             });
         });

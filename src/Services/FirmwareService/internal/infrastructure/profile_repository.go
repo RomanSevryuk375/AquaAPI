@@ -15,7 +15,7 @@ type profileDAO struct {
 	ID            uuid.UUID `db:"id"`
 	Name          string    `db:"name"`
 	BoardRevision string    `db:"board_revision"`
-	IsDeprecated  bool      `db:"is_depricated"`
+	IsDeprecated  bool      `db:"is_deprecated"`
 }
 
 type PostgresHardwareProfileRepository struct {
@@ -28,7 +28,7 @@ func NewPostgresHardwareProfileRepository(db *sqlx.DB) *PostgresHardwareProfileR
 
 func (r *PostgresHardwareProfileRepository) GetById(ctx context.Context, id uuid.UUID) (*entities.HardwareProfile, error) {
 	query := `
-		SELECT p.id, p.name, p.board_revision, p.is_depricated
+		SELECT p.id, p.name, p.board_revision, p.is_deprecated
 		FROM hardware_profiles p
 		WHERE p.id = $1
 	`

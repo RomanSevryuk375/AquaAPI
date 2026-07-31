@@ -37,8 +37,18 @@ func NewOTAHandler(otaService *application.OtaDistributionService, campService *
 	}
 }
 
+// @Summary      Проверка обновлений (OTA)
+// @Description  Ищет активную кампанию обновления для переданного контроллера. Возвращает ссылку на скачивание бинарника из S3.
+// @Tags         Device API
+// @Produce      json
+// @Param        controller_id query string true "UUID контроллера"
+// @Success      200 {object} OTAResponse "Возвращает статус обновления и метаданные"
+// @Failure      400 {string} string "Неверный формат controller_id"
+// @Failure      500 {string} string "Внутренняя ошибка сервера"
+// @Router       /api/firmware/v1/ota/check [get]
 func (h *OTAHandler) CheckUpdate(w http.ResponseWriter, r *http.Request) {
-	controllerIdStr := r.PathValue("id")
+	// Исправлено: читаем из строки запроса (Query), а не из пути (Path)
+	controllerIdStr := r.URL.Query().Get("controller_id")
 	if controllerIdStr == "" {
 		http.Error(w, "missing controller_id parameter", http.StatusBadRequest)
 		return
@@ -72,6 +82,16 @@ func (h *OTAHandler) CheckUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// @Summary      Обновить статус прошивки устройства
+// @Description  Вызывается ESP32 для сообщения о начале скачивания, успешной прошивке или ошибке обновления.
+// @Tags         Device API
+// @Accept       json
+// @Produce      json
+// @Param        request body UpdateTargetStatusRequest true "Данные о статусе обновления"
+// @Success      204 "Статус успешно обновлен"
+// @Failure      400 {string} string "Неверный формат запроса"
+// @Failure      500 {string} string "Внутренняя ошибка сервера"
+// @Router       /api/firmware/v1/ota/status [post]
 func (h *OTAHandler) HandleUpdateTargetStatus(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 1*1024*1024)
 
@@ -89,7 +109,7 @@ func (h *OTAHandler) HandleUpdateTargetStatus(w http.ResponseWriter, r *http.Req
 		req.ControllerId,
 		entities.TargetStatus(req.Status),
 		req.ErrorMessage); err != nil {
-		log.Printf("[ERROR] Failed to target update %s: %v", req.CampaignId, err)
+		log.Printf("[ERROR] Failed to update target %s: %v", req.ControllerId, err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
