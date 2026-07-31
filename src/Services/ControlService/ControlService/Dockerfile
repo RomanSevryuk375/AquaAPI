@@ -13,7 +13,13 @@ WORKDIR /src
 COPY ["*.slnx", "*.sln", "./"]
 COPY ["src/*.props", "src/*.targets", "src/"]
 
-COPY ["src/Contracts/Contracts/Contracts.csproj", "src/Contracts/Contracts/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj", "src/BuildingBlocks/BuildingBlocks.Domain/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Application/BuildingBlocks.Application.csproj", "src/BuildingBlocks/BuildingBlocks.Application/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj", "src/BuildingBlocks/BuildingBlocks.Infrastructure/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Presentation/BuildingBlocks.Presentation.csproj", "src/BuildingBlocks/BuildingBlocks.Presentation/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.IntegrationEvents/BuildingBlocks.IntegrationEvents.csproj", "src/BuildingBlocks/BuildingBlocks.IntegrationEvents/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.GrpcContracts/BuildingBlocks.GrpcContracts.csproj", "src/BuildingBlocks/BuildingBlocks.GrpcContracts/"]
+
 COPY ["src/Services/ControlService/ControlService/Control.API.csproj", "src/Services/ControlService/ControlService/"]
 COPY ["src/Services/ControlService/ControlService.Application/Control.Application.csproj", "src/Services/ControlService/ControlService.Application/"]
 COPY ["src/Services/ControlService/ControlService.Domain/Control.Domain.csproj", "src/Services/ControlService/ControlService.Domain/"]

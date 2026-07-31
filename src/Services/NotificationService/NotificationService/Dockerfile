@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
@@ -13,7 +13,13 @@ WORKDIR /src
 COPY ["*.slnx", "*.sln", "./"]
 COPY ["src/*.props", "src/*.targets", "src/"]
 
-COPY ["src/Contracts/Contracts/Contracts.csproj", "src/Contracts/Contracts/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj", "src/BuildingBlocks/BuildingBlocks.Domain/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Application/BuildingBlocks.Application.csproj", "src/BuildingBlocks/BuildingBlocks.Application/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj", "src/BuildingBlocks/BuildingBlocks.Infrastructure/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Presentation/BuildingBlocks.Presentation.csproj", "src/BuildingBlocks/BuildingBlocks.Presentation/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.IntegrationEvents/BuildingBlocks.IntegrationEvents.csproj", "src/BuildingBlocks/BuildingBlocks.IntegrationEvents/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.GrpcContracts/BuildingBlocks.GrpcContracts.csproj", "src/BuildingBlocks/BuildingBlocks.GrpcContracts/"]
+
 COPY ["src/Services/NotificationService/NotificationService/Notification.API.csproj", "src/Services/NotificationService/NotificationService/"]
 COPY ["src/Services/NotificationService/Notification.Application/Notification.Application.csproj", "src/Services/NotificationService/Notification.Application/"]
 COPY ["src/Services/NotificationService/Notification.Domain/Notification.Domain.csproj", "src/Services/NotificationService/Notification.Domain/"]

@@ -22,7 +22,8 @@ public static class DependencyInjection
                        .AddRepositories()
                        .AddRabbitMq(configuration)
                        .AddOutboxProcessorQuartzJob<DeviceDbContext>()
-                       .AddQuartzJobs(configuration);
+                       .AddQuartzJobs(configuration)
+                       .AddUserContext();
 
     }
 
@@ -32,7 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IRelayRepository, RelayRepository>();
         services.AddScoped<IRelayCommandsRepository, RelayCommandsQueueRepository>();
         services.AddScoped<ISensorRepository, SensorRepository>();
-        
+
         return services;
     }
 

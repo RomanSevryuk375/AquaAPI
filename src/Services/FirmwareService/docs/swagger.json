@@ -1,0 +1,800 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/firmware/v1/campaigns": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Создает новую кампанию OTA-обновления для указанной прошивки со статусом Pending.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Создать кампанию",
+                "parameters": [
+                    {
+                        "description": "Данные для создания кампании",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.CreateCampaignRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает ID созданной кампании",
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/campaigns/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Полностью удаляет кампанию и все связанные с ней таргеты из базы данных (Каскадное удаление).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Удалить кампанию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID кампании",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Кампания успешно удалена"
+                    },
+                    "400": {
+                        "description": "Неверный ID кампании",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/campaigns/{id}/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Переводит кампанию в статус Canceled (Аварийная остановка развертывания из-за багов или ошибок).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Отменить кампанию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID кампании",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Указание причины отмены",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.CancelCampaignRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Кампания успешно отменена"
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/campaigns/{id}/pause": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Переводит кампанию из статуса Active в Paused. Выдача новых ссылок на обновление останавливается.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Приостановить кампанию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID кампании",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Кампания успешно приостановлена"
+                    },
+                    "400": {
+                        "description": "Неверный ID кампании",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/campaigns/{id}/start": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Переводит кампанию в статус Active. ESP32-устройства начинают получать обновления.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Запустить кампанию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID кампании",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Кампания успешно запущена"
+                    },
+                    "400": {
+                        "description": "Неверный ID кампании",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/campaigns/{id}/targets": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Добавляет список контроллеров ESP32 в кампанию. Доступно только для кампаний в статусе Pending.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rollout Campaigns"
+                ],
+                "summary": "Добавить устройства (Таргеты)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID кампании",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Список ID контроллеров",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.AddTargetsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Устройства успешно добавлены"
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/firmwares": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Создает новый релиз прошивки в статусе Draft и загружает бинарный файл в S3.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Firmware Releases"
+                ],
+                "summary": "Загрузить новую прошивку",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID профиля оборудования",
+                        "name": "hardware_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Семантическая версия (например, 1.0.0)",
+                        "name": "version",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "SHA-256 хэш файла (64 символа)",
+                        "name": "file_hash",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Бинарный файл прошивки (.bin)",
+                        "name": "firmware_file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает ID созданного релиза",
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или слишком большой файл",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/firmwares/{id}/publish": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Переводит прошивку из статуса Draft в Published. После этого её можно использовать в кампаниях.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Firmware Releases"
+                ],
+                "summary": "Опубликовать прошивку",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID прошивки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Прошивка успешно опубликована"
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/firmwares/{id}/revoke": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Экстренно переводит прошивку в статус Revoked с указанием причины (например, найден баг).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Firmware Releases"
+                ],
+                "summary": "Отозвать прошивку",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID прошивки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Причина отзыва",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.RevokeFirmwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Прошивка успешно отозвана"
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/hardware-profiles": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Создает профиль для новой ревизии платы (железа). К этому профилю будут привязываться релизы прошивок.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hardware Profiles"
+                ],
+                "summary": "Создать аппаратный профиль",
+                "parameters": [
+                    {
+                        "description": "Данные для создания профиля",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.CreateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает ID созданного профиля",
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/hardware-profiles/{id}/deprecate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Помечает профиль как устаревший. Для таких профилей больше нельзя выпускать новые прошивки.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hardware Profiles"
+                ],
+                "summary": "Списать аппаратный профиль (Deprecate)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID аппаратного профиля",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Профиль успешно списан"
+                    },
+                    "400": {
+                        "description": "Неверный формат ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/hardware-profiles/{id}/name": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Обновляет имя профиля оборудования.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hardware Profiles"
+                ],
+                "summary": "Переименовать аппаратный профиль",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID аппаратного профиля",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новое имя профиля",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Имя успешно обновлено"
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/ota/check": {
+            "get": {
+                "description": "Ищет активную кампанию обновления для переданного контроллера. Возвращает ссылку на скачивание бинарника из S3.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device API"
+                ],
+                "summary": "Проверка обновлений (OTA)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID контроллера",
+                        "name": "controller_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает статус обновления и метаданные",
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.OTAResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат controller_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/firmware/v1/ota/status": {
+            "post": {
+                "description": "Вызывается ESP32 для сообщения о начале скачивания, успешной прошивке или ошибке обновления.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device API"
+                ],
+                "summary": "Обновить статус прошивки устройства",
+                "parameters": [
+                    {
+                        "description": "Данные о статусе обновления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_presentation.UpdateTargetStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Статус успешно обновлен"
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "internal_presentation.AddTargetsRequest": {
+            "type": "object",
+            "properties": {
+                "controller_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "internal_presentation.CancelCampaignRequest": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.CreateCampaignRequest": {
+            "type": "object",
+            "properties": {
+                "firmware_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.CreateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "board_revision": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.IDResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.OTAResponse": {
+            "type": "object",
+            "properties": {
+                "download_url": {
+                    "type": "string"
+                },
+                "file_hash": {
+                    "type": "string"
+                },
+                "has_update": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.RevokeFirmwareRequest": {
+            "type": "object",
+            "properties": {
+                "error_message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_presentation.UpdateTargetStatusRequest": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {
+                    "type": "string"
+                },
+                "controller_id": {
+                    "type": "string"
+                },
+                "error_message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
