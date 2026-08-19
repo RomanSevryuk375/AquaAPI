@@ -133,6 +133,76 @@ services:
     networks:
       - aqua-network
 
+  telemetry-redis:
+    image: redis:7.2-alpine
+    container_name: telemetry-redis
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - telemetry-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aqua-network
+
+  device-redis:
+    image: redis:7.2-alpine
+    container_name: device-redis
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - device-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aqua-network
+  
+  control-redis:
+    image: redis:7.2-alpine
+    container_name: control-redis
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - control-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aqua-network
+
+  identity-redis:
+    image: redis:7.2-alpine
+    container_name: identity-redis
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - identity-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aqua-network
+
+  notification-redis:
+    image: redis:7.2-alpine
+    container_name: notification-redis
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - notification-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aqua-network
+
   minio:
     image: minio/minio
     container_name: minio
@@ -252,10 +322,13 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      telemetry-redis:
+        condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080  
       - ConnectionStrings__TelemetryDbContext=Host=telemetry-db;Database=telemetry_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=telemetry-redis:6379 
       - ElasticConfiguration__Uri=http://elasticsearch:9200
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
@@ -286,10 +359,13 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      device-redis:
+        condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__DeviceDbContext=Host=device-db;Database=device_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=device-redis:6379 
       - ElasticConfiguration__Uri=http://elasticsearch:9200
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
@@ -318,10 +394,13 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      control-redis:
+        condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__ControlDbContext=Host=control-db;Database=control_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=control-redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
@@ -348,6 +427,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__IdentityDbContext=Host=identity-db;Database=identity_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=identity-redis:6379
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
@@ -358,6 +438,8 @@ services:
     depends_on:
       identity-db:
         condition: service_healthy
+      identity-redis:
+        condition: service_healthy 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -376,11 +458,14 @@ services:
         condition: service_healthy 
       rabbitmq: 
         condition: service_healthy 
+      notification-redis:
+        condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 
       - ConnectionStrings__NotificationDbContext=Host=notification-db;Database=notification_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=notification-redis:6379
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
@@ -436,10 +521,18 @@ networks:
     driver: bridge
 
 volumes:
+
   telemetry-db-data:
   device-db-data:
   control-db-data:
   identity-db-data:
   notification-db-data:
   firmware-db-data:
+
+  telemetry-redis-data:
+  device-redis-data:
+  control-redis-data:
+  identity-redis-data:
+  notification-redis-data:
+
   minio-data:

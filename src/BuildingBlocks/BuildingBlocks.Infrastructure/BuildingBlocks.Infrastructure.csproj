@@ -8,6 +8,10 @@
         <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
         <PackageReference Include="Quartz.Extensions.Hosting" />
+        <PackageReference Include="ZiggyCreatures.FusionCache" />
+        <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
+        <PackageReference Include="ZiggyCreatures.FusionCache.Backplane.StackExchangeRedis" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     </ItemGroup>
     
     <ItemGroup>

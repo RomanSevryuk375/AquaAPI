@@ -23,7 +23,8 @@ public static class DependencyInjection
                        .AddRabbitMq(configuration)
                        .AddOutboxProcessorQuartzJob<DeviceDbContext>()
                        .AddQuartzJobs(configuration)
-                       .AddUserContext();
+                       .AddUserContext()
+                       .AddCache(configuration);
 
     }
 
