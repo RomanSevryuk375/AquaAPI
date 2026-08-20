@@ -6,6 +6,7 @@ namespace Device.Application.Features.RelayCommands.Command.SetRelayState;
 public sealed record SetRelayStateCommand
     : ICommand, IControllerBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid ControllerId { get; init; }
     public Guid RelayId { get; init; }
     public bool TargetState { get; init; }

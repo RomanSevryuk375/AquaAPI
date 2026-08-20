@@ -1,5 +1,4 @@
 using BuildingBlocks.Application.Behaviors;
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using MediatR;
 using Notification.Application.Interfaces;
@@ -9,8 +8,7 @@ using Notification.Domain.Interfaces;
 namespace Notification.Application.Behaviors;
 
 public sealed class EcosystemSecurityBehavior<TRequest, TResponse>(
-    IEcosystemRepository ecosystemRepository,
-    IUserContext userContext)
+    IEcosystemRepository ecosystemRepository)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IEcosystemBoundRequest
 {
     public async Task<TResponse> Handle(
@@ -26,7 +24,7 @@ public sealed class EcosystemSecurityBehavior<TRequest, TResponse>(
                     $"Ecosystem {request.EcosystemId} not found. "));
         }
 
-        if (ecosystem.UserId != userContext.UserId)
+        if (ecosystem.UserId != request.UserId)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(Error.Conflict("Access.Denied",
                     "You are not the owner of this ecosystem"));

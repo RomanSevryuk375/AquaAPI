@@ -4,17 +4,19 @@ using Notification.Application.Features.Notifications.Commands.MarkNotificationA
 using Notification.Domain.Interfaces;
 using Notification.TestShared.Builders;
 using NSubstitute;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Notification.Application.UnitTests.Features.Notifications.Commands.MarkNotificationAsRead;
 
 public class MarkNotificationAsReadHandlerTests
 {
     private readonly INotificationRepository _notificationRepoMock = Substitute.For<INotificationRepository>();
+    private readonly IFusionCache _cacheMock = Substitute.For<IFusionCache>();
     private readonly MarkNotificationAsReadHandler _handler;
 
     public MarkNotificationAsReadHandlerTests()
     {
-        _handler = new MarkNotificationAsReadHandler(_notificationRepoMock);
+        _handler = new MarkNotificationAsReadHandler(_notificationRepoMock, _cacheMock);
     }
 
     [Fact]

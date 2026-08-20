@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.VacationModes.Commands.DeleteVacationMode;
 
@@ -11,9 +12,14 @@ public sealed class DeleteVacationModeEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.VacationModes}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            DeleteVacationModeCommand command = new DeleteVacationModeCommand { VacationModeId = id };
+            DeleteVacationModeCommand command = new()
+            {
+                VacationModeId = id,
+                UserId = userContext.UserId
+            };
 
             var result = await sender.Send(command, cancellationToken);
 

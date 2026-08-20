@@ -32,7 +32,9 @@ public class GetMyProfileHandlerTests(IntegrationTestWebAppFactory factory)
         UserContext.UserId = user.Id;
         UserContext.IsAuthenticated = true;
 
-        var query = new GetMyProfileQuery();
+        var query = new GetMyProfileQuery(){
+    UserId = UserContext.UserId
+};
 
         // Act
         Result<UserProfileResponseDto> result = await Sender.Send(query);

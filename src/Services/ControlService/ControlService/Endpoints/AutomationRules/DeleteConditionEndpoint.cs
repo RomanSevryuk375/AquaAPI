@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.AutomationRules.Commands.DeleteCondition;
 
@@ -12,10 +13,12 @@ public sealed class DeleteConditionEndpoint : IEndpoint
             Guid ruleId,
             Guid conditionId,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             DeleteConditionCommand command = new DeleteConditionCommand
             {
+                UserId = userContext.UserId,
                 RuleId = ruleId,
                 ConditionId = conditionId,
             };

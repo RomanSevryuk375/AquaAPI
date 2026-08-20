@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,11 @@ public sealed class AddRelayEndpoint : IEndpoint
         app.MapPost(ApiConstants.Routes.Relays, async (
             AddRelayCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            Result<RelayCreatedResponse> result = await sender.Send(command, cancellationToken);
+            AddRelayCommand commandWithUser = command with { UserId = userContext.UserId };
+            Result<RelayCreatedResponse> result = await sender.Send(commandWithUser, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetRelayById", new { id = result.Value.Id }, result.Value)

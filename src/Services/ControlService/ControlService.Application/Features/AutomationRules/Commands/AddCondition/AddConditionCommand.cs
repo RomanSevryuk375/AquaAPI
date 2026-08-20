@@ -7,6 +7,7 @@ namespace Control.Application.Features.AutomationRules.Commands.AddCondition;
 public sealed record AddConditionCommand
     : ICommand<Guid>, IRuleSensorBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid RuleId { get; init; }
     public Guid SensorId { get; init; }
     public Condition Condition { get; init; }

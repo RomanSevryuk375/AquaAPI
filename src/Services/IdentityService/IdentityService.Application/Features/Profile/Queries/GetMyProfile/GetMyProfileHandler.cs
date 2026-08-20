@@ -10,8 +10,7 @@ using MediatR;
 namespace IdentityService.Application.Features.Profile.Queries.GetMyProfile;
 
 public sealed class GetMyProfileHandler(
-    ISqlConnectionFactory sqlConnectionFactory,
-    IUserContext userContext) : IRequestHandler<GetMyProfileQuery, Result<UserProfileResponseDto>>
+    ISqlConnectionFactory sqlConnectionFactory) : IRequestHandler<GetMyProfileQuery, Result<UserProfileResponseDto>>
 {
     public async Task<Result<UserProfileResponseDto>> Handle(GetMyProfileQuery request, CancellationToken cancellationToken)
     {
@@ -31,7 +30,7 @@ public sealed class GetMyProfileHandler(
             """;
 
         UserProfileResponseDto? profile = await connection.QuerySingleOrDefaultAsync<UserProfileResponseDto>(
-            SQL, new { userContext.UserId });
+            SQL, new { request.UserId });
 
         if (profile is null)
         {

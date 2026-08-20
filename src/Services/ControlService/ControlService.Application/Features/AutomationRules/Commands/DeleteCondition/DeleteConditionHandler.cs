@@ -1,11 +1,15 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.AutomationRules.Commands.DeleteCondition;
 
-public sealed class DeleteConditionHandler(IAutomationRuleRepository ruleRepository)
+public sealed class DeleteConditionHandler(
+    IAutomationRuleRepository ruleRepository,
+    IFusionCache cache)
     : IRequestHandler<DeleteConditionCommand, Result>
 {
     public async Task<Result> Handle(
@@ -16,7 +20,7 @@ public sealed class DeleteConditionHandler(IAutomationRuleRepository ruleReposit
             request.RuleId, cancellationToken);
         if (rule is null)
         {
-            return Result<Guid>.Failure(Error.NotFound<RuleCondition>(
+            return Result.Failure(Error.NotFound<RuleCondition>(
                 $"Rule {request.RuleId} not found"));
         }
 
@@ -30,8 +34,10 @@ public sealed class DeleteConditionHandler(IAutomationRuleRepository ruleReposit
         Result removeResult = rule.RemoveCondition(condition);
         if (removeResult.IsFailure)
         {
-            return Result<Guid>.Failure(removeResult.Error);
+            return Result.Failure(removeResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Rule(request.UserId, request.RuleId), token: cancellationToken);
 
         return Result.Success();
     }

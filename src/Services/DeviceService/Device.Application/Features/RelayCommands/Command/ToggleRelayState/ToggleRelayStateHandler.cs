@@ -17,7 +17,7 @@ public sealed class ToggleRelayStateHandler(
         Relay? existingRelay = await relayRepository.GetByIdAsync(
             request.RelayId, cancellationToken);
 
-        existingRelay!.SetState(!existingRelay.IsActive);
+        existingRelay!.SetState(!existingRelay.IsActive, request.UserId);
 
         Result<RelayCommand> newCommand = RelayCommand.Create(
             id: NewId.NextGuid(), existingRelay.ControllerId, existingRelay.Id,

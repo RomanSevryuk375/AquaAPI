@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,10 @@ public sealed class GetMyProfileEndpoint : IEndpoint
     {
         app.MapGet(ApiConstants.Routes.Profiles, async (
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetMyProfileQuery();
+            var query = new GetMyProfileQuery { UserId = userContext.UserId };
             Result<UserProfileResponseDto> result = await sender.Send(query, cancellationToken);
 
             return result.ToIResult();

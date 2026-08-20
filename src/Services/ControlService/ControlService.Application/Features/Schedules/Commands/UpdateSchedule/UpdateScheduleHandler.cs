@@ -1,13 +1,16 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.Schedules.Commands.UpdateSchedule;
 
 public sealed class UpdateScheduleHandler(
     IScheduleRepository scheduleRepository,
-    ICronValidator cronValidator) : IRequestHandler<UpdateScheduleCommand, Result>
+    ICronValidator cronValidator,
+    IFusionCache cache) : IRequestHandler<UpdateScheduleCommand, Result>
 {
     public async Task<Result> Handle(UpdateScheduleCommand request, CancellationToken cancellationToken)
     {
@@ -25,6 +28,8 @@ public sealed class UpdateScheduleHandler(
         {
             return Result.Failure(updateResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Schedule(request.UserId, request.ScheduleId), token: cancellationToken);
 
         return Result.Success();
     }

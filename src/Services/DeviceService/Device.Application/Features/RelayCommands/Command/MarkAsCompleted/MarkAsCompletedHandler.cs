@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Enums;
 using BuildingBlocks.Domain.Results;
 
@@ -28,7 +28,7 @@ internal sealed class MarkAsCompletedHandler(
                     string.Format(ErrorMessages.RelayNotFound, command.RelayId)));
         }
 
-        existingRelay.SetState(command.TargetState);
+        existingRelay.SetState(command.TargetState, existingRelay.UserId);
         if (command.Status == CommandStatus.Completed)
         {
             return Result.Success();

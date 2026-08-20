@@ -138,10 +138,12 @@ public class AutomationRulesEndpointTests(E2ETestWebAppFactory factory) : BaseE2
     {
         // Arrange
         Ecosystem ecosystem = new EcosystemBuilder()
+            .WithId(Guid.NewGuid())
             .WithUserId(Guid.NewGuid())
             .Build();
 
         AutomationRule rule = new AutomationRuleBuilder()
+            .WithId(Guid.NewGuid())
             .WithEcosystemId(ecosystem.Id)
             .Build();
 

@@ -11,8 +11,7 @@ using MediatR;
 namespace Control.Application.Behaviors;
 
 public sealed class VacationModeSecurityBehavior<TRequest, TResponse>(
-    ISqlConnectionFactory sqlConnectionFactory,
-    IUserContext userContext)
+    ISqlConnectionFactory sqlConnectionFactory)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IVacationModeBoundRequest
 {
     public async Task<TResponse> Handle(
@@ -38,7 +37,7 @@ public sealed class VacationModeSecurityBehavior<TRequest, TResponse>(
                 $"Vacation mode {request.VacationModeId} not found."));
         }
 
-        if (ownerId != userContext.UserId)
+        if (ownerId != request.UserId)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(Error.Conflict(
                 ErrorCodes.Security.AccessDenied,

@@ -253,6 +253,7 @@ public class AddTelemetryBatchHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenValidationFails_ReturnsFailureAndDoesNotCallRepositories()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var command = new AddTelemetryBatchCommand
         {
@@ -283,6 +284,7 @@ public class AddTelemetryBatchHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenEcosystemUserMismatch_ReturnsAccessDeniedConflict()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var controllerId = Guid.NewGuid();
         var ecosystemUserId = Guid.NewGuid();

@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using Device.Application.Features.Controllers.Command.AddController;
 
@@ -6,14 +5,13 @@ namespace Device.Application.UnitTests.Features.Controllers;
 
 public class AddControllerHandlerTests
 {
-    private readonly IUserContext _userContextMock = Substitute.For<IUserContext>();
     private readonly IMyHasher _hasherMock = Substitute.For<IMyHasher>();
     private readonly IControllerRepository _controllerRepoMock = Substitute.For<IControllerRepository>();
     private readonly AddControllerHandler _handler;
 
     public AddControllerHandlerTests()
     {
-        _handler = new AddControllerHandler(_userContextMock, _hasherMock, _controllerRepoMock);
+        _handler = new AddControllerHandler(_hasherMock, _controllerRepoMock);
     }
 
     [Fact]
@@ -22,7 +20,6 @@ public class AddControllerHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
 
         string expectedHash = "some_generated_hash";
 
@@ -30,6 +27,7 @@ public class AddControllerHandlerTests
 
         var command = new AddControllerCommand
         {
+            UserId = userId,
             MacAddress = TestConstants.ValidMacAddress,
             Name = "New Controller",
             IsOnline = true
@@ -53,9 +51,13 @@ public class AddControllerHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WithDomainValidationError_ReturnsFailureAndDoesNotSave()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var command = new AddControllerCommand
         {
+
+            UserId = userId
+,
             MacAddress = "invalid_mac",
             Name = "New Controller",
             IsOnline = true

@@ -24,7 +24,7 @@ public sealed class SensorSecurityBehavior<TRequest, TResponse>(
         }
 
         Result ownership = await securityService.EnsureUserOwnsControllerAsync(
-            existingSensor.ControllerId, cancellationToken);
+            existingSensor.ControllerId, request.UserId, cancellationToken);
         if (ownership.IsFailure)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(ownership.Error);

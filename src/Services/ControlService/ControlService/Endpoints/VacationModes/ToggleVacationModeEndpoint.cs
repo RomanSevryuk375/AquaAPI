@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.VacationModes.Commands.ToggleVacationMode;
 
@@ -11,9 +12,14 @@ public sealed class ToggleVacationModeEndpoint : IEndpoint
         app.MapPut($"{ApiConstants.Routes.VacationModes}/{{id:guid}}/toggle", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            ToggleVacationModeCommand command = new ToggleVacationModeCommand { VacationModeId = id };
+            ToggleVacationModeCommand command = new()
+            {
+                VacationModeId = id,
+                UserId = userContext.UserId
+            };
 
             var result = await sender.Send(command, cancellationToken);
 

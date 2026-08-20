@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -16,9 +17,10 @@ public sealed class UpdateRelayEndpoint : IEndpoint
             Guid id,
             UpdateRelayCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            UpdateRelayCommand enrichedCommand = command with { RelayId = id };
+            UpdateRelayCommand enrichedCommand = command with { RelayId = id, UserId = userContext.UserId };
 
             Result result = await sender.Send(enrichedCommand, cancellationToken);
 

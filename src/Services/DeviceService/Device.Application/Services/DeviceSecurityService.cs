@@ -1,4 +1,3 @@
-﻿using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using Device.Application.Interfaces;
@@ -7,11 +6,11 @@ namespace Device.Application.Services;
 
 public sealed class DeviceSecurityService(
     IControllerRepository controllerRepository,
-    IUserContext userContext,
     IMyHasher myHasher) : IDeviceSecurityService
 {
     public async Task<Result> EnsureUserOwnsControllerAsync(
         Guid controllerId,
+        Guid userId,
         CancellationToken cancellationToken = default)
     {
         Controller? controller = await controllerRepository.GetByIdAsync(controllerId, cancellationToken);
@@ -22,7 +21,7 @@ public sealed class DeviceSecurityService(
                 ErrorMessages.ControllerNotFoundPlain));
         }
 
-        if (controller.UserId != userContext.UserId)
+        if (controller.UserId != userId)
         {
             return Result.Failure(Error.Conflict(
                 ErrorMessages.AccessDenied,

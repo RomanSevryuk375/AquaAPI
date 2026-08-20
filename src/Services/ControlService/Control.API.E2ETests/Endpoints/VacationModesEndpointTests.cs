@@ -139,10 +139,12 @@ public class VacationModesEndpointTests(E2ETestWebAppFactory factory) : BaseE2ET
     {
         // Arrange
         Ecosystem ecosystem = new EcosystemBuilder()
+            .WithId(Guid.NewGuid())
             .WithUserId(Guid.NewGuid())
             .Build();
 
         VacationMode vacation = new VacationModeBuilder()
+            .WithId(Guid.NewGuid())
             .WithEcosystemId(ecosystem.Id)
             .Build();
 

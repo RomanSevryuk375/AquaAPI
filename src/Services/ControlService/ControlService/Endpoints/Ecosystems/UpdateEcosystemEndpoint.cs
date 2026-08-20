@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.DTOs.Ecosystems;
 using Control.Application.Features.Ecosystems.Commands.UpdateEcosystem;
@@ -13,10 +14,12 @@ public sealed class UpdateEcosystemEndpoint : IEndpoint
             Guid id,
             EcosystemUpdateRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             UpdateEcosystemCommand command = new UpdateEcosystemCommand
             {
+                UserId = userContext.UserId,
                 EcosystemId = id,
                 Name = request.Name,
                 Volume = request.Volume

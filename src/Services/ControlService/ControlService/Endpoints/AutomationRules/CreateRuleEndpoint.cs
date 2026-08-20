@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
@@ -15,9 +16,13 @@ public sealed class CreateRuleEndpoint : IEndpoint
             CreateRuleRequestDto request,
             ISender sender,
             IMapper mapper,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            CreateRuleCommand command = mapper.Map<CreateRuleCommand>(request);
+            CreateRuleCommand command = mapper.Map<CreateRuleCommand>(request) with 
+            { 
+                UserId = userContext.UserId 
+            };
 
             Result<Guid> result = await sender.Send(command, cancellationToken);
 

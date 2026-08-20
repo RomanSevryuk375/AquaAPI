@@ -12,7 +12,7 @@ public sealed class DeleteRelayHandler(IRelayRepository relayRepository)
         Relay? existingRelay = await relayRepository.GetByIdAsync(
             request.RelayId, cancellationToken);
 
-        existingRelay!.MarkAsDeleted();
+        existingRelay!.MarkAsDeleted(request.UserId);
 
         await relayRepository.DeleteAsync(request.RelayId, cancellationToken);
 

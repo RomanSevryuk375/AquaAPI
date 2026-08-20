@@ -7,6 +7,7 @@ namespace Device.Application.Features.Relays.Command.AddRelay;
 public sealed record AddRelayCommand
     : ICommand<RelayCreatedResponse>, IControllerBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid ControllerId { get; init; }
     public Guid? PowerSensorId { get; init; }
     public string Name { get; init; } = string.Empty;

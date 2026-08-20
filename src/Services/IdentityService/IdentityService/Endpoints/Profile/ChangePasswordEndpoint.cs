@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -16,10 +17,12 @@ public sealed class ChangePasswordEndpoint : IEndpoint
         app.MapPost($"{ApiConstants.Routes.Profiles}/password", async (
             ChangePasswordRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var command = new ChangePasswordCommand
             {
+                UserId = userContext.UserId,
                 CurrentPassword = request.CurrentPassword,
                 NewPassword = request.NewPassword
             };

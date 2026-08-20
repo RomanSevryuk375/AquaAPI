@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Schedules.Commands.CreateSchedule;
@@ -12,9 +13,12 @@ public sealed class CreateScheduleEndpoint : IEndpoint
         app.MapPost(ApiConstants.Routes.Schedules, async (
             CreateScheduleCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            CreateScheduleCommand enrichedCommand = command with { UserId = userContext.UserId };
+
+            Result<Guid> result = await sender.Send(enrichedCommand, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetScheduleById", new { id = result.Value }, result.Value)

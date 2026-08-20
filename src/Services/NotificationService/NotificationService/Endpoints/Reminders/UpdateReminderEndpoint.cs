@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -16,9 +17,14 @@ public sealed class UpdateReminderEndpoint : IEndpoint
             Guid id,
             UpdateReminderCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            UpdateReminderCommand enrichedCommand = command with { ReminderId = id };
+            UpdateReminderCommand enrichedCommand = command with 
+            { 
+                ReminderId = id,
+                UserId = userContext.UserId 
+            };
 
             Result result = await sender.Send(enrichedCommand, cancellationToken);
 

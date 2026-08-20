@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.Profile.Commands.ChangePassword;
 using Microsoft.AspNetCore.Identity;
@@ -8,14 +7,13 @@ namespace Identity.Application.UnitTests.Features.Profile.Commands.ChangePasswor
 public class ChangePasswordHandlerTests
 {
     private readonly UserManager<User> _userManagerMock;
-    private readonly IUserContext _userContextMock = Substitute.For<IUserContext>();
     private readonly ChangePasswordHandler _handler;
 
     public ChangePasswordHandlerTests()
     {
         IUserStore<User> storeMock = Substitute.For<IUserStore<User>>();
         _userManagerMock = Substitute.For<UserManager<User>>(storeMock, null, null, null, null, null, null, null, null);
-        _handler = new ChangePasswordHandler(_userManagerMock, _userContextMock);
+        _handler = new ChangePasswordHandler(_userManagerMock);
     }
 
     [Fact]
@@ -24,11 +22,11 @@ public class ChangePasswordHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
         _userManagerMock.FindByIdAsync(userId.ToString()).Returns((User?)null);
 
         var command = new ChangePasswordCommand
         {
+            UserId = userId,
             CurrentPassword = "OldPassword123!",
             NewPassword = "NewPassword123!"
         };
@@ -51,7 +49,6 @@ public class ChangePasswordHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        _userContextMock.UserId.Returns(user.Id);
         _userManagerMock.FindByIdAsync(user.Id.ToString()).Returns(user);
 
         _userManagerMock.ChangePasswordAsync(user, "OldPassword123!", "NewPassword123!")
@@ -59,6 +56,7 @@ public class ChangePasswordHandlerTests
 
         var command = new ChangePasswordCommand
         {
+            UserId = user.Id,
             CurrentPassword = "OldPassword123!",
             NewPassword = "NewPassword123!"
         };
@@ -78,7 +76,6 @@ public class ChangePasswordHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        _userContextMock.UserId.Returns(user.Id);
         _userManagerMock.FindByIdAsync(user.Id.ToString()).Returns(user);
 
         var identityError = new IdentityError { Description = "Password must contain at least one digit." };
@@ -87,6 +84,7 @@ public class ChangePasswordHandlerTests
 
         var command = new ChangePasswordCommand
         {
+            UserId = user.Id,
             CurrentPassword = "OldPassword123!",
             NewPassword = "weakpassword"
         };

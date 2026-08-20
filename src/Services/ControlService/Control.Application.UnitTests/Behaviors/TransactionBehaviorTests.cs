@@ -40,6 +40,7 @@ public class TransactionBehaviorTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenCommandSucceeds_CommitsTransaction()
     {
+
         // Arrange
         var behavior = new TransactionBehavior<TestCommand, Result>(_unitOfWorkMock);
         _nextMock.Invoke().Returns(Result.Success());

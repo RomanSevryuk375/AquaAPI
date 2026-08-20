@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;

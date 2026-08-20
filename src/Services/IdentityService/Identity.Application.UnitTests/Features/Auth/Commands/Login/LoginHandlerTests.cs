@@ -58,7 +58,11 @@ public class LoginHandlerTests
     public async Task Handle_WhenUserNotFound_ReturnsAuthInvalidError()
     {
         // Arrange
-        var command = new LoginCommand { Email = "nonexistent@example.com", Password = "Password123!" };
+        var command = new LoginCommand
+        {
+            Email = "nonexistent@example.com",
+            Password = "Password123!"
+        };
         _userManagerMock.FindByEmailAsync(command.Email).Returns((User?)null);
 
         // Act
@@ -78,7 +82,11 @@ public class LoginHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        var command = new LoginCommand { Email = user.Email!, Password = "WrongPassword" };
+        var command = new LoginCommand
+        {
+            Email = user.Email!,
+            Password = "WrongPassword"
+        };
 
         _userManagerMock.FindByEmailAsync(user.Email!).Returns(user);
         _userManagerMock.CheckPasswordAsync(user, command.Password).Returns(false);

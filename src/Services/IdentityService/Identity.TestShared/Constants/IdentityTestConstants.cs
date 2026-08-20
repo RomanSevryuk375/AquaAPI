@@ -1,5 +1,3 @@
-using System;
-
 namespace Identity.TestShared.Constants;
 
 public static class IdentityTestConstants

@@ -12,7 +12,7 @@ public sealed class ToggleRelayModeHandler(IRelayRepository relayRepository)
         Relay? existingRelay = await relayRepository.GetByIdAsync(
             request.RelayId, cancellationToken);
 
-        existingRelay!.SetMode(!existingRelay.IsManual);
+        existingRelay!.SetMode(!existingRelay.IsManual, request.UserId);
 
         return Result<bool>.Success(existingRelay.IsManual);
     }

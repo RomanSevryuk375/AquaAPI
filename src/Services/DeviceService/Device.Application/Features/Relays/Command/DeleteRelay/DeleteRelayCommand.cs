@@ -7,4 +7,5 @@ public sealed record DeleteRelayCommand
     : ICommand, IRelayBoundRequest
 {
     public Guid RelayId { get; init; }
+    public Guid UserId { get; init; }
 }

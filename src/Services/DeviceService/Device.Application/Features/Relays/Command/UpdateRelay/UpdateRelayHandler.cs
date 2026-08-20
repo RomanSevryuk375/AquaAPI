@@ -17,7 +17,7 @@ internal sealed class UpdateRelayHandler(
         if (request.ControllerId != existingRelay!.ControllerId)
         {
             Result newControllerOwnership = await securityService.EnsureUserOwnsControllerAsync(
-                request.ControllerId, cancellationToken);
+                request.ControllerId, request.UserId, cancellationToken);
             if (newControllerOwnership.IsFailure)
             {
                 return newControllerOwnership;
@@ -25,7 +25,7 @@ internal sealed class UpdateRelayHandler(
         }
 
         Result result = existingRelay.Update(
-            request.ControllerId,
+            request.ControllerId, request.UserId,
             request.ConnectionProtocol, request.ConnectionAddress,
             request.Purpose, request.IsNormallyOpen);
 

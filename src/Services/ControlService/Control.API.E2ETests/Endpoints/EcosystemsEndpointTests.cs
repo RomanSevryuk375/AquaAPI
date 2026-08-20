@@ -105,6 +105,7 @@ public class EcosystemsEndpointTests(E2ETestWebAppFactory factory) : BaseE2ETest
     {
         // Arrange
         Ecosystem ecosystem = new EcosystemBuilder()
+            .WithId(Guid.NewGuid())
             .WithUserId(Guid.NewGuid())
             .Build();
 

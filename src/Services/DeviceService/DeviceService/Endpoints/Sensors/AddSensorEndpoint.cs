@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,11 @@ public sealed class AddSensorEndpoint : IEndpoint
         app.MapPost(ApiConstants.Routes.Sensors, async (
             AddSensorCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            Result<SensorCreatedResponse> result = await sender.Send(command, cancellationToken);
+            AddSensorCommand commandWithUser = command with { UserId = userContext.UserId };
+            Result<SensorCreatedResponse> result = await sender.Send(commandWithUser, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetSensorById", new { id = result.Value.Id }, result.Value)

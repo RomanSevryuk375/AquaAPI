@@ -11,8 +11,7 @@ using Notification.Domain.Entities;
 namespace Notification.Application.Behaviors;
 
 public sealed class ReminderSecurityBehavior<TRequest, TResponse>(
-    ISqlConnectionFactory sqlConnectionFactory,
-    IUserContext userContext)
+    ISqlConnectionFactory sqlConnectionFactory)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, IReminderBoundRequest
 {
@@ -33,7 +32,7 @@ public sealed class ReminderSecurityBehavior<TRequest, TResponse>(
                     string.Format(ErrorMessages.Reminder.NotFoundFormat, request.ReminderId)));
         }
 
-        if (ownerId != userContext.UserId)
+        if (ownerId != request.UserId)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(
                 Error.Conflict(ErrorCodes.Security.AccessDenied,

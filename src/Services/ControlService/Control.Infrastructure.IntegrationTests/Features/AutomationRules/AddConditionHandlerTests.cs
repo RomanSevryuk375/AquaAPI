@@ -31,6 +31,9 @@ public class AddConditionHandlerTests(
 
         var command = new AddConditionCommand
         {
+
+            UserId = UserContext.UserId
+,
             RuleId = rule.Id,
             SensorId = sensor.Id,
             Condition = Condition.Greater,

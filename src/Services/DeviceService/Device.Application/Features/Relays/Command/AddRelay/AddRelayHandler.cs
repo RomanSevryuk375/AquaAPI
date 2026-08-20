@@ -6,7 +6,6 @@ namespace Device.Application.Features.Relays.Command.AddRelay;
 
 internal sealed class AddRelayHandler(
     IRelayRepository relayRepository,
-    IUserContext userContext,
     IUnitOfWork unitOfWork,
     IMapper mapper) : IRequestHandler<AddRelayCommand, Result<RelayCreatedResponse>>
 {
@@ -16,7 +15,7 @@ internal sealed class AddRelayHandler(
     {
         Result<Relay> relay = Relay.Create(
             id: NewId.NextGuid(),
-            request.ControllerId, userContext.UserId, request.PowerSensorId,
+            request.ControllerId, request.UserId, request.PowerSensorId,
             request.Name, request.ConnectionProtocol, request.ConnectionAddress,
             request.IsNormallyOpen, request.Purpose,
             request.IsActive, request.IsManual);

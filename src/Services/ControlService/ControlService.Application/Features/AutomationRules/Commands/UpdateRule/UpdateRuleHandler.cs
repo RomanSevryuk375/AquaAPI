@@ -1,11 +1,15 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.AutomationRules.Commands.UpdateRule;
 
-public sealed class UpdateRuleHandler(IAutomationRuleRepository ruleRepository)
+public sealed class UpdateRuleHandler(
+    IAutomationRuleRepository ruleRepository,
+    IFusionCache cache)
     : IRequestHandler<UpdateRuleCommand, Result>
 {
     public async Task<Result> Handle(
@@ -15,7 +19,7 @@ public sealed class UpdateRuleHandler(IAutomationRuleRepository ruleRepository)
         AutomationRule? rule = await ruleRepository.GetByIdAsync(request.RuleId, cancellationToken);
         if (rule is null)
         {
-            return Result<AutomationRule>.Failure(Error.NotFound<RuleCondition>(
+            return Result.Failure(Error.NotFound<RuleCondition>(
                 $"Rule {request.RuleId} not found"));
         }
 
@@ -25,6 +29,8 @@ public sealed class UpdateRuleHandler(IAutomationRuleRepository ruleRepository)
         {
             return Result.Failure(validationResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Rule(request.UserId, request.RuleId), token: cancellationToken);
 
         return Result.Success();
     }

@@ -11,5 +11,6 @@ public interface IDeviceSecurityService
 
     public Task<Result> EnsureUserOwnsControllerAsync(
         Guid controllerId,
+        Guid userId,
         CancellationToken cancellationToken = default);
 }

@@ -10,7 +10,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
         <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationEvents\BuildingBlocks.IntegrationEvents.csproj" />
-        <ProjectReference Include="..\..\..\Contracts\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\ControlService.Domain\Control.Domain.csproj" />
     </ItemGroup>
 

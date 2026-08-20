@@ -39,8 +39,10 @@ public class RelaysEndpointTests(E2ETestWebAppFactory factory) : BaseE2ETest(fac
     public async Task GetRelayByIdAsync_WhenExists_ReturnsOk()
     {
         // Arrange
-        Controller controller = new ControllerBuilder().WithUserId(TestConstants.UserId).Build();
-        Relay relay = new RelayBuilder().WithControllerId(controller.Id).Build();
+        var controllerId = Guid.NewGuid();
+        var relayId = Guid.NewGuid();
+        Controller controller = new ControllerBuilder().WithId(controllerId).WithUserId(TestConstants.UserId).Build();
+        Relay relay = new RelayBuilder().WithId(relayId).WithControllerId(controllerId).Build();
 
         DbContext.Controllers.Add(controller);
         DbContext.Relays.Add(relay);

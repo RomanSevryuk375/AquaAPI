@@ -75,7 +75,7 @@ public class RelayTests
         RelayPurpose newPurpose = RelayPurpose.Light;
 
         // Act
-        Result result = relay.Update(newControllerId, newProtocol, newAddress, newPurpose, isNormallyOpen: false);
+        Result result = relay.Update(newControllerId, TestConstants.UserId, newProtocol, newAddress, newPurpose, isNormallyOpen: false);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -101,7 +101,7 @@ public class RelayTests
             .Build();
 
         // Act
-        Result result = relay.SetPowerSensor(voltageSensor);
+        Result result = relay.SetPowerSensor(voltageSensor, TestConstants.UserId);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -124,7 +124,7 @@ public class RelayTests
             .Build();
 
         // Act
-        Result result = relay.SetPowerSensor(tempSensor);
+        Result result = relay.SetPowerSensor(tempSensor, TestConstants.UserId);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -141,7 +141,7 @@ public class RelayTests
         bool targetState = true;
 
         // Act
-        relay.SetState(targetState);
+        relay.SetState(targetState, TestConstants.UserId);
 
         // Assert
         relay.IsActive.Should().Be(targetState);
@@ -158,7 +158,7 @@ public class RelayTests
         bool targetMode = false;
 
         // Act
-        relay.SetMode(targetMode);
+        relay.SetMode(targetMode, TestConstants.UserId);
 
         // Assert
         relay.IsManual.Should().Be(targetMode);

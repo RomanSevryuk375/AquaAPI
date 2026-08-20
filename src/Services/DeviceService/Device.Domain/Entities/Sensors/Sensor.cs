@@ -76,6 +76,7 @@ public abstract class Sensor : AggregateRoot, IEntity
         RaiseEvent(new SensorUpdatedDomainEvent
         {
             SensorId = Id,
+            UserId = UserId,
             ControllerId = ControllerId,
             Name = Name.Value,
             Type = Type,
@@ -101,6 +102,7 @@ public abstract class Sensor : AggregateRoot, IEntity
         RaiseEvent(new SensorStateChangedDomainEvent
         {
             SensorId = Id,
+            UserId = UserId,
             State = State
         });
 
@@ -112,6 +114,7 @@ public abstract class Sensor : AggregateRoot, IEntity
         RaiseEvent(new SensorCreatedDomainEvent
         {
             SensorId = Id,
+            UserId = UserId,
             ControllerId = ControllerId,
             Name = Name.Value,
             Type = Type,
@@ -123,5 +126,12 @@ public abstract class Sensor : AggregateRoot, IEntity
         IncrementVersion();
     }
 
-    public void MarkAsDeleted() => RaiseEvent(new SensorDeletedDomainEvent { SensorId = Id });
+    public void MarkAsDeleted()
+    {
+        RaiseEvent(new SensorDeletedDomainEvent 
+        { 
+            SensorId = Id,
+             UserId = UserId 
+        });
+    }
 }

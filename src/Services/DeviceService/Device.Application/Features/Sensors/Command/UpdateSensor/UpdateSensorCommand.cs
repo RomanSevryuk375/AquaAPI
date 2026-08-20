@@ -7,6 +7,7 @@ namespace Device.Application.Features.Sensors.Command.UpdateSensor;
 public sealed record UpdateSensorCommand
     : ICommand, ISensorBoundRequest, IControllerBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid SensorId { get; init; }
     public Guid ControllerId { get; init; }
     public ConnectionProtocol ConnectionProtocol { get; init; }

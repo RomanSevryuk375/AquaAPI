@@ -14,7 +14,7 @@ public sealed class ControllerSecurityBehavior<TRequest, TResponse>(
         CancellationToken cancellationToken)
     {
         Result ownership = await securityService.EnsureUserOwnsControllerAsync(
-             request.ControllerId, cancellationToken);
+             request.ControllerId, request.UserId, cancellationToken);
         if (ownership.IsFailure)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(ownership.Error);

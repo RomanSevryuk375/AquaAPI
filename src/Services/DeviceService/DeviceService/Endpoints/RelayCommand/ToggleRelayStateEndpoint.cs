@@ -1,3 +1,5 @@
+using BuildingBlocks.Domain.Abstractions;
+
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,11 +17,13 @@ public sealed class ToggleRelayStateEndpoint : IEndpoint
         app.MapPost($"{ApiConstants.Routes.Commands}/toggle-state/{{relayId:guid}}", async (
             Guid relayId,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             var command = new ToggleRelayStateCommand
             {
-                RelayId = relayId
+                RelayId = relayId,
+                UserId = userContext.UserId
             };
 
             Result<bool> result = await sender.Send(command, cancellationToken);

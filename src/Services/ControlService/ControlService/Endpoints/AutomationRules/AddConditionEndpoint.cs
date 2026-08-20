@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.AddCondition;
@@ -13,10 +14,12 @@ public sealed class AddConditionEndpoint : IEndpoint
             Guid ruleId,
             RuleConditionRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             AddConditionCommand command = new AddConditionCommand
             {
+                UserId = userContext.UserId,
                 RuleId = ruleId,
                 SensorId = request.SensorId,
                 Condition = request.Condition,

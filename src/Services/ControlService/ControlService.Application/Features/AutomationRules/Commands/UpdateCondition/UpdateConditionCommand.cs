@@ -7,6 +7,7 @@ namespace Control.Application.Features.AutomationRules.Commands.UpdateCondition;
 public sealed record UpdateConditionCommand
     : ICommand, IRuleBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid RuleId { get; init; }
     public Guid ConditionId { get; init; }
     public Guid SensorId { get; init; }

@@ -1,11 +1,14 @@
 using BuildingBlocks.Domain.Results;
 using MediatR;
+using Notification.Application.Constants;
 using Notification.Domain.Interfaces;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Notification.Application.Features.Notifications.Commands.MarkNotificationAsRead;
 
 public sealed class MarkNotificationAsReadHandler(
-    INotificationRepository notificationRepository) : IRequestHandler<MarkNotificationAsReadCommand, Result>
+    INotificationRepository notificationRepository,
+    IFusionCache cache) : IRequestHandler<MarkNotificationAsReadCommand, Result>
 {
     public async Task<Result> Handle(MarkNotificationAsReadCommand request, CancellationToken cancellationToken)
     {
@@ -23,6 +26,8 @@ public sealed class MarkNotificationAsReadHandler(
         }
 
         notification.MarkAsRead();
+
+        await cache.RemoveAsync(CacheKeys.Notification(notification.UserId, notification.Id), token: cancellationToken);
 
         return Result.Success();
     }

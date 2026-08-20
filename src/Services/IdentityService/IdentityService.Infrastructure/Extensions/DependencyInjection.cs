@@ -22,7 +22,8 @@ public static class DependencyInjection
                        .AddRabbitMq(configuration)
                        .AddOutboxProcessorQuartzJob<IdentityDbContext>()
                        .AddQuartzJobs()
-                       .AddUserContext();
+                       .AddUserContext()
+                       .AddCache(configuration);
     }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)

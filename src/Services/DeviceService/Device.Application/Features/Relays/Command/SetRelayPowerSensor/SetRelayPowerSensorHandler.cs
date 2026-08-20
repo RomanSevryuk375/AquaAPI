@@ -28,7 +28,7 @@ public sealed class SetRelayPowerSensorHandler(
                 ErrorMessages.SensorAndRelaySameController));
         }
 
-        existingRelay.SetPowerSensor(powerSensor);
+        existingRelay.SetPowerSensor(powerSensor, request.UserId);
 
         return Result.Success();
     }

@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.VacationModes.Commands.CreateVacationMode;
@@ -12,9 +13,12 @@ public sealed class CreateVacationModeEndpoint : IEndpoint
         app.MapPost(ApiConstants.Routes.VacationModes, async (
             CreateVacationModeCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            CreateVacationModeCommand enrichedCommand = command with { UserId = userContext.UserId };
+
+            Result<Guid> result = await sender.Send(enrichedCommand, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetVacationModeById", new { id = result.Value }, result.Value)

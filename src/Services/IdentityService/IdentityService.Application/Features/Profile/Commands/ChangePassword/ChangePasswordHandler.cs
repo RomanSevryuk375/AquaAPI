@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using IdentityService.Domain.Entities;
@@ -8,12 +7,11 @@ using Microsoft.AspNetCore.Identity;
 namespace IdentityService.Application.Features.Profile.Commands.ChangePassword;
 
 public sealed class ChangePasswordHandler(
-    UserManager<User> userManager,
-    IUserContext userContext) : IRequestHandler<ChangePasswordCommand, Result>
+    UserManager<User> userManager) : IRequestHandler<ChangePasswordCommand, Result>
 {
     public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindByIdAsync(userContext.UserId.ToString());
+        User? user = await userManager.FindByIdAsync(request.UserId.ToString());
         if (user is null)
         {
             return Result.Failure(Error.NotFound<User>(

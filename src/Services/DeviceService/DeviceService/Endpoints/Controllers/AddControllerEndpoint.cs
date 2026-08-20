@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,11 @@ public sealed class AddControllerEndpoint : IEndpoint
         app.MapPost(ApiConstants.Routes.Controllers, async (
             AddControllerCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            Result<ControllerRegisteredResponse> result = await sender.Send(command, cancellationToken);
+            AddControllerCommand commandWithUser = command with { UserId = userContext.UserId, };
+            Result<ControllerRegisteredResponse> result = await sender.Send(commandWithUser, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetControllerById", new { id = result.Value.ControllerId }, result.Value)

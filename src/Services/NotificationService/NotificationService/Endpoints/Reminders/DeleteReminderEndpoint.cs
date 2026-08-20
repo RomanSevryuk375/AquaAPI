@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,14 @@ public sealed class DeleteReminderEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.Reminders}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            var command = new DeleteReminderCommand { ReminderId = id };
+            var command = new DeleteReminderCommand 
+            { 
+                ReminderId = id,
+                UserId = userContext.UserId 
+            };
 
             Result result = await sender.Send(command, cancellationToken);
 

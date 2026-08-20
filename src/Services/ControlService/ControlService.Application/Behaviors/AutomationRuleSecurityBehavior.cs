@@ -1,6 +1,5 @@
 using System.Data;
 using BuildingBlocks.Application.Behaviors;
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using Control.Application.Interfaces;
@@ -12,8 +11,7 @@ namespace Control.Application.Behaviors;
 
 public sealed class AutomationRuleSecurityBehavior<TRequest, TResponse>(
     IAutomationRuleRepository ruleRepository,
-    IEcosystemRepository ecosystemRepository,
-    IUserContext userContext)
+    IEcosystemRepository ecosystemRepository)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IRuleBoundRequest
 {
     public async Task<TResponse> Handle(
@@ -35,7 +33,7 @@ public sealed class AutomationRuleSecurityBehavior<TRequest, TResponse>(
                     $"Ecosystem {rule.EcosystemId} not found. "));
         }
 
-        if (ecosystem.UserId != userContext.UserId)
+        if (ecosystem.UserId != request.UserId)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(Error.Conflict(
                     ErrorCodes.Security.AccessDenied,

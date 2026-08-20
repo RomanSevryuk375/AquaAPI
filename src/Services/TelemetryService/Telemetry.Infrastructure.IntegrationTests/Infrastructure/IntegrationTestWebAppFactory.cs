@@ -1,11 +1,10 @@
+using System.Reflection;
 using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using MassTransit;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NSubstitute;
 using Telemetry.Application.DTOs;
 using Telemetry.Application.Interfaces;
@@ -43,7 +42,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         {
             services.AddScoped<BuildingBlocks.Infrastructure.Data.Outbox.OutboxMessageProcessorService<TelemetryDbContext>>();
 
-            var massTransitAssembly = typeof(IBus).Assembly;
+            Assembly massTransitAssembly = typeof(IBus).Assembly;
             var massTransitDescriptors = services.Where(d =>
                 d.ServiceType.Namespace?.StartsWith("MassTransit") == true ||
                 d.ImplementationType?.Namespace?.StartsWith("MassTransit") == true ||
@@ -67,7 +66,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                     .Select(g => g.First())
                     .ToList();
                 options.Registrations.Clear();
-                foreach (var reg in uniqueRegistrations)
+                foreach (HealthCheckRegistration? reg in uniqueRegistrations)
                 {
                     options.Registrations.Add(reg);
                 }

@@ -32,7 +32,8 @@ public static class DependencyInjection
                        .AddOutboxProcessorQuartzJob<TelemetryDbContext>()
                        .AddQuartzJob()
                        .AddMySignalR()
-                       .AddUserContext();
+                       .AddUserContext()
+                       .AddCache(configuration);
     }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
