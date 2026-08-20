@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -16,10 +17,12 @@ public sealed class UpdateMyProfileEndpoint : IEndpoint
         app.MapPut($"{ApiConstants.Routes.Profiles}/me", async (
             UpdateProfileRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var command = new UpdateProfileCommand
             {
+                UserId = userContext.UserId,
                 Name = request.Name,
                 PhoneNumber = request.PhoneNumber ?? string.Empty
             };

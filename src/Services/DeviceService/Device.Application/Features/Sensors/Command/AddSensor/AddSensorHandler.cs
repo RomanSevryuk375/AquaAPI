@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using Device.Domain.Factories;
 using MassTransit;
@@ -7,7 +6,6 @@ namespace Device.Application.Features.Sensors.Command.AddSensor;
 
 public sealed class AddSensorHandler(
     ISensorRepository sensorRepository,
-    IUserContext userContext,
     IMapper mapper) : IRequestHandler<AddSensorCommand, Result<SensorCreatedResponse>>
 {
     public async Task<Result<SensorCreatedResponse>> Handle(
@@ -15,7 +13,7 @@ public sealed class AddSensorHandler(
         CancellationToken cancellationToken)
     {
         Result<Sensor> sensor = SensorFactory.CreateSensor(
-            id: NewId.NextGuid(), request.ControllerId, userContext.UserId,
+            id: NewId.NextGuid(), request.ControllerId, request.UserId,
             request.Name,
             request.ConnectionProtocol, request.ConnectionAddress,
             request.Type);

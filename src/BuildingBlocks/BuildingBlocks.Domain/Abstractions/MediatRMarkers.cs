@@ -11,7 +11,7 @@ public interface ICommand<TValue> : IRequest<Result<TValue>>, IBaseCommand { }
 
 public interface IQuery<out TResponse> : IRequest<TResponse> { }
 
-public interface ICachedQuery<TResponse> : IRequest<TResponse>
+public interface ICachedQuery<TResponse> : IQuery<TResponse>
 {
     public string CacheKey { get; }
     public TimeSpan? Expiration { get; }

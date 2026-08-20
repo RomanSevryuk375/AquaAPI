@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using IdentityService.Domain.Entities;
@@ -8,12 +7,11 @@ using Microsoft.AspNetCore.Identity;
 namespace IdentityService.Application.Features.Profile.Commands.UpdateProfile;
 
 public sealed class UpdateProfileHandler(
-    UserManager<User> userManager,
-    IUserContext userContext) : IRequestHandler<UpdateProfileCommand, Result>
+    UserManager<User> userManager) : IRequestHandler<UpdateProfileCommand, Result>
 {
     public async Task<Result> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindByIdAsync(userContext.UserId.ToString());
+        User? user = await userManager.FindByIdAsync(request.UserId.ToString());
         if (user is null)
         {
             return Result.Failure(Error.NotFound<User>(ErrorMessages.Identity.UserNotFound));

@@ -13,8 +13,7 @@ using MediatR;
 namespace Control.Application.Behaviors;
 
 public sealed class ScheduleSecurityBehavior<TRequest, TResponse>(
-    ISqlConnectionFactory sqlConnectionFactory,
-    IUserContext userContext)
+    ISqlConnectionFactory sqlConnectionFactory)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IScheduleBoundRequest
 {
     public async Task<TResponse> Handle(
@@ -40,7 +39,7 @@ public sealed class ScheduleSecurityBehavior<TRequest, TResponse>(
                 $"Schedule {request.ScheduleId} not found."));
         }
 
-        if (ownerId != userContext.UserId)
+        if (ownerId != request.UserId)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(Error.Conflict(
                 ErrorCodes.Security.AccessDenied,

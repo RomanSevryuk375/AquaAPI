@@ -8,6 +8,7 @@ namespace Control.Application.Features.Schedules.Commands.CreateSchedule;
 public sealed record CreateScheduleCommand
     : ICommand<Guid>, IEcosystemBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid EcosystemId { get; init; }
     public Guid RelayId { get; init; }
     public string CronExpression { get; init; } = string.Empty;

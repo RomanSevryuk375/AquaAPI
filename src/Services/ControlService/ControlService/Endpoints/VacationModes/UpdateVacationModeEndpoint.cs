@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.VacationModes.Commands.UpdateVacationMode;
@@ -13,9 +14,10 @@ public sealed class UpdateVacationModeEndpoint : IEndpoint
             Guid id,
             UpdateVacationModeCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            UpdateVacationModeCommand enrichedCommand = command with { VacationModeId = id };
+            UpdateVacationModeCommand enrichedCommand = command with { VacationModeId = id, UserId = userContext.UserId };
 
             Result result = await sender.Send(enrichedCommand, cancellationToken);
 

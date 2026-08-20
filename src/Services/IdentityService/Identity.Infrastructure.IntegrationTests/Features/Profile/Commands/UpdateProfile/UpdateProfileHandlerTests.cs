@@ -34,7 +34,9 @@ public class UpdateProfileHandlerTests(IntegrationTestWebAppFactory factory)
 
         var command = new UpdateProfileCommand
         {
-            Name = "New Name",
+
+            UserId=UserContext.UserId
+,            Name = "New Name",
             PhoneNumber = "+375296667788"
         };
 

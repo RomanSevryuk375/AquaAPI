@@ -1,4 +1,6 @@
-﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Domain.Abstractions;
+
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Schedules.Commands.UpdateSchedule;
@@ -13,9 +15,10 @@ public sealed class UpdateScheduleEndpoint : IEndpoint
             Guid id,
             UpdateScheduleCommand command,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            UpdateScheduleCommand enrichedCommand = command with { ScheduleId = id };
+            UpdateScheduleCommand enrichedCommand = command with { ScheduleId = id, UserId = userContext.UserId };
 
             Result result = await sender.Send(enrichedCommand, cancellationToken);
 

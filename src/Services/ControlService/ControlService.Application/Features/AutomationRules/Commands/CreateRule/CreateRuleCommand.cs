@@ -8,6 +8,7 @@ namespace Control.Application.Features.AutomationRules.Commands.CreateRule;
 public sealed record CreateRuleCommand
     : ICommand<Guid>, IEcosystemBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid EcosystemId { get; init; }
     public Guid RelayId { get; init; }
     public string Name { get; init; } = string.Empty;

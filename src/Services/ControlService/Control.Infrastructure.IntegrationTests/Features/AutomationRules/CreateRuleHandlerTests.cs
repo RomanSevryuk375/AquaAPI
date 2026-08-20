@@ -40,6 +40,9 @@ public class CreateRuleHandlerTests(
 
         var command = new CreateRuleCommand
         {
+
+            UserId = UserContext.UserId
+,
             EcosystemId = ecosystem.Id,
             RelayId = relay.Id,
             Name = "Temperature Control",

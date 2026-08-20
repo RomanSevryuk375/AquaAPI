@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Ecosystems.Commands.DeleteEcosystem;
 
@@ -11,9 +12,14 @@ public sealed class DeleteEcosystemEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.Ecosystems}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            DeleteEcosystemCommand command = new DeleteEcosystemCommand { EcosystemId = id };
+            DeleteEcosystemCommand command = new()
+            {
+                EcosystemId = id,
+                UserId = userContext.UserId
+            };
 
             var result = await sender.Send(command, cancellationToken);
 

@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Authorization;
 using BuildingBlocks.Presentation.Constants;
@@ -15,9 +16,10 @@ public sealed class DeleteRelayEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.Relays}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            var command = new DeleteRelayCommand { RelayId = id };
+            var command = new DeleteRelayCommand { RelayId = id, UserId = userContext.UserId };
 
             Result result = await sender.Send(command, cancellationToken);
 

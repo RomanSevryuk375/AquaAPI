@@ -5,7 +5,7 @@ namespace Device.Application.UnitTests.Behaviors;
 
 public class DeviceSecurityBehaviorTests
 {
-    public sealed record TestDeviceRequest(Guid ControllerId, string DeviceToken)
+    public sealed record TestDeviceRequest(Guid ControllerId, string DeviceToken, Guid UserId = default)
         : IRequest<Result>, IDeviceBoundRequest;
 
     private readonly IDeviceSecurityService _securityServiceMock;

@@ -1,9 +1,13 @@
-﻿using BuildingBlocks.Domain.Constants;
+using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
+using Device.Application.Constants;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Device.Application.Features.Controllers.Command.ToggleCommandState;
 
-public sealed class ToggleControllerStateHandler(IControllerRepository controllerRepository)
+public sealed class ToggleControllerStateHandler(
+    IControllerRepository controllerRepository,
+    IFusionCache cache)
     : IRequestHandler<ToggleControllerStateCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(
@@ -19,6 +23,8 @@ public sealed class ToggleControllerStateHandler(IControllerRepository controlle
         }
 
         controller.ToggleState();
+
+        await cache.RemoveAsync(CacheKeys.Controller(controller.UserId, controller.Id), token: cancellationToken);
 
         return Result<bool>.Success(controller.IsOnline);
     }

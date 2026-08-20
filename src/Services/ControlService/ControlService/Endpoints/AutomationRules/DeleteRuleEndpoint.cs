@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Results;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.AutomationRules.Commands.DeleteRule;
@@ -12,9 +13,14 @@ public sealed class DeleteRuleEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.AutomationRules}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            DeleteRuleCommand command = new() { RuleId = id };
+            DeleteRuleCommand command = new() 
+            { 
+                RuleId = id,
+                UserId = userContext.UserId 
+            };
 
             Result result = await sender.Send(command, cancellationToken);
 

@@ -5,7 +5,7 @@ namespace Device.Application.UnitTests.Behaviors;
 
 public class SensorSecurityBehaviorTests
 {
-    public sealed record TestSensorRequest(Guid SensorId) : IRequest<Result>, ISensorBoundRequest;
+    public sealed record TestSensorRequest(Guid SensorId, Guid UserId = default) : IRequest<Result>, ISensorBoundRequest;
 
     private readonly ISensorRepository _sensorRepoMock;
     private readonly IDeviceSecurityService _securityServiceMock;
@@ -36,7 +36,7 @@ public class SensorSecurityBehaviorTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Code.Should().Be("Sensor.NotFound");
-        await _securityServiceMock.DidNotReceiveWithAnyArgs().EnsureUserOwnsControllerAsync(Guid.Empty);
+        await _securityServiceMock.DidNotReceiveWithAnyArgs().EnsureUserOwnsControllerAsync(Guid.Empty, Guid.Empty);
         await _nextMock.DidNotReceive().Invoke();
     }
 
@@ -50,7 +50,7 @@ public class SensorSecurityBehaviorTests
 
         _sensorRepoMock.GetByIdAsync(request.SensorId, Arg.Any<CancellationToken>()).Returns(sensor);
 
-        _securityServiceMock.EnsureUserOwnsControllerAsync(sensor.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(sensor.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure(Error.Conflict("Access.Denied", "Forbidden")));
 
         // Act
@@ -71,7 +71,7 @@ public class SensorSecurityBehaviorTests
         Sensor sensor = new SensorBuilder().WithId(request.SensorId).Build();
 
         _sensorRepoMock.GetByIdAsync(request.SensorId, Arg.Any<CancellationToken>()).Returns(sensor);
-        _securityServiceMock.EnsureUserOwnsControllerAsync(sensor.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(sensor.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
         // Act

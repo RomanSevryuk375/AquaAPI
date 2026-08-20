@@ -5,7 +5,7 @@ namespace Device.Application.UnitTests.Behaviors;
 
 public class ControllerSecurityBehaviorTests
 {
-    public sealed record TestControllerRequest(Guid ControllerId) : IRequest<Result>, IControllerBoundRequest;
+    public sealed record TestControllerRequest(Guid ControllerId, Guid UserId = default) : IRequest<Result>, IControllerBoundRequest;
 
     private readonly IDeviceSecurityService _securityServiceMock;
     private readonly RequestHandlerDelegate<Result> _nextMock;
@@ -27,7 +27,7 @@ public class ControllerSecurityBehaviorTests
         // Arrange
         var request = new TestControllerRequest(Guid.NewGuid());
 
-        _securityServiceMock.EnsureUserOwnsControllerAsync(request.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(request.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
         // Act
@@ -46,7 +46,7 @@ public class ControllerSecurityBehaviorTests
         var request = new TestControllerRequest(Guid.NewGuid());
         var expectedError = Error.Conflict("Access.Denied", "Forbidden");
 
-        _securityServiceMock.EnsureUserOwnsControllerAsync(request.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(request.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure(expectedError));
 
         // Act

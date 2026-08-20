@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using Notification.Application.Features.Reminders.Commands.CompleteReminder;
@@ -6,18 +5,19 @@ using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
 using Notification.TestShared.Builders;
 using NSubstitute;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Notification.Application.UnitTests.Features.Reminders.Commands.CompleteReminder;
 
 public class CompleteReminderHandlerTests
 {
     private readonly IReminderRepository _reminderRepoMock = Substitute.For<IReminderRepository>();
-    private readonly IUserContext _userContextMock = Substitute.For<IUserContext>();
+    private readonly IFusionCache _cacheMock = Substitute.For<IFusionCache>();
     private readonly CompleteReminderHandler _handler;
 
     public CompleteReminderHandlerTests()
     {
-        _handler = new CompleteReminderHandler(_reminderRepoMock, _userContextMock);
+        _handler = new CompleteReminderHandler(_reminderRepoMock, _cacheMock);
     }
 
     [Fact]
@@ -33,9 +33,11 @@ public class CompleteReminderHandlerTests
         _reminderRepoMock.GetByIdAsync(reminder.Id, Arg.Any<CancellationToken>())
             .Returns(reminder);
 
-        _userContextMock.UserId.Returns(reminder.UserId);
-
-        var command = new CompleteReminderCommand { ReminderId = reminder.Id };
+        var command = new CompleteReminderCommand 
+        { 
+            ReminderId = reminder.Id,
+            UserId = reminder.UserId
+        };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);
@@ -50,12 +52,15 @@ public class CompleteReminderHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenReminderDoesNotExist_ReturnsNotFoundFailure()
     {
+var userId = Guid.NewGuid();
         // Arrange
         var nonExistentReminderId = Guid.NewGuid();
         _reminderRepoMock.GetByIdAsync(nonExistentReminderId, Arg.Any<CancellationToken>())
             .Returns((Reminder?)null);
 
-        var command = new CompleteReminderCommand { ReminderId = nonExistentReminderId };
+        var command = new CompleteReminderCommand { 
+            UserId=userId
+,ReminderId = nonExistentReminderId };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);
@@ -77,9 +82,12 @@ public class CompleteReminderHandlerTests
             .Returns(reminder);
 
         var otherUserId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(otherUserId);
 
-        var command = new CompleteReminderCommand { ReminderId = reminder.Id };
+        var command = new CompleteReminderCommand 
+        { 
+            ReminderId = reminder.Id,
+            UserId = otherUserId
+        };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);

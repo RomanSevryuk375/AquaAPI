@@ -159,14 +159,17 @@ public class SchedulesEndpointTests(E2ETestWebAppFactory factory) : BaseE2ETest(
     {
         // Arrange
         Ecosystem ecosystem = new EcosystemBuilder()
+            .WithId(Guid.NewGuid())
             .WithUserId(Guid.NewGuid())
             .Build();
 
         Relay relay = new RelayBuilder()
+            .WithId(Guid.NewGuid())
             .WithEcosystemId(ecosystem.Id)
             .Build();
 
         Schedule schedule = new ScheduleBuilder()
+            .WithId(Guid.NewGuid())
             .WithEcosystemId(ecosystem.Id)
             .WithRelayId(relay.Id)
             .Build();

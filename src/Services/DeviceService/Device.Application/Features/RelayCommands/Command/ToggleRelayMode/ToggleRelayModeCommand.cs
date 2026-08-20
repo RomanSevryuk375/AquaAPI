@@ -7,4 +7,5 @@ public sealed record ToggleRelayModeCommand
     : ICommand<bool>, IRelayBoundRequest
 {
     public Guid RelayId { get; init; }
+    public Guid UserId { get; init; }
 }

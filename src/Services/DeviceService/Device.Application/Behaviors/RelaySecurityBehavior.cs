@@ -25,7 +25,7 @@ public sealed class RelaySecurityBehavior<TRequest, TResponse>(
         }
 
         Result ownership = await securityService.EnsureUserOwnsControllerAsync(
-            existingRelay.ControllerId, cancellationToken);
+            existingRelay.ControllerId, request.UserId, cancellationToken);
         if (ownership.IsFailure)
         {
             return BehaviorHelpers.CreateFailedResult<TResponse>(ownership.Error);

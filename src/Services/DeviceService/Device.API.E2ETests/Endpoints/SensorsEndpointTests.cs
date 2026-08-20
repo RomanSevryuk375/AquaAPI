@@ -117,14 +117,16 @@ public class SensorsEndpointTests(E2ETestWebAppFactory factory) : BaseE2ETest(fa
     public async Task DeleteSensor_WithValidId_Returns204NoContent()
     {
         // Arrange
+        var controllerId = Guid.NewGuid();
+        var sensorId = Guid.NewGuid();
         Controller controller = new ControllerBuilder()
-            .WithId(TestConstants.ControllerId)
+            .WithId(controllerId)
             .WithUserId(TestConstants.UserId)
             .Build();
 
         Sensor sensor = new SensorBuilder()
-            .WithId(TestConstants.SensorId)
-            .WithControllerId(TestConstants.ControllerId)
+            .WithId(sensorId)
+            .WithControllerId(controllerId)
             .Build();
 
         DbContext.Controllers.Add(controller);
@@ -133,7 +135,7 @@ public class SensorsEndpointTests(E2ETestWebAppFactory factory) : BaseE2ETest(fa
 
         // Act
         HttpResponseMessage response = await Client.DeleteAsync(
-            $"{ApiConstants.Routes.Sensors}/{TestConstants.SensorId}");
+            $"{ApiConstants.Routes.Sensors}/{sensorId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);

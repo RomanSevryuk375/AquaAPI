@@ -1,4 +1,6 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Schedules.Commands.SetIsActiveSchedule;
 
@@ -17,12 +19,14 @@ public sealed class SetIsActiveScheduleEndpoint : IEndpoint
             Guid id,
             SetIsActiveScheduleRequest request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            SetIsActiveScheduleCommand command = new SetIsActiveScheduleCommand
+            SetIsActiveScheduleCommand command = new()
             {
                 ScheduleId = id,
-                IsActive = request.IsActive
+                IsActive = request.IsActive,
+                UserId = userContext.UserId
             };
 
             var result = await sender.Send(command, cancellationToken);

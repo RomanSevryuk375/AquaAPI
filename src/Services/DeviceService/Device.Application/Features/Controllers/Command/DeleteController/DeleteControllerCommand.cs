@@ -6,5 +6,6 @@ namespace Device.Application.Features.Controllers.Command.DeleteController;
 public sealed record DeleteControllerCommand
     : ICommand, IControllerBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid ControllerId { get; init; }
 }

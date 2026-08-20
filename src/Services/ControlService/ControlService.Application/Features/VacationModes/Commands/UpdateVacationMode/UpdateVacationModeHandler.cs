@@ -1,11 +1,15 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.VacationModes.Commands.UpdateVacationMode;
 
-public sealed class UpdateVacationModeHandler(IVacationModeRepository vacationModeRepository)
+public sealed class UpdateVacationModeHandler(
+    IVacationModeRepository vacationModeRepository,
+    IFusionCache cache)
     : IRequestHandler<UpdateVacationModeCommand, Result>
 {
     public async Task<Result> Handle(UpdateVacationModeCommand request, CancellationToken cancellationToken)
@@ -24,6 +28,8 @@ public sealed class UpdateVacationModeHandler(IVacationModeRepository vacationMo
         {
             return Result.Failure(feedResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.VacationMode(request.UserId, request.VacationModeId), token: cancellationToken);
 
         return Result.Success();
     }

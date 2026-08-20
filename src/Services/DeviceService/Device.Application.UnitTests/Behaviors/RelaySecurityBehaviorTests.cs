@@ -5,7 +5,7 @@ namespace Device.Application.UnitTests.Behaviors;
 
 public class RelaySecurityBehaviorTests
 {
-    public sealed record TestRelayRequest(Guid RelayId) : IRequest<Result>, IRelayBoundRequest;
+    public sealed record TestRelayRequest(Guid RelayId, Guid UserId = default) : IRequest<Result>, IRelayBoundRequest;
 
     private readonly IRelayRepository _relayRepoMock;
     private readonly IDeviceSecurityService _securityServiceMock;
@@ -40,7 +40,7 @@ public class RelaySecurityBehaviorTests
         result.IsFailure.Should().BeTrue();
         result.Error.Message.Should().Contain("not found");
 
-        await _securityServiceMock.DidNotReceiveWithAnyArgs().EnsureUserOwnsControllerAsync(Guid.Empty, default);
+        await _securityServiceMock.DidNotReceiveWithAnyArgs().EnsureUserOwnsControllerAsync(Guid.Empty, Guid.Empty);
         await _nextMock.DidNotReceive().Invoke();
     }
 
@@ -54,7 +54,7 @@ public class RelaySecurityBehaviorTests
 
         _relayRepoMock.GetByIdAsync(request.RelayId, Arg.Any<CancellationToken>()).Returns(relay);
 
-        _securityServiceMock.EnsureUserOwnsControllerAsync(relay.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(relay.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure(Error.Conflict("Access.Denied", "Forbidden")));
 
         // Act
@@ -75,7 +75,7 @@ public class RelaySecurityBehaviorTests
         Relay relay = new RelayBuilder().WithId(request.RelayId).Build();
 
         _relayRepoMock.GetByIdAsync(request.RelayId, Arg.Any<CancellationToken>()).Returns(relay);
-        _securityServiceMock.EnsureUserOwnsControllerAsync(relay.ControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(relay.ControllerId, request.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
         // Act

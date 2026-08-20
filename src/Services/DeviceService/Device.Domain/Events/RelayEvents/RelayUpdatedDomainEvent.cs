@@ -6,6 +6,7 @@ namespace Device.Domain.Events.RelayEvents;
 public sealed record RelayUpdatedDomainEvent : IDomainEvent
 {
     public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
+    public Guid UserId { get; init; }
     public Guid RelayId { get; init; }
     public Guid ControllerId { get; init; }
     public Guid? PowerSensorId { get; init; }

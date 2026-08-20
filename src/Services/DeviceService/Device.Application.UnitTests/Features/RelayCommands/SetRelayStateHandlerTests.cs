@@ -19,6 +19,7 @@ public class SetRelayStateHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WithValidCommand_CreatesCommandAndSaves()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         Relay relay = new RelayBuilder().AsAuto().AsActive(false).Build();
         Controller controller = new ControllerBuilder().WithId(relay.ControllerId).Build();
@@ -28,6 +29,9 @@ public class SetRelayStateHandlerTests
 
         var command = new SetRelayStateCommand
         {
+
+            UserId = userId
+,
             ControllerId = controller.Id,
             RelayId = relay.Id,
             TargetState = true,
@@ -49,6 +53,7 @@ public class SetRelayStateHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenRelayIsManual_ReturnsConflictFailure()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         Relay relay = new RelayBuilder().Build();
         Controller controller = new ControllerBuilder().WithId(relay.ControllerId).Build();
@@ -58,6 +63,9 @@ public class SetRelayStateHandlerTests
 
         var command = new SetRelayStateCommand
         {
+
+            UserId = userId
+,
             ControllerId = controller.Id,
             RelayId = relay.Id,
             TargetState = !relay.IsActive
@@ -76,6 +84,7 @@ public class SetRelayStateHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenTargetStateEqualsCurrentState_ReturnsConflictFailure()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         Relay relay = new RelayBuilder().AsAuto().AsActive(true).Build();
         Controller controller = new ControllerBuilder().WithId(relay.ControllerId).Build();
@@ -85,6 +94,9 @@ public class SetRelayStateHandlerTests
 
         var command = new SetRelayStateCommand
         {
+
+            UserId = userId
+,
             ControllerId = controller.Id,
             RelayId = relay.Id,
             TargetState = true
@@ -102,6 +114,7 @@ public class SetRelayStateHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenCommandIsExpired_ReturnsConflictFailure()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         Relay relay = new RelayBuilder().AsAuto().AsActive(false).Build();
         Controller controller = new ControllerBuilder().WithId(relay.ControllerId).Build();
@@ -111,6 +124,9 @@ public class SetRelayStateHandlerTests
 
         var command = new SetRelayStateCommand
         {
+
+            UserId = userId
+,
             ControllerId = controller.Id,
             RelayId = relay.Id,
             TargetState = true,

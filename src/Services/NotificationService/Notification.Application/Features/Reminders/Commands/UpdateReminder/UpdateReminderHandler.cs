@@ -1,11 +1,15 @@
 using BuildingBlocks.Domain.Results;
 using MediatR;
+using Notification.Application.Constants;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Notification.Application.Features.Reminders.Commands.UpdateReminder;
 
-public sealed class UpdateReminderHandler(IReminderRepository reminderRepository)
+public sealed class UpdateReminderHandler(
+    IReminderRepository reminderRepository,
+    IFusionCache cache)
     : IRequestHandler<UpdateReminderCommand, Result>
 {
     public async Task<Result> Handle(UpdateReminderCommand request, CancellationToken cancellationToken)
@@ -17,6 +21,8 @@ public sealed class UpdateReminderHandler(IReminderRepository reminderRepository
         {
             return Result.Failure(updateResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Reminder(reminder.UserId, reminder.Id), token: cancellationToken);
 
         return Result.Success();
     }

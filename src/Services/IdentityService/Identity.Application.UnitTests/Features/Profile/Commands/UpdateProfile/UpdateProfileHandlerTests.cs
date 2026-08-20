@@ -1,4 +1,3 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using IdentityService.Application.Features.Profile.Commands.UpdateProfile;
 using Microsoft.AspNetCore.Identity;
@@ -8,14 +7,13 @@ namespace Identity.Application.UnitTests.Features.Profile.Commands.UpdateProfile
 public class UpdateProfileHandlerTests
 {
     private readonly UserManager<User> _userManagerMock;
-    private readonly IUserContext _userContextMock = Substitute.For<IUserContext>();
     private readonly UpdateProfileHandler _handler;
 
     public UpdateProfileHandlerTests()
     {
         IUserStore<User> storeMock = Substitute.For<IUserStore<User>>();
         _userManagerMock = Substitute.For<UserManager<User>>(storeMock, null, null, null, null, null, null, null, null);
-        _handler = new UpdateProfileHandler(_userManagerMock, _userContextMock);
+        _handler = new UpdateProfileHandler(_userManagerMock);
     }
 
     [Fact]
@@ -24,10 +22,9 @@ public class UpdateProfileHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _userContextMock.UserId.Returns(userId);
         _userManagerMock.FindByIdAsync(userId.ToString()).Returns((User?)null);
 
-        var command = new UpdateProfileCommand { Name = "Jane Doe", PhoneNumber = "+375292223344" };
+        var command = new UpdateProfileCommand { UserId = userId, Name = "Jane Doe", PhoneNumber = "+375292223344" };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);
@@ -46,11 +43,10 @@ public class UpdateProfileHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        _userContextMock.UserId.Returns(user.Id);
         _userManagerMock.FindByIdAsync(user.Id.ToString()).Returns(user);
         _userManagerMock.UpdateAsync(user).Returns(IdentityResult.Success);
 
-        var command = new UpdateProfileCommand { Name = "Jane Doe", PhoneNumber = "+375292223344" };
+        var command = new UpdateProfileCommand { UserId = user.Id, Name = "Jane Doe", PhoneNumber = "+375292223344" };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);
@@ -69,11 +65,10 @@ public class UpdateProfileHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        _userContextMock.UserId.Returns(user.Id);
         _userManagerMock.FindByIdAsync(user.Id.ToString()).Returns(user);
 
         // Empty Name will fail domain validation
-        var command = new UpdateProfileCommand { Name = "", PhoneNumber = "+375292223344" };
+        var command = new UpdateProfileCommand { UserId = user.Id, Name = "", PhoneNumber = "+375292223344" };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);
@@ -91,13 +86,12 @@ public class UpdateProfileHandlerTests
     {
         // Arrange
         User user = new UserBuilder().Build();
-        _userContextMock.UserId.Returns(user.Id);
         _userManagerMock.FindByIdAsync(user.Id.ToString()).Returns(user);
 
         var identityError = new IdentityError { Description = "Database error updating user." };
         _userManagerMock.UpdateAsync(user).Returns(IdentityResult.Failed(identityError));
 
-        var command = new UpdateProfileCommand { Name = "Jane Doe", PhoneNumber = "+375292223344" };
+        var command = new UpdateProfileCommand { UserId = user.Id, Name = "Jane Doe", PhoneNumber = "+375292223344" };
 
         // Act
         Result result = await _handler.Handle(command, CancellationToken.None);

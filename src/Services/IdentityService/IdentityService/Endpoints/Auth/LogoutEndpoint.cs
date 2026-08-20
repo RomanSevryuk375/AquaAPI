@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Constants;
 using BuildingBlocks.Presentation.Endpoints;
@@ -13,10 +14,11 @@ public sealed class LogoutEndpoint : IEndpoint
     {
         app.MapPost($"{ApiConstants.Routes.Auth}/logout", async (
             ISender sender,
+            IUserContext userContext,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var command = new LogoutCommand();
+            var command = new LogoutCommand { UserId = userContext.UserId };
 
             Result result = await sender.Send(command, cancellationToken);
 

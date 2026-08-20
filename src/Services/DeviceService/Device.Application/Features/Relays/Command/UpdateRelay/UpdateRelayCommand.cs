@@ -8,6 +8,7 @@ public sealed record UpdateRelayCommand
     : ICommand, IRelayBoundRequest, IControllerBoundRequest
 {
     public Guid RelayId { get; init; }
+    public Guid UserId { get; init; } 
     public Guid ControllerId { get; init; }
     public ConnectionProtocol ConnectionProtocol { get; init; }
     public string ConnectionAddress { get; init; } = string.Empty;

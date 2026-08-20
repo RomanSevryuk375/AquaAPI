@@ -6,6 +6,7 @@ namespace Control.Application.Features.VacationModes.Commands.CreateVacationMode
 public sealed record CreateVacationModeCommand
     : ICommand<Guid>, IEcosystemBoundRequest
 {
+    public Guid UserId { get; init; }
     public Guid EcosystemId { get; init; }
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }

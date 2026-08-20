@@ -118,9 +118,11 @@ public class MaintenanceLogsEndpointTests(E2ETestWebAppFactory factory) : BaseE2
     public async Task GetLogByIdAsync_WhenExists_ReturnsOkAndMatchingLog()
     {
         // Arrange
+        var logId = Guid.NewGuid();
+        var ecosystemId = Guid.NewGuid();
         User user = new UserBuilder().WithId(NotificationTestConstants.UserId).Build();
-        Ecosystem ecosystem = new EcosystemBuilder().WithUserId(user.Id).Build();
-        MaintenanceLog log = new MaintenanceLogBuilder().WithUserId(user.Id).WithEcosystemId(ecosystem.Id).Build();
+        Ecosystem ecosystem = new EcosystemBuilder().WithId(ecosystemId).WithUserId(user.Id).Build();
+        MaintenanceLog log = new MaintenanceLogBuilder().WithId(logId).WithUserId(user.Id).WithEcosystemId(ecosystem.Id).Build();
 
         DbContext.Users.Add(user);
         DbContext.Aquariums.Add(ecosystem);

@@ -1,11 +1,15 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.Ecosystems.Commands.UpdateEcosystem;
 
-public sealed class UpdateEcosystemHandler(IEcosystemRepository ecosystemRepository)
+public sealed class UpdateEcosystemHandler(
+    IEcosystemRepository ecosystemRepository,
+    IFusionCache cache)
     : IRequestHandler<UpdateEcosystemCommand, Result>
 {
     public async Task<Result> Handle(
@@ -31,6 +35,8 @@ public sealed class UpdateEcosystemHandler(IEcosystemRepository ecosystemReposit
         {
             return Result.Failure(volumeResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Ecosystem(request.UserId, request.EcosystemId), token: cancellationToken);
 
         return Result.Success();
     }

@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.UpdateRule;
@@ -13,10 +14,12 @@ public sealed class UpdateRuleEndpoint : IEndpoint
             Guid id,
             AutomationRuleUpdateRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             UpdateRuleCommand command = new UpdateRuleCommand
             {
+                UserId = userContext.UserId,
                 RuleId = id,
                 Name = request.Name,
                 RelayId = request.RelayId,

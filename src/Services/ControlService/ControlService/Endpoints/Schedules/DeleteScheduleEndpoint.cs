@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Schedules.Commands.DeleteSchedule;
 
@@ -11,9 +12,14 @@ public sealed class DeleteScheduleEndpoint : IEndpoint
         app.MapDelete($"{ApiConstants.Routes.Schedules}/{{id:guid}}", async (
             Guid id,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            DeleteScheduleCommand command = new DeleteScheduleCommand { ScheduleId = id };
+            DeleteScheduleCommand command = new()
+            {
+                ScheduleId = id,
+                UserId = userContext.UserId
+            };
 
             var result = await sender.Send(command, cancellationToken);
 

@@ -16,7 +16,7 @@ public sealed class UpdateSensorHandler(
         if (request.ControllerId != existingSensor!.ControllerId)
         {
             Result newControllerOwnership = await securityService.EnsureUserOwnsControllerAsync(
-                request.ControllerId, cancellationToken);
+                request.ControllerId, request.UserId, cancellationToken);
 
             if (newControllerOwnership.IsFailure)
             {

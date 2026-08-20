@@ -1,4 +1,5 @@
 using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ZiggyCreatures.Caching.Fusion;
@@ -25,13 +26,28 @@ public sealed class CacheBehavior<TRequest, TResponse>(
             FailSafeMaxDuration = TimeSpan.FromHours(2)
         };
 
-        TResponse? response = await cache.GetOrSetAsync<TResponse>(
+        MaybeValue<TResponse> cachedValue = await cache.TryGetAsync<TResponse>(
             request.CacheKey,
-            async (ctx, ct) =>
-            {
-                logger.LogInformation("Cache Miss for {CacheKey}. Executing database query...", request.CacheKey);
-                return await next();
-            },
+            setup,
+            token: cancellationToken);
+
+        if (cachedValue.HasValue)
+        {
+            logger.LogDebug("Cache Hit for {CacheKey}", request.CacheKey);
+            return cachedValue.Value;
+        }
+
+        logger.LogInformation("Cache Miss for {CacheKey}. Executing database query...", request.CacheKey);
+        TResponse response = await next();
+
+        if (response is Result { IsFailure: true })
+        {
+            return response;
+        }
+
+        await cache.SetAsync(
+            request.CacheKey,
+            response,
             setup,
             token: cancellationToken);
 

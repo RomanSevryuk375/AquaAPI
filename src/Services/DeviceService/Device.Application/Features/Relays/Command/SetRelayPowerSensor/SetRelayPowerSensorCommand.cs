@@ -7,5 +7,6 @@ public sealed record SetRelayPowerSensorCommand
     : ICommand, IRelayBoundRequest
 {
     public Guid RelayId { get; init; }
+    public Guid UserId { get; init; }
     public Guid PowerSensorId { get; init; }
 }

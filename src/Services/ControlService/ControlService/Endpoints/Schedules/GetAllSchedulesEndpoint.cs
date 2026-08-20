@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.Features.Schedules.Queries.GetAllSchedules;

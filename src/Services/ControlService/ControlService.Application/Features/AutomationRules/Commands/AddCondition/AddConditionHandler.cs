@@ -1,12 +1,16 @@
 using BuildingBlocks.Domain.Results;
+using Control.Application.Constants;
 using Control.Domain.Entities;
 using Control.Domain.Interfaces;
 using MassTransit;
 using MediatR;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Control.Application.Features.AutomationRules.Commands.AddCondition;
 
-public sealed class AddConditionHandler(IAutomationRuleRepository ruleRepository)
+public sealed class AddConditionHandler(
+    IAutomationRuleRepository ruleRepository,
+    IFusionCache cache)
     : IRequestHandler<AddConditionCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(
@@ -34,6 +38,8 @@ public sealed class AddConditionHandler(IAutomationRuleRepository ruleRepository
         {
             return Result<Guid>.Failure(addConditionResult.Error);
         }
+
+        await cache.RemoveAsync(CacheKeys.Rule(request.UserId, request.RuleId), token: cancellationToken);
 
         return Result<Guid>.Success(result.Value.Id);
     }

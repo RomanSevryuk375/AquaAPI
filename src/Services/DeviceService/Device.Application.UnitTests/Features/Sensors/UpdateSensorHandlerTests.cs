@@ -22,11 +22,13 @@ public class UpdateSensorHandlerTests
         // Arrange
         var oldControllerId = Guid.NewGuid();
         var newControllerId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
 
         Sensor sensor = new SensorBuilder().WithControllerId(oldControllerId).Build();
 
         var command = new UpdateSensorCommand
         {
+            UserId = userId,
             SensorId = sensor.Id,
             ControllerId = newControllerId,
             Name = "New Name",
@@ -36,7 +38,7 @@ public class UpdateSensorHandlerTests
 
         _sensorRepoMock.GetByIdAsync(sensor.Id, Arg.Any<CancellationToken>()).Returns(sensor);
 
-        _securityServiceMock.EnsureUserOwnsControllerAsync(newControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(newControllerId, command.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Success());
 
         // Act
@@ -46,7 +48,7 @@ public class UpdateSensorHandlerTests
         result.IsSuccess.Should().BeTrue();
         sensor.ControllerId.Should().Be(newControllerId);
 
-        await _securityServiceMock.Received(1).EnsureUserOwnsControllerAsync(newControllerId, Arg.Any<CancellationToken>());
+        await _securityServiceMock.Received(1).EnsureUserOwnsControllerAsync(newControllerId, command.UserId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -55,10 +57,12 @@ public class UpdateSensorHandlerTests
     {
         // Arrange
         var newControllerId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         Sensor sensor = new SensorBuilder().Build();
 
         var command = new UpdateSensorCommand
         {
+            UserId = userId,
             SensorId = sensor.Id,
             ControllerId = newControllerId,
             Name = "New Name",
@@ -69,7 +73,7 @@ public class UpdateSensorHandlerTests
         _sensorRepoMock.GetByIdAsync(sensor.Id, Arg.Any<CancellationToken>()).Returns(sensor);
 
         var expectedError = Error.Conflict("Access.Denied", "Forbidden");
-        _securityServiceMock.EnsureUserOwnsControllerAsync(newControllerId, Arg.Any<CancellationToken>())
+        _securityServiceMock.EnsureUserOwnsControllerAsync(newControllerId, command.UserId, Arg.Any<CancellationToken>())
             .Returns(Result.Failure(expectedError));
 
         // Act

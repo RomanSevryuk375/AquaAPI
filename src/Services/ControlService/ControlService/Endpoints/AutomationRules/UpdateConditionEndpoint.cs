@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Presentation.Endpoints;
+using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.DTOs.AutomationRules;
 using Control.Application.Features.AutomationRules.Commands.UpdateCondition;
@@ -14,10 +15,12 @@ public sealed class UpdateConditionEndpoint : IEndpoint
             Guid conditionId,
             RuleConditionRequestDto request,
             ISender sender,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             UpdateConditionCommand command = new UpdateConditionCommand
             {
+                UserId = userContext.UserId,
                 RuleId = ruleId,
                 ConditionId = conditionId,
                 SensorId = request.SensorId,

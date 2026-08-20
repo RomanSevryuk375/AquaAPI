@@ -1,15 +1,16 @@
-using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using MediatR;
+using Notification.Application.Constants;
 using Notification.Domain.Entities;
 using Notification.Domain.Interfaces;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Notification.Application.Features.Reminders.Commands.CompleteReminder;
 
 public sealed class CompleteReminderHandler(
     IReminderRepository reminderRepository,
-    IUserContext userContext)
+    IFusionCache cache)
     : IRequestHandler<CompleteReminderCommand, Result>
 {
     public async Task<Result> Handle(CompleteReminderCommand request, CancellationToken cancellationToken)
@@ -21,13 +22,15 @@ public sealed class CompleteReminderHandler(
                 string.Format(ErrorMessages.Reminder.NotFoundFormat, request.ReminderId)));
         }
 
-        if (reminder.UserId != userContext.UserId)
+        if (reminder.UserId != request.UserId)
         {
             return Result.Failure(Error.Conflict(ErrorCodes.Security.AccessDenied,
                 ErrorMessages.Security.YouAreNotOwnerOfReminder));
         }
 
         reminder.CompleteTask();
+
+        await cache.RemoveAsync(CacheKeys.Reminder(reminder.UserId, reminder.Id), token: cancellationToken);
 
         return Result.Success();
     }

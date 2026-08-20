@@ -20,6 +20,7 @@ public class CreateRuleHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WithValidCommand_CreatesRuleAndReturnsSuccess()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var sensorId1 = Guid.NewGuid();
         var sensorId2 = Guid.NewGuid();
@@ -27,6 +28,9 @@ public class CreateRuleHandlerTests
 
         var command = new CreateRuleCommand
         {
+
+            UserId = userId
+,
             EcosystemId = Guid.NewGuid(),
             RelayId = relayId,
             Name = "Temperature Rule",
@@ -71,12 +75,16 @@ public class CreateRuleHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenHardwareValidationFails_ReturnsFailureAndDoesNotSave()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var sensorId1 = Guid.NewGuid();
         var relayId = Guid.NewGuid();
 
         var command = new CreateRuleCommand
         {
+
+            UserId = userId
+,
             EcosystemId = Guid.NewGuid(),
             RelayId = relayId,
             Name = "Temperature Rule",
@@ -108,9 +116,13 @@ public class CreateRuleHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WithInvalidCommandName_ReturnsFailure()
     {
+        var userId = Guid.NewGuid();
         // Arrange
         var command = new CreateRuleCommand
         {
+
+            UserId = userId
+,
             EcosystemId = Guid.NewGuid(),
             RelayId = Guid.NewGuid(),
             Name = "",

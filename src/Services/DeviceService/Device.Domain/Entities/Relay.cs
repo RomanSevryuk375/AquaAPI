@@ -106,6 +106,7 @@ public sealed class Relay : AggregateRoot, IEntity
 
     public Result Update(
         Guid controllerId,
+        Guid userId,
         ConnectionProtocol connectionProtocol,
         string rawConnectionAddress,
         RelayPurpose purpose,
@@ -126,6 +127,7 @@ public sealed class Relay : AggregateRoot, IEntity
         RaiseEvent(new RelayUpdatedDomainEvent
         {
             RelayId = Id,
+            UserId = userId,
             ControllerId = ControllerId,
             PowerSensorId = PowerSensorId,
             Name = Name.Value,
@@ -140,7 +142,9 @@ public sealed class Relay : AggregateRoot, IEntity
         return Result.Success();
     }
 
-    public Result SetName(string rawName)
+    public Result SetName(
+        Guid userId, 
+        string rawName)
     {
         Result<DeviceName> nameResult = DeviceName.Create(rawName);
         if (nameResult.IsFailure)
@@ -150,12 +154,25 @@ public sealed class Relay : AggregateRoot, IEntity
 
         Name = nameResult.Value;
 
+        RaiseEvent(new RelayUpdatedDomainEvent
+        {
+            RelayId = Id,
+            UserId = userId,
+            ControllerId = ControllerId,
+            PowerSensorId = PowerSensorId,
+            Name = Name.Value,
+            Purpose = Purpose,
+            IsManual = IsManual,
+            IsActive = IsActive,
+            CreatedAt = CreatedAt
+        });
+
         IncrementVersion();
 
         return Result.Success();
     }
 
-    public Result SetPowerSensor(Sensor sensor)
+    public Result SetPowerSensor(Sensor sensor, Guid userId)
     {
         if (sensor is not VoltageSensor)
         {
@@ -169,6 +186,7 @@ public sealed class Relay : AggregateRoot, IEntity
         {
             RelayId = Id,
             PowerSensorId = sensor.Id,
+            UserId = userId,
         });
 
         IncrementVersion();
@@ -176,7 +194,7 @@ public sealed class Relay : AggregateRoot, IEntity
         return Result.Success();
     }
 
-    public void SetState(bool state)
+    public void SetState(bool state, Guid userId)
     {
         if (IsActive == state)
         {
@@ -187,6 +205,7 @@ public sealed class Relay : AggregateRoot, IEntity
 
         RaiseEvent(new RelayStateChangedDomainEvent
         {
+            UserId = userId,
             ControllerId = ControllerId,
             RelayId = Id,
             TargetState = IsActive,
@@ -196,7 +215,7 @@ public sealed class Relay : AggregateRoot, IEntity
         IncrementVersion();
     }
 
-    public void SetMode(bool mode)
+    public void SetMode(bool mode, Guid userId)
     {
         if (IsManual == mode)
         {
@@ -207,6 +226,7 @@ public sealed class Relay : AggregateRoot, IEntity
 
         RaiseEvent(new RelayModeChangedDomainEvent
         {
+            UserId = userId,
             RelayId = Id,
             IsManual = IsManual
         });
@@ -214,5 +234,12 @@ public sealed class Relay : AggregateRoot, IEntity
         IncrementVersion();
     }
 
-    public void MarkAsDeleted() => RaiseEvent(new RelayDeletedDomainEvent { RelayId = Id, });
+    public void MarkAsDeleted(Guid userId)
+    {
+        RaiseEvent(new RelayDeletedDomainEvent 
+        { 
+            RelayId = Id, 
+            UserId = userId
+        });
+    }
 }
