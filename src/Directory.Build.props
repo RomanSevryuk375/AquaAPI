@@ -3,6 +3,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
         <AnalysisLevel>latest</AnalysisLevel>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>.</DockerfileContext>
@@ -15,6 +17,7 @@
                    Or $(MSBuildProjectName.EndsWith('.E2ETests', System.StringComparison.OrdinalIgnoreCase))
                    Or $(MSBuildProjectName.EndsWith('.ArchitectureTests', System.StringComparison.OrdinalIgnoreCase))">
         <IsTestProject>true</IsTestProject>
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

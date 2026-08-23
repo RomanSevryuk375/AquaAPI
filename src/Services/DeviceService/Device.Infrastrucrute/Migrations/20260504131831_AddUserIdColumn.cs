@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,14 +15,14 @@ namespace Device.Infrastructure.Migrations
                 table: "sensors",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "user_id",
                 table: "relays",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.CreateIndex(
                 name: "ix_sensors_user_id",

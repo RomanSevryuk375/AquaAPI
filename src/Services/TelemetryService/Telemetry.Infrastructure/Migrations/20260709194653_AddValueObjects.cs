@@ -35,28 +35,28 @@ namespace Telemetry.Infrastructure.Migrations
                 table: "telemetry_raw_data",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "version",
                 table: "telemetry_aggregate_data",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "version",
                 table: "sensors",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "version",
                 table: "ecosystems",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
         }
 
         /// <inheritdoc />

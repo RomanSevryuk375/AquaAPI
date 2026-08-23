@@ -49,8 +49,8 @@ public sealed class ValidateDeviceTokenHandler(ISqlConnectionFactory sqlConnecti
 
     private sealed record ControllerAuthData
     {
-        public Guid ControllerId { get; init; }
-        public Guid UserId { get; init; }
+        public Guid ControllerId { get; init; } = Guid.Empty;
+        public Guid UserId { get; init; } = Guid.Empty;
         public string DeviceTokenHash { get; init; } = string.Empty;
     }
 }
