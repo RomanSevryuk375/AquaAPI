@@ -10,10 +10,6 @@ public interface ITelemetryRawDataRepository : IRepository<RawTelemetry>
         string externalMessageId,
         CancellationToken cancellationToken = default);
 
-    public Task DeleteOldRawDataAsync(
-        DateTime olderThan,
-        CancellationToken cancellationToken = default);
-
     public Task<IReadOnlyDictionary<Guid, TelemetrySummary>> GetSummaryForPeriodAsync(
             DateTime from,
             DateTime to,

@@ -3,8 +3,10 @@
 using System.Text;
 using BuildingBlocks.Domain.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BuildingBlocks.Presentation.Authorization;
@@ -131,7 +133,14 @@ public static class Extensions
             throw new InvalidOperationException(DiErrors.JwtConfiguration);
         }
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options => { ConfigureJwtBearer(options, jwtOptions); });
 
         return services;
@@ -155,10 +164,19 @@ public static class Extensions
         {
             OnMessageReceived = context =>
             {
-                if (string.IsNullOrWhiteSpace(context.Token) &&
-                    context.Request.Cookies.TryGetValue(AccessTokenCookieName, out string? token))
+                StringValues accessToken = context.Request.Query["access_token"];
+                PathString path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                 {
-                    context.Token = token;
+                    context.Token = accessToken;
+                    return Task.CompletedTask;
+                }
+
+                if (string.IsNullOrWhiteSpace(context.Token) &&
+                    context.Request.Cookies.TryGetValue(AccessTokenCookieName, out string? cookieToken))
+                {
+                    context.Token = cookieToken;
                 }
 
                 return Task.CompletedTask;

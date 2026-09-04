@@ -1,172 +1,49 @@
 version: '3.8'
 
 services:
-  telemetry-db:
-    image: postgres:18
-    container_name: telemetry-db
+  postgres:
+    image: postgres:16-alpine
+    container_name: aqua-postgres
     environment:
-      - POSTGRES_DB=telemetry_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_HOST_AUTH_METHOD=trust 
     ports:
-      - "5438:5432"
+      - "5432:5432"
     volumes:
-      - telemetry-db-data:/var/lib/postgresql
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d telemetry_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
       - aqua-network
 
-  device-db:
-    image: postgres:18
-    container_name: device-db
-    environment:
-      - POSTGRES_DB=device_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_HOST_AUTH_METHOD=trust  
-    ports:
-      - "5439:5432"
-    volumes:
-      - device-db-data:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d device_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - aqua-network
-
-  control-db:
-      image: postgres:18
-      container_name: control-db
-      environment:
-        - POSTGRES_DB=control_db
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=password
-        - POSTGRES_HOST_AUTH_METHOD=trust 
-      ports:
-        - "5440:5432"
-      volumes:
-        - control-db-data:/var/lib/postgresql
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres -d control_db"]
-        interval: 5s
-        timeout: 5s
-        retries: 5
-      networks:
-        - aqua-network
-
-  identity-db:
-      image: postgres:18
-      container_name: identity-db
-      environment:
-        - POSTGRES_DB=identity_db
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=password
-        - POSTGRES_HOST_AUTH_METHOD=trust 
-      ports:
-        - "5441:5432"
-      volumes:
-        - identity-db-data:/var/lib/postgresql
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres -d identity_db"]
-        interval: 5s
-        timeout: 5s
-        retries: 5
-      networks:
-        - aqua-network
-
-  notification-db:
-      image: postgres:18
-      container_name: notification-db
-      environment:
-        - POSTGRES_DB=notification_db
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=password
-        - POSTGRES_HOST_AUTH_METHOD=trust
-      ports:
-        - "5442:5432"
-      volumes:
-        - notification-db-data:/var/lib/postgresql
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres -d notification_db"]
-        interval: 5s
-        timeout: 5s
-        retries: 5
-      networks:
-        - aqua-network
-
-  firmware-db:
-    image: postgres:18 
-    container_name: firmware-db
-    environment:
-      - POSTGRES_DB=firmware_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    ports:
-      - "5443:5432"
-    volumes:
-      - firmware-db-data:/var/lib/postgresql  
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d firmware_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - aqua-network
-
-  firmware-migrations:
-    image: migrate/migrate
-    container_name: firmware-migrations
+  postgres-init:
+    image: postgres:16-alpine
+    container_name: aqua-postgres-init
     depends_on:
-      firmware-db:
+      postgres:
         condition: service_healthy
-    volumes:
-      - ./src/Services/FirmwareService/migrations:/migrations
-    command: -path /migrations -database postgres://postgres:password@firmware-db:5432/firmware_db?sslmode=disable up
     networks:
       - aqua-network
+    command: >
+      bash -c "
+      export PGPASSWORD=password;
+      for db in telemetry_db device_db control_db identity_db notification_db firmware_db; do
+        psql -h postgres -U postgres -tc \"SELECT 1 FROM pg_database WHERE datname = '$$db'\" | grep -q 1 || psql -h postgres -U postgres -c \"CREATE DATABASE $$db\";
+      done
+      "
 
-  telemetry-redis:
+  redis:
     image: redis:7.2-alpine
-    container_name: telemetry-redis
+    container_name: aqua-redis
     command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
     volumes:
-      - telemetry-redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - aqua-network
-
-  device-redis:
-    image: redis:7.2-alpine
-    container_name: device-redis
-    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - device-redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - aqua-network
-  
-  control-redis:
-    image: redis:7.2-alpine
-    container_name: control-redis
-    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - control-redis-data:/data
+      - redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -175,37 +52,26 @@ services:
     networks:
       - aqua-network
 
-  identity-redis:
-    image: redis:7.2-alpine
-    container_name: identity-redis
-    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - identity-redis-data:/data
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: aqua-rabbitmq
+    ports:
+      - "5672:5672"  
+      - "15672:15672"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - aqua-network
-
-  notification-redis:
-    image: redis:7.2-alpine
-    container_name: notification-redis
-    command: redis-server --save 60 1 --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - notification-redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     networks:
       - aqua-network
 
   minio:
     image: minio/minio
-    container_name: minio
+    container_name: aqua-minio
     ports:
       - "9000:9000" 
       - "9001:9001" 
@@ -225,10 +91,12 @@ services:
 
   minio-setup:
     image: minio/mc
-    container_name: minio-setup
+    container_name: aqua-minio-setup
     depends_on:
       minio:
         condition: service_healthy
+    networks:
+      - aqua-network
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
@@ -236,12 +104,10 @@ services:
       /usr/bin/mc policy download myminio/aquasmart-firmware-bucket;
       exit 0;
       "
-    networks:
-      - aqua-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
-    container_name: elasticsearch
+    container_name: aqua-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false 
@@ -253,7 +119,8 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.4
-    container_name: kibana
+    container_name: aqua-kibana
+    profiles: ["observability"]
     ports:
       - "5601:5601"
     environment:
@@ -263,47 +130,23 @@ services:
     networks:
       - aqua-network
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"  
-      - "15672:15672"
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - aqua-network
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-
   api-gateway:
     container_name: api-gateway
-    image: api-gateway
     build:
       context: .
-      dockerfile: src\Gateway\ApiGateway\Dockerfile
+      dockerfile: src/Gateway/ApiGateway/Dockerfile
     ports:
       - "5055:8080"
     depends_on:
-      telemetry-api:
-        condition: service_healthy
-      device-api:
-        condition: service_healthy
-      control-api:
-        condition: service_healthy
-      identity-api:
-        condition: service_healthy
-      notification-api:
-        condition: service_healthy
-      firmware-api:
-        condition: service_healthy
+      - telemetry-api
+      - device-api
+      - control-api
+      - identity-api
+      - notification-api
+      - firmware-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
@@ -311,33 +154,28 @@ services:
     networks:
       - aqua-network
 
-  telemetry-api:
-    container_name: telemetry-api
-    image: telemetry-api
+  identity-api:
+    container_name: identity-api
     build:
-      context: . 
-      dockerfile: src/Services/TelemetryService/TelemetryService/Dockerfile
-    depends_on:
-      telemetry-db:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      telemetry-redis:
-        condition: service_healthy 
+      context: .
+      dockerfile: src/Services/IdentityService/IdentityService/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080  
-      - ConnectionStrings__TelemetryDbContext=Host=telemetry-db;Database=telemetry_db;Username=postgres;Password=password
-      - ConnectionStrings__Redis=telemetry-redis:6379 
-      - ElasticConfiguration__Uri=http://elasticsearch:9200
-      - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__IdentityDbContext=Host=postgres;Database=identity_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=redis:6379
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
-      - MT_LICENSE=community  
+      - RabbitMqOptions__Host=amqp://rabbitmq:5672
+      - RabbitMqOptions__UserName=guest
+      - RabbitMqOptions__Password=guest
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -348,25 +186,21 @@ services:
 
   device-api:
     container_name: device-api
-    image: device-api 
     build:
       context: . 
       dockerfile: src/Services/DeviceService/DeviceService/Dockerfile
-    ports:
-      - "5237:8080"
     depends_on:
-      device-db:
-        condition: service_healthy
+      postgres-init:
+        condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
-      device-redis:
+      redis:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DeviceDbContext=Host=device-db;Database=device_db;Username=postgres;Password=password
-      - ConnectionStrings__Redis=device-redis:6379 
-      - ElasticConfiguration__Uri=http://elasticsearch:9200
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DeviceDbContext=Host=postgres;Database=device_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
@@ -374,7 +208,7 @@ services:
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
-      - MT_LICENSE=community  
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -385,22 +219,21 @@ services:
 
   control-api:
     container_name: control-api
-    image: control-api
     build:
       context: . 
       dockerfile: src/Services/ControlService/ControlService/Dockerfile
     depends_on:
-      control-db:
-        condition: service_healthy
+      postgres-init:
+        condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
-      control-redis:
+      redis:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__ControlDbContext=Host=control-db;Database=control_db;Username=postgres;Password=password
-      - ConnectionStrings__Redis=control-redis:6379 
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__ControlDbContext=Host=postgres;Database=control_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
@@ -408,7 +241,7 @@ services:
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
-      - MT_LICENSE=community
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -417,29 +250,31 @@ services:
     networks:
       - aqua-network
 
-  identity-api:
-    container_name: identity-api
-    image: identity-api
+  telemetry-api:
+    container_name: telemetry-api
     build:
-      context: .
-      dockerfile: src/Services/IdentityService/IdentityService/Dockerfile
+      context: . 
+      dockerfile: src/Services/TelemetryService/TelemetryService/Dockerfile
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__IdentityDbContext=Host=identity-db;Database=identity_db;Username=postgres;Password=password
-      - ConnectionStrings__Redis=identity-redis:6379
+      - ASPNETCORE_URLS=http://+:8080  
+      - ConnectionStrings__TelemetryDbContext=Host=postgres;Database=telemetry_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=redis:6379 
+      - RabbitMqOptions__Host=amqp://rabbitmq:5672
+      - RabbitMqOptions__UserName=guest
+      - RabbitMqOptions__Password=guest
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
-      - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
-    depends_on:
-      identity-db:
-        condition: service_healthy
-      identity-redis:
-        condition: service_healthy 
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -452,20 +287,20 @@ services:
     container_name: notification-api
     build:
       context: .
-      dockerfile: src\Services\NotificationService\NotificationService\Dockerfile
+      dockerfile: src/Services/NotificationService/NotificationService/Dockerfile
     depends_on:
-      notification-db: 
-        condition: service_healthy 
+      postgres-init: 
+        condition: service_completed_successfully
       rabbitmq: 
         condition: service_healthy 
-      notification-redis:
+      redis:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 
-      - ConnectionStrings__NotificationDbContext=Host=notification-db;Database=notification_db;Username=postgres;Password=password
-      - ConnectionStrings__Redis=notification-redis:6379
+      - ConnectionStrings__NotificationDbContext=Host=postgres;Database=notification_db;Username=postgres;Password=password
+      - ConnectionStrings__Redis=redis:6379
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
       - RabbitMqOptions__UserName=guest
       - RabbitMqOptions__Password=guest
@@ -477,7 +312,6 @@ services:
       - EmailOptions__Host=test
       - EmailOptions__UserName=test
       - EmailOptions__Password=test
-      - MT_LICENSE=community
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -486,21 +320,30 @@ services:
     networks:
       - aqua-network
 
+  firmware-migrations:
+    image: migrate/migrate
+    container_name: firmware-migrations
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./src/Services/FirmwareService/migrations:/migrations
+    command: -path /migrations -database postgres://postgres:password@postgres:5432/firmware_db?sslmode=disable up
+    networks:
+      - aqua-network
+
   firmware-api:
     container_name: firmware-api
-    image: firmware-api
     build:
       context: ./src/Services/FirmwareService/.
       dockerfile: Dockerfile
     depends_on:
-      firmware-db:
-        condition: service_healthy
       firmware-migrations:
         condition: service_completed_successfully 
       minio:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://postgres:password@firmware-db:5432/firmware_db?sslmode=disable
+      - DATABASE_URL=postgres://postgres:password@postgres:5432/firmware_db?sslmode=disable
       - S3_BUCKET_NAME=aquasmart-firmware-bucket
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=minioadmin
@@ -521,18 +364,6 @@ networks:
     driver: bridge
 
 volumes:
-
-  telemetry-db-data:
-  device-db-data:
-  control-db-data:
-  identity-db-data:
-  notification-db-data:
-  firmware-db-data:
-
-  telemetry-redis-data:
-  device-redis-data:
-  control-redis-data:
-  identity-redis-data:
-  notification-redis-data:
-
+  postgres-data:
+  redis-data:
   minio-data:

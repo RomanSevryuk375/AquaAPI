@@ -47,7 +47,7 @@ public static class SensorFactory
 
         DateTime now = DateTime.UtcNow;
 
-        Sensor sensor = type switch
+        Sensor? sensor = type switch
         {
             SensorType.Humidity => new HumiditySensor(
                 id, controllerId, userId, nameResult.Value, addressResult.Value, now),

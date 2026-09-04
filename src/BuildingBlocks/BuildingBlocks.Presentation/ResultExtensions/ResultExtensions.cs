@@ -28,25 +28,6 @@ public static class ResultExtensions
         return MapError(controller, result.Error);
     }
 
-    private static ObjectResult MapError(
-        ControllerBase controller, Error error)
-    {
-        var response = new
-        {
-            error = error.Code,
-            message = error.Message
-        };
-
-        return error.Type switch
-        {
-            ErrorType.NotFound => controller.NotFound(response),
-            ErrorType.Validation => controller.BadRequest(response),
-            ErrorType.Conflict => controller.Conflict(response),
-
-            _ => controller.StatusCode(500, new { error = "InternalError", message = error.Message })
-        };
-    }
-
     public static IResult ToIResult(this Result result)
     {
         if (result.IsSuccess)
@@ -65,6 +46,25 @@ public static class ResultExtensions
         }
 
         return MapError(result.Error);
+    }
+
+    private static ObjectResult MapError(
+        ControllerBase controller, Error error)
+    {
+        var response = new
+        {
+            error = error.Code,
+            message = error.Message
+        };
+
+        return error.Type switch
+        {
+            ErrorType.NotFound => controller.NotFound(response),
+            ErrorType.Validation => controller.BadRequest(response),
+            ErrorType.Conflict => controller.Conflict(response),
+
+            _ => controller.StatusCode(500, new { error = "InternalError", message = error.Message })
+        };
     }
 
     private static IResult MapError(Error error)

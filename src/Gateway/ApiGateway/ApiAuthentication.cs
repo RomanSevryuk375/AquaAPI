@@ -20,25 +20,10 @@ public static class ApiAuthentication
         services.Configure<JwtOptions>(jwtSection);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
+                    .AddJwtBearer(options =>
                     {
-                        if (!context.Request.Headers.ContainsKey("Authorization"))
-                        {
-                            string? token = context.Request.Cookies["AccessToken"];
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                context.Token = token;
-                            }
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-                Extensions.ConfigureJwtBearer(options, jwtOptions);
-            });
+                        BuildingBlocks.Presentation.Authorization.Extensions.ConfigureJwtBearer(options, jwtOptions);
+                    });
 
         return services;
     }

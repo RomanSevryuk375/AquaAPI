@@ -1,6 +1,5 @@
 // Ignore Spelling: Parameterless
 
-using System.Reflection;
 using BuildingBlocks.Domain.Abstractions;
 
 namespace Identity.ArchitectureTests;
@@ -19,9 +18,9 @@ public class DomainTests : BaseArchitectureTest
 
         foreach (Type? type in entityTypes)
         {
-            bool hasPrivateParameterlessConstructor = type.GetConstructors(
-                BindingFlags.NonPublic | BindingFlags.Instance)
-                .Any(c => c.GetParameters().Length == 0);
+            bool hasPrivateParameterlessConstructor = Array.Exists(
+                type.GetConstructors(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance),
+                c => c.GetParameters().Length == 0);
 
             if (!hasPrivateParameterlessConstructor)
             {

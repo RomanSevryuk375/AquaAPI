@@ -42,14 +42,14 @@ namespace IdentityService.Infrastructure.Migrations
                 table: "subscriptions",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "version",
                 table: "refresh_tokens",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
 
             migrationBuilder.CreateTable(
                 name: "outbox_messages",

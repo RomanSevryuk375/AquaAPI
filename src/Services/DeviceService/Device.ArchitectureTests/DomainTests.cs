@@ -18,9 +18,9 @@ public class DomainTests : BaseArchitectureTest
 
         foreach (Type? type in entityTypes)
         {
-            bool hasPrivateParameterlessConstructor = type.GetConstructors(
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Any(c => c.GetParameters().Length == 0);
+            bool hasPrivateParameterlessConstructor = Array.Exists(
+                type.GetConstructors(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance),
+                c => c.GetParameters().Length == 0);
 
             if (!hasPrivateParameterlessConstructor)
             {

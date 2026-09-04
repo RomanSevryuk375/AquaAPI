@@ -10,7 +10,7 @@ namespace Device.API.gRPC;
 
 public sealed class DeviceIntegrationEndpoint(ISender sender)
     : DeviceIntegrationGrpc.DeviceIntegrationGrpcBase
-{
+{ 
     public override async Task<GetMetadataResponse> GetMetadata(
         GetMetadataRequest request,
         ServerCallContext context)

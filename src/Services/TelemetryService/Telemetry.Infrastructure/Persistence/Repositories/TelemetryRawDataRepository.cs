@@ -41,15 +41,6 @@ public sealed class TelemetryRawDataRepository(TelemetryDbContext dbContext)
             x => TelemetrySummary.Create(x.MinValue, x.AvgValue, x.MaxValue, x.Count).Value);
     }
 
-    public async Task DeleteOldRawDataAsync(
-        DateTime olderThan,
-        CancellationToken cancellationToken = default)
-    {
-        await Context.TelemetryRawData
-            .Where(x => x.RecordedAt < olderThan && x.IsAggregated)
-            .ExecuteDeleteAsync(cancellationToken);
-    }
-
     public async Task MarkAsAggregatedAsync(
         List<Guid> sensorIds,
         DateTime from,

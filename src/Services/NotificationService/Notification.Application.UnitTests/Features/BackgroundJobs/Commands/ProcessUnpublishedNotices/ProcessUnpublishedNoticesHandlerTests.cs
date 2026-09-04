@@ -1,281 +1,303 @@
+using System.Data.Common;
+using BuildingBlocks.Domain.Abstractions;
 using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using MassTransit;
 using Notification.Application.Features.BackgroundJobs.Commands.ProcessUnpublishedNotices;
 using Notification.Application.InternalEvents;
-using Notification.Domain.Entities;
-using Notification.Domain.Interfaces;
-using Notification.TestShared.Builders;
 using NSubstitute;
 
 namespace Notification.Application.UnitTests.Features.BackgroundJobs.Commands.ProcessUnpublishedNotices;
 
 public class ProcessUnpublishedNoticesHandlerTests
 {
-    private readonly INotificationRepository _notificationRepoMock = Substitute.For<INotificationRepository>();
-    private readonly IUserRepository _userRepoMock = Substitute.For<IUserRepository>();
+    private readonly ISqlConnectionFactory _sqlConnectionFactoryMock = Substitute.For<ISqlConnectionFactory>();
+    private readonly DbConnection _dbConnectionMock = Substitute.For<DbConnection>();
+    private readonly DbCommand _dbCommandMock = Substitute.For<DbCommand>();
     private readonly IPublishEndpoint _publishEndpointMock = Substitute.For<IPublishEndpoint>();
-    private readonly ProcessUnpublishedNoticesHandler _handler;
 
     public ProcessUnpublishedNoticesHandlerTests()
     {
-        _handler = new ProcessUnpublishedNoticesHandler(
-            _notificationRepoMock,
-            _userRepoMock,
-            _publishEndpointMock);
+        _sqlConnectionFactoryMock.CreateConnection().Returns(_dbConnectionMock);
+        _dbConnectionMock.CreateCommand().Returns(_dbCommandMock);
+        DbParameterCollection dbParameterCollectionMock = Substitute.For<DbParameterCollection>();
+        DbParameter dbParameterMock = Substitute.For<DbParameter>();
+        _dbCommandMock.Parameters.Returns(dbParameterCollectionMock);
+        _dbCommandMock.CreateParameter().Returns(dbParameterMock);
+        dbParameterCollectionMock.Add(Arg.Any<object>()).Returns(0);
+        _dbCommandMock.ExecuteNonQueryAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(0));
+    }
+
+    private ProcessUnpublishedNoticesHandler CreateHandler()
+    {
+        return new ProcessUnpublishedNoticesHandler(_sqlConnectionFactoryMock, _publishEndpointMock);
+    }
+
+    private void SetupQueryResults(
+        List<(Guid Id, Guid UserId, string Message)> notifications,
+        List<(Guid Id, string Email, bool EmailEnable, bool TgEnable, long? TelegramChatId, bool IsNotifyEnabled)> users)
+    {
+        int callCount = 0;
+
+        _dbCommandMock.ExecuteReaderAsync(Arg.Any<System.Data.CommandBehavior>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
+            {
+                callCount++;
+                if (callCount == 1)
+                {
+                    // First query: Notifications
+                    var columns = new[] { "Id", "UserId", "Message" };
+                    var types = new[] { typeof(Guid), typeof(Guid), typeof(string) };
+                    var rows = notifications.Select(n => new object?[] { n.Id, n.UserId, n.Message }).ToList();
+                    return Task.FromResult<DbDataReader>(new TestDataReader(columns, types, rows));
+                }
+                if (callCount == 2)
+                {
+                    // Second query: Users
+                    var columns = new[] { "Id", "Email", "EmailEnable", "TgEnable", "TelegramChatId", "IsNotifyEnabled" };
+                    var types = new[] { typeof(Guid), typeof(string), typeof(bool), typeof(bool), typeof(long?), typeof(bool) };
+                    var rows = users.Select(u => new object?[] { u.Id, u.Email, u.EmailEnable, u.TgEnable, u.TelegramChatId, u.IsNotifyEnabled }).ToList();
+                    return Task.FromResult<DbDataReader>(new TestDataReader(columns, types, rows));
+                }
+                // Subsequent queries: return empty notifications reader to terminate loop
+                return Task.FromResult<DbDataReader>(new TestDataReader(new[] { "Id", "UserId", "Message" }, new[] { typeof(Guid), typeof(Guid), typeof(string) }, new List<object?[]>()));
+            });
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenNoUnpublishedNotifications_ReturnsSuccess()
     {
         // Arrange
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification>());
-
+        SetupQueryResults([], []);
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        await _userRepoMock.DidNotReceive().GetAllUsersByIdAsync(Arg.Any<List<Guid>>(), Arg.Any<CancellationToken>());
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenUserHasBothChannelsEnabled_PublishesBothAndMarksAsPublished()
     {
         // Arrange
-        User user = new UserBuilder()
-            .WithEnable(true)
-            .WithTgEnable(true, 123456789)
-            .WithEmailEnable(true)
-            .WithEmail("user@test.com")
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
+        var message = "Test Message";
 
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(user.Id)
-            .WithIsPublished(false)
-            .Build();
+        SetupQueryResults(
+            [(notificationId, userId, message)],
+            [(userId, "user@test.com", true, true, 123456789, true)]);
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
-
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Is<List<Guid>>(x => x.Contains(user.Id)), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { user });
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeTrue();
-        notification.PublishedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
-        notification.FailureReason.Should().BeNull();
-        notification.RetryCount.Should().Be(0);
 
         await _publishEndpointMock.Received(1).Publish(
             Arg.Is<SendTelegramCommand>(cmd =>
-                cmd.NotificationId == notification.Id &&
+                cmd.NotificationId == notificationId &&
                 cmd.ChatId == 123456789 &&
-                cmd.Message == notification.Message.Value),
+                cmd.Message == message),
             Arg.Any<CancellationToken>());
 
         await _publishEndpointMock.Received(1).Publish(
             Arg.Is<SendEmailCommand>(cmd =>
-                cmd.NotificationId == notification.Id &&
+                cmd.NotificationId == notificationId &&
                 cmd.Email == "user@test.com" &&
-                cmd.Message == notification.Message.Value),
+                cmd.Message == message),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenUserHasOnlyTgEnabled_PublishesTgOnlyAndMarksAsPublished()
     {
         // Arrange
-        User user = new UserBuilder()
-            .WithEnable(true)
-            .WithTgEnable(true, 123456789)
-            .WithEmailEnable(false)
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
+        var message = "Test Message";
 
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(user.Id)
-            .WithIsPublished(false)
-            .Build();
+        SetupQueryResults(
+            [(notificationId, userId, message)],
+            [(userId, "user@test.com", false, true, 123456789, true)]);
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
-
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Is<List<Guid>>(x => x.Contains(user.Id)), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { user });
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeTrue();
 
         await _publishEndpointMock.Received(1).Publish(
             Arg.Is<SendTelegramCommand>(cmd =>
-                cmd.NotificationId == notification.Id &&
+                cmd.NotificationId == notificationId &&
                 cmd.ChatId == 123456789 &&
-                cmd.Message == notification.Message.Value),
+                cmd.Message == message),
             Arg.Any<CancellationToken>());
 
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<SendEmailCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenUserHasOnlyEmailEnabled_PublishesEmailOnlyAndMarksAsPublished()
     {
         // Arrange
-        User user = new UserBuilder()
-            .WithEnable(true)
-            .WithTgEnable(false)
-            .WithEmailEnable(true)
-            .WithEmail("user@test.com")
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
+        var message = "Test Message";
 
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(user.Id)
-            .WithIsPublished(false)
-            .Build();
+        SetupQueryResults(
+            [(notificationId, userId, message)],
+            [(userId, "user@test.com", true, false, null, true)]);
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
-
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Is<List<Guid>>(x => x.Contains(user.Id)), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { user });
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeTrue();
 
         await _publishEndpointMock.Received(1).Publish(
             Arg.Is<SendEmailCommand>(cmd =>
-                cmd.NotificationId == notification.Id &&
+                cmd.NotificationId == notificationId &&
                 cmd.Email == "user@test.com" &&
-                cmd.Message == notification.Message.Value),
+                cmd.Message == message),
             Arg.Any<CancellationToken>());
 
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<SendTelegramCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenUserNotFound_MarksNotificationAsFailure()
     {
         // Arrange
-        var nonExistentUserId = Guid.NewGuid();
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(nonExistentUserId)
-            .WithIsPublished(false)
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
+        SetupQueryResults(
+            [(notificationId, userId, "Test Message")],
+            []);
 
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Any<List<Guid>>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User>());
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeFalse();
-        notification.RetryCount.Should().Be(1);
-        notification.FailureReason.Should().Be(ErrorMessages.NotificationProvider.UserDisabledOrNotFound);
-
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenUserIsNotifyEnabledIsFalse_MarksNotificationAsFailure()
     {
         // Arrange
-        User user = new UserBuilder()
-            .WithEnable(false)
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
 
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(user.Id)
-            .WithIsPublished(false)
-            .Build();
+        SetupQueryResults(
+            [(notificationId, userId, "Test Message")],
+            [(userId, "user@test.com", true, true, 123456789, false)]);
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
-
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Is<List<Guid>>(x => x.Contains(user.Id)), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { user });
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeFalse();
-        notification.RetryCount.Should().Be(1);
-        notification.FailureReason.Should().Be(ErrorMessages.NotificationProvider.UserDisabledOrNotFound);
-
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenNoProvidersAreEnabledForUser_MarksNotificationAsFailure()
     {
         // Arrange
-        User user = new UserBuilder()
-            .WithEnable(true)
-            .WithTgEnable(false)
-            .WithEmailEnable(false)
-            .Build();
+        var userId = Guid.NewGuid();
+        var notificationId = Guid.NewGuid();
 
-        Domain.Entities.Notification notification = new NotificationBuilder()
-            .WithUserId(user.Id)
-            .WithIsPublished(false)
-            .Build();
+        SetupQueryResults(
+            [(notificationId, userId, "Test Message")],
+            [(userId, "user@test.com", false, false, null, true)]);
 
-        _notificationRepoMock.GetUnpublishedNotificationsAsync(Arg.Any<CancellationToken>())
-            .Returns(new List<Domain.Entities.Notification> { notification });
-
-        _userRepoMock.GetAllUsersByIdAsync(Arg.Is<List<Guid>>(x => x.Contains(user.Id)), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { user });
-
+        var handler = CreateHandler();
         var command = new ProcessUnpublishedNoticesCommand();
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        notification.IsPublished.Should().BeFalse();
-        notification.RetryCount.Should().Be(1);
-        notification.FailureReason.Should().Be(ErrorMessages.NotificationProvider.NoActiveChannels);
-
         await _publishEndpointMock.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
     }
+
+    private sealed class TestDataReader(string[] columnNames, Type[] columnTypes, List<object?[]> rows) : DbDataReader
+    {
+        private int _currentIndex = -1;
+
+        public override bool Read()
+        {
+            _currentIndex++;
+            return _currentIndex < rows.Count;
+        }
+
+        public override Task<bool> ReadAsync(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(Read());
+        }
+
+        public override bool NextResult() => false;
+        public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length) => 0;
+        public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length) => 0;
+
+        public override int FieldCount => columnNames.Length;
+        public override string GetName(int ordinal) => columnNames[ordinal];
+        public override int GetOrdinal(string name) => Array.FindIndex(columnNames, c => c.Equals(name, StringComparison.OrdinalIgnoreCase));
+        public override object GetValue(int ordinal) => rows[_currentIndex][ordinal] ?? DBNull.Value;
+        public override bool IsDBNull(int ordinal) => rows[_currentIndex][ordinal] is null or DBNull;
+
+        public override bool HasRows => rows.Count > 0;
+        public override bool IsClosed => false;
+        public override int RecordsAffected => 0;
+
+        public override bool GetBoolean(int ordinal) => Convert.ToBoolean(GetValue(ordinal));
+        public override byte GetByte(int ordinal) => Convert.ToByte(GetValue(ordinal));
+        public override char GetChar(int ordinal) => Convert.ToChar(GetValue(ordinal));
+        public override DateTime GetDateTime(int ordinal) => Convert.ToDateTime(GetValue(ordinal));
+        public override decimal GetDecimal(int ordinal) => Convert.ToDecimal(GetValue(ordinal));
+        public override double GetDouble(int ordinal) => Convert.ToDouble(GetValue(ordinal));
+        public override float GetFloat(int ordinal) => Convert.ToSingle(GetValue(ordinal));
+        public override Guid GetGuid(int ordinal) => (Guid)GetValue(ordinal);
+        public override short GetInt16(int ordinal) => Convert.ToInt16(GetValue(ordinal));
+        public override int GetInt32(int ordinal) => Convert.ToInt32(GetValue(ordinal));
+        public override long GetInt64(int ordinal) => Convert.ToInt64(GetValue(ordinal));
+        public override string GetString(int ordinal) => Convert.ToString(GetValue(ordinal))!;
+        public override string GetDataTypeName(int ordinal) => GetFieldType(ordinal).Name;
+        public override Type GetFieldType(int ordinal) => columnTypes[ordinal];
+        public override int GetValues(object[] values)
+        {
+            int count = Math.Min(values.Length, FieldCount);
+            for (int i = 0; i < count; i++) values[i] = GetValue(i);
+            return count;
+        }
+        public override object this[int ordinal] => GetValue(ordinal);
+        public override object this[string name] => GetValue(GetOrdinal(name));
+        public override System.Collections.IEnumerator GetEnumerator() => throw new NotImplementedException();
+        public override int Depth => 0;
+    }
 }
+

@@ -1,40 +1,34 @@
-using ApiGateway;
-using BuildingBlocks.Presentation.Authorization;
-using BuildingBlocks.Presentation.Extensions;
+using ApiGateway.Extensions;
+using BuildingBlocks.Infrastructure.Extensions;
+using Serilog;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-
-builder.Services
-    .AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddMySwaggerGen();
-
-builder.Services.AddApiAuthentication(builder.Configuration);
-builder.Services.AddAquaAuthorizationPolicies();
-builder.Services.AddAuthorization();
-builder.Services.AddProblemDetails();
-
-WebApplication app = builder.Build();
-
-app.UseExceptionHandler();
-
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+const string AppName = "AquaSmart.ApiGateway";
+try
 {
-    options.SwaggerEndpoint("/swagger-docs/telemetry/swagger/v1/swagger.json", "Telemetry API");
-    options.SwaggerEndpoint("/swagger-docs/device/swagger/v1/swagger.json", "Device API");
-    options.SwaggerEndpoint("/swagger-docs/control/swagger/v1/swagger.json", "Control API");
-    options.SwaggerEndpoint("/swagger-docs/identity/swagger/v1/swagger.json", "Identity API");
-    options.SwaggerEndpoint("/swagger-docs/notification/swagger/v1/swagger.json", "Notification API");
-    options.SwaggerEndpoint("/swagger-docs/firmware/swagger/doc.json", "Firmware API");
-});
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-app.UseAuthentication();
-app.UseAuthorization();
+    builder.AddGlobalElkLogging(AppName);
+    builder.Services.AddConfiguration(builder.Configuration);
 
-app.MapReverseProxy();
+    WebApplication app = builder.Build();
 
-await app.RunAsync();
+    app.AddGatewayConfiguration();
+
+    await app.RunAsync();
+}
+#pragma warning disable S2139
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "{Name} terminated unexpectedly", AppName);
+    throw;
+}
+#pragma warning restore S2139
+finally
+{
+    await Log.CloseAndFlushAsync();
+}

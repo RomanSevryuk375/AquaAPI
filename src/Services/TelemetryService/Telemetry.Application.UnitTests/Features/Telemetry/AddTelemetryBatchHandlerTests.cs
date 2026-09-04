@@ -253,7 +253,6 @@ public class AddTelemetryBatchHandlerTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenValidationFails_ReturnsFailureAndDoesNotCallRepositories()
     {
-        var userId = Guid.NewGuid();
         // Arrange
         var command = new AddTelemetryBatchCommand
         {
@@ -276,15 +275,14 @@ public class AddTelemetryBatchHandlerTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(error);
 
-        _sensorRepositoryMock.DidNotReceiveWithAnyArgs();
-        _telemetryRepositoryMock.DidNotReceiveWithAnyArgs();
+        await _sensorRepositoryMock.DidNotReceiveWithAnyArgs().GetAllByEcosystemId(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _telemetryRepositoryMock.DidNotReceiveWithAnyArgs().AddAsync(Arg.Any<RawTelemetry>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_WhenEcosystemUserMismatch_ReturnsAccessDeniedConflict()
     {
-        var userId = Guid.NewGuid();
         // Arrange
         var controllerId = Guid.NewGuid();
         var ecosystemUserId = Guid.NewGuid();

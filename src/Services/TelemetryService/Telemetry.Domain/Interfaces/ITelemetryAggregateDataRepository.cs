@@ -7,11 +7,6 @@ namespace Telemetry.Domain.Interfaces;
 
 public interface ITelemetryAggregateDataRepository : IRepository<AggregateTelemetry>
 {
-    public Task DeleteOldRawDataAsync(
-        PeriodType period,
-        DateTime olderThan,
-        CancellationToken cancellationToken = default);
-
     public Task<IReadOnlyDictionary<Guid, TelemetrySummary>> GetSummaryForPeriodAsync(
         PeriodType sourcePeriod,
         DateTime from,
