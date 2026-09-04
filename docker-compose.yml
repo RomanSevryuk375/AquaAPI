@@ -146,7 +146,7 @@ services:
       - firmware-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
@@ -161,7 +161,7 @@ services:
       dockerfile: src/Services/IdentityService/IdentityService/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__IdentityDbContext=Host=postgres;Database=identity_db;Username=postgres;Password=password
       - ConnectionStrings__Redis=redis:6379
       - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
@@ -198,7 +198,7 @@ services:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DeviceDbContext=Host=postgres;Database=device_db;Username=postgres;Password=password
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
@@ -208,6 +208,7 @@ services:
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -230,7 +231,7 @@ services:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__ControlDbContext=Host=postgres;Database=control_db;Username=postgres;Password=password
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
@@ -240,6 +241,7 @@ services:
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -262,7 +264,7 @@ services:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080  
+      - ASPNETCORE_URLS=http://+:8080  
       - ConnectionStrings__TelemetryDbContext=Host=postgres;Database=telemetry_db;Username=postgres;Password=password
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
@@ -272,6 +274,7 @@ services:
       - JwtOptions__Issuer=AquaSmart.Identity
       - JwtOptions__Audience=AquaSmart.Gateway
       - JwtOptions__ExpiresHours=12
+      - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -294,7 +297,7 @@ services:
         condition: service_healthy 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 
       - ConnectionStrings__NotificationDbContext=Host=postgres;Database=notification_db;Username=postgres;Password=password
       - ConnectionStrings__Redis=redis:6379

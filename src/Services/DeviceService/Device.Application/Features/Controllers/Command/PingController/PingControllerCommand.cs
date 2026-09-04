@@ -6,7 +6,6 @@ namespace Device.Application.Features.Controllers.Command.PingController;
 public sealed record PingControllerCommand
     : ICommand<ControllerPingResponse>, IDeviceBoundRequest
 {
-    public Guid UserId { get; init; }
     public Guid ControllerId { get; init; }
     public string DeviceToken { get; init; } = string.Empty;
 }

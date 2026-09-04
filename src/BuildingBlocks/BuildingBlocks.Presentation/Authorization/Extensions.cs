@@ -133,7 +133,14 @@ public static class Extensions
             throw new InvalidOperationException(DiErrors.JwtConfiguration);
         }
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options => { ConfigureJwtBearer(options, jwtOptions); });
 
         return services;

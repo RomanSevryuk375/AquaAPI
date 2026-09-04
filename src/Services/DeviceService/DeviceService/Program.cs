@@ -1,6 +1,8 @@
 using BuildingBlocks.Infrastructure.Extensions;
 using BuildingBlocks.Presentation.Extensions;
 using Device.API.Extensions;
+using Device.API.gRPC;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -15,12 +17,22 @@ try
 
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(50051, listenOptions =>
+        {
+            listenOptions.Protocols = HttpProtocols.Http2;
+        });
+    });
+
     builder.AddGlobalElkLogging(AppName);
     builder.Services.AddConfiguration(builder.Configuration);
 
     WebApplication app = builder.Build();
 
     app.AddGlobalConfiguration();
+
+    app.MapGrpcService<DeviceIntegrationEndpoint>();
 
     await app.RunAsync();
 }

@@ -1,4 +1,5 @@
 using BuildingBlocks.Domain.Abstractions;
+using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Presentation.Endpoints;
 using BuildingBlocks.Presentation.ResultExtensions;
 using Control.Application.DTOs.Ecosystems;
@@ -16,7 +17,7 @@ public sealed class CreateEcosystemEndpoint : IEndpoint
             IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
-            CreateEcosystemCommand command = new CreateEcosystemCommand
+            CreateEcosystemCommand command = new()
             {
                 Type = request.Type,
                 Name = request.Name,
@@ -25,7 +26,7 @@ public sealed class CreateEcosystemEndpoint : IEndpoint
                 UserId = userContext.UserId
             };
 
-            var result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await sender.Send(command, cancellationToken);
 
             return result.IsSuccess
                 ? Results.CreatedAtRoute("GetEcosystemById", new { id = result.Value }, result.Value)

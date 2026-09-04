@@ -12,12 +12,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddGlobalApi(configuration);
-        services.AddEndpointsApiExplorer();
-        services.AddEndpoints(typeof(DependencyInjection).Assembly);
-        services.AddApplication(configuration);
-        services.AddInfrastructure(configuration);
-
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
             options.Password.RequiredLength = 8;
@@ -27,6 +21,13 @@ public static class DependencyInjection
         })
         .AddEntityFrameworkStores<IdentityDbContext>()
         .AddDefaultTokenProviders();
+
+        services.AddGlobalApi(configuration);
+        
+        services.AddEndpointsApiExplorer();
+        services.AddEndpoints(typeof(DependencyInjection).Assembly);
+        services.AddApplication(configuration);
+        services.AddInfrastructure(configuration);
 
         return services;
     }
