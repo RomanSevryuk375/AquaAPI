@@ -1,13 +1,13 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   postgres:
     image: postgres:16-alpine
     container_name: aqua-postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_HOST_AUTH_METHOD=trust 
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD} 
     ports:
       - "5432:5432"
     volumes:
@@ -30,9 +30,9 @@ services:
       - aqua-network
     command: >
       bash -c "
-      export PGPASSWORD=password;
+      export PGPASSWORD=${POSTGRES_PASSWORD};
       for db in telemetry_db device_db control_db identity_db notification_db firmware_db; do
-        psql -h postgres -U postgres -tc \"SELECT 1 FROM pg_database WHERE datname = '$$db'\" | grep -q 1 || psql -h postgres -U postgres -c \"CREATE DATABASE $$db\";
+        psql -h postgres -U ${POSTGRES_USER} -tc \"SELECT 1 FROM pg_database WHERE datname = '$$db'\" | grep -q 1 || psql -h postgres -U ${POSTGRES_USER} -c \"CREATE DATABASE $$db\";
       done
       "
 
@@ -64,8 +64,8 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     networks:
       - aqua-network
 
@@ -76,8 +76,8 @@ services:
       - "9000:9000" 
       - "9001:9001" 
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
@@ -99,9 +99,9 @@ services:
       - aqua-network
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
-      /usr/bin/mc mb myminio/aquasmart-firmware-bucket --ignore-existing;
-      /usr/bin/mc policy download myminio/aquasmart-firmware-bucket;
+      /usr/bin/mc config host add myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb myminio/${MINIO_BUCKET_NAME} --ignore-existing;
+      /usr/bin/mc policy download myminio/${MINIO_BUCKET_NAME};
       exit 0;
       "
 
@@ -147,10 +147,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
     networks:
       - aqua-network
 
@@ -162,15 +162,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__IdentityDbContext=Host=postgres;Database=identity_db;Username=postgres;Password=password
+      - ConnectionStrings__IdentityDbContext=Host=postgres;Database=identity_db;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
+      - RabbitMqOptions__UserName=${RABBITMQ_DEFAULT_USER}
+      - RabbitMqOptions__Password=${RABBITMQ_DEFAULT_PASS}
     depends_on:
       postgres-init:
         condition: service_completed_successfully
@@ -199,15 +199,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DeviceDbContext=Host=postgres;Database=device_db;Username=postgres;Password=password
+      - ConnectionStrings__DeviceDbContext=Host=postgres;Database=device_db;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
+      - RabbitMqOptions__UserName=${RABBITMQ_DEFAULT_USER}
+      - RabbitMqOptions__Password=${RABBITMQ_DEFAULT_PASS}
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
       - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -232,15 +232,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__ControlDbContext=Host=postgres;Database=control_db;Username=postgres;Password=password
+      - ConnectionStrings__ControlDbContext=Host=postgres;Database=control_db;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
+      - RabbitMqOptions__UserName=${RABBITMQ_DEFAULT_USER}
+      - RabbitMqOptions__Password=${RABBITMQ_DEFAULT_PASS}
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
       - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -265,15 +265,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080  
-      - ConnectionStrings__TelemetryDbContext=Host=postgres;Database=telemetry_db;Username=postgres;Password=password
+      - ConnectionStrings__TelemetryDbContext=Host=postgres;Database=telemetry_db;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379 
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
+      - RabbitMqOptions__UserName=${RABBITMQ_DEFAULT_USER}
+      - RabbitMqOptions__Password=${RABBITMQ_DEFAULT_PASS}
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
       - GrpcConfiguration__DeviceServiceUrl=http://device-api:50051
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -299,19 +299,21 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 
-      - ConnectionStrings__NotificationDbContext=Host=postgres;Database=notification_db;Username=postgres;Password=password
+      - ConnectionStrings__NotificationDbContext=Host=postgres;Database=notification_db;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - ConnectionStrings__Redis=redis:6379
       - RabbitMqOptions__Host=amqp://rabbitmq:5672
-      - RabbitMqOptions__UserName=guest
-      - RabbitMqOptions__Password=guest
-      - JwtOptions__SecretKey=super-secret-key-must-be-at-least-32-characters-long
-      - JwtOptions__Issuer=AquaSmart.Identity
-      - JwtOptions__Audience=AquaSmart.Gateway
-      - JwtOptions__ExpiresHours=12
-      - TelegramOptions__BotToken=test
-      - EmailOptions__Host=test
-      - EmailOptions__UserName=test
-      - EmailOptions__Password=test
+      - RabbitMqOptions__UserName=${RABBITMQ_DEFAULT_USER}
+      - RabbitMqOptions__Password=${RABBITMQ_DEFAULT_PASS}
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__ExpiresHours=${JWT_EXPIRES_HOURS}
+      - TelegramOptions__BotToken=${TELEGRAM_BOT_TOKEN}
+      - EmailOptions__Host=${EMAIL_HOST}
+      - EmailOptions__Port=${EMAIL_PORT}
+      - EmailOptions__UserName=${EMAIL_USERNAME}
+      - EmailOptions__Password=${EMAIL_PASSWORD}
+      - EmailOptions__FromEmail=${EMAIL_FROM}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -328,7 +330,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./src/Services/FirmwareService/migrations:/migrations
-    command: -path /migrations -database postgres://postgres:password@postgres:5432/firmware_db?sslmode=disable up
+    command: -path /migrations -database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/firmware_db?sslmode=disable up
     networks:
       - aqua-network
 
@@ -343,11 +345,11 @@ services:
       minio:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://postgres:password@postgres:5432/firmware_db?sslmode=disable
-      - S3_BUCKET_NAME=aquasmart-firmware-bucket
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=minioadmin
-      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/firmware_db?sslmode=disable
+      - S3_BUCKET_NAME=${MINIO_BUCKET_NAME}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - AWS_ENDPOINT_URL=http://minio:9000 
     ports:
       - "5238:8080"
