@@ -41,13 +41,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         builder.ConfigureTestServices(services =>
         {
-            services.AddMassTransitTestHarness(x =>
-            {
-                x.UsingInMemory((context, cfg) =>
-                {
-                    cfg.ConfigureEndpoints(context);
-                });
-            });
+            services.AddMassTransitTestHarness(x => x.UsingInMemory((context, cfg) => { cfg.ConfigureEndpoints(context); }));
 
             ServiceDescriptor? quartzHostedService = services.FirstOrDefault(d =>
                 d.ImplementationType?.Name == "QuartzHostedService");

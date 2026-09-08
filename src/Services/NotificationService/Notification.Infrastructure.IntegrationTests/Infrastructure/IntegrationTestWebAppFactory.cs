@@ -40,16 +40,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         builder.UseSetting("ConnectionStrings:NotificationDbContext", _dbContainer.GetConnectionString());
 
+        builder.UseSetting("JwtOptions:SecretKey", "test-secret-key-must-be-at-least-32-characters-long");
+        builder.UseSetting("JwtOptions:Issuer", "AquaSmart.Identity");
+        builder.UseSetting("JwtOptions:Audience", "AquaSmart.Gateway");
+        builder.UseSetting("JwtOptions:ExpiresHours", "12");
+
         builder.ConfigureTestServices(services =>
         {
             services.AddScoped<BuildingBlocks.Infrastructure.Data.Outbox.OutboxMessageProcessorService<NotificationDbContext>>();
-            services.AddMassTransitTestHarness(x =>
-            {
-                x.UsingInMemory((context, cfg) =>
-                {
-                    cfg.ConfigureEndpoints(context);
-                });
-            });
+            services.AddMassTransitTestHarness(x => x.UsingInMemory((context, cfg) => { cfg.ConfigureEndpoints(context); }));
 
             ServiceDescriptor? quartzHostedService = services.FirstOrDefault(d =>
                 d.ImplementationType?.Name == "QuartzHostedService");
