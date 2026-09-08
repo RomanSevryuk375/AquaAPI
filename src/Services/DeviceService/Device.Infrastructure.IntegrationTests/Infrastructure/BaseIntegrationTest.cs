@@ -1,6 +1,7 @@
 using MediatR;
 using Npgsql;
 using Respawn;
+using BuildingBlocks.IntegrationTests;
 
 namespace Device.Infrastructure.IntegrationTests.Infrastructure;
 

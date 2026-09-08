@@ -51,28 +51,28 @@ jobs:
       run: |
         for file in $(find src/Services/${{ matrix.service }} -name "*ArchitectureTests.csproj"); do
           echo "Running $file"
-          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" /p:UseSlnx=true
+          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" 
         done
 
     - name: Run Unit Tests
       run: |
         for file in $(find src/Services/${{ matrix.service }} -name "*UnitTests.csproj"); do
           echo "Running $file"
-          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" /p:UseSlnx=true
+          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" 
         done
 
     - name: Run Integration Tests
       run: |
         for file in $(find src/Services/${{ matrix.service }} -name "*IntegrationTests.csproj"); do
           echo "Running $file"
-          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" /p:UseSlnx=true
+          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" 
         done
 
     - name: Run E2E Tests
       run: |
         for file in $(find src/Services/${{ matrix.service }} -name "*E2ETests.csproj"); do
           echo "Running $file"
-          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" /p:UseSlnx=true
+          dotnet test "$file" --configuration Release --no-build --logger "trx;LogFileName=$(basename $file).trx" 
         done
 
     - name: Upload Test Results

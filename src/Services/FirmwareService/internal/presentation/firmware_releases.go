@@ -46,8 +46,8 @@ func (h *FirmwareReleasesHandler) HandleUploadFirmware(w http.ResponseWriter, r 
 
 	file, fileHeader, err := r.FormFile("firmware_file")
 	if err != nil {
-		log.Printf("[ERROR] FormFile parsing error: %v", err)
-		http.Error(w, fmt.Sprintf("missing 'firmware_file' in form: %v", err), http.StatusBadRequest)
+		log.Printf("[ERROR] FormFile parsing error")
+		http.Error(w, "missing or invalid 'firmware_file' in form", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -139,7 +139,7 @@ func (h *FirmwareReleasesHandler) HandleRevokeFirmware(w http.ResponseWriter, r 
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&req); err != nil {
-		http.Error(w, fmt.Sprintf("invalid request body: %v", err), http.StatusBadRequest)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 

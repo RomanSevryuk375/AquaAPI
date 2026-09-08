@@ -44,7 +44,7 @@ public static class DependencyInjection
             .GetSection(BackgroundJobsOptions.SectionName)
             .Get<BackgroundJobsOptions>() ?? throw new InvalidOperationException(DiErrors.BackgroundJobsConfiguration);
 
-        services.AddQuartz(opts =>
+        services.AddQuartzWithHostedService(opts =>
         {
             var deleteCompletedTaskAsync = new JobKey(nameof(DeleteCompletedCommandsJob));
             opts.AddJob<DeleteCompletedCommandsJob>(jobOpts =>
@@ -64,9 +64,6 @@ public static class DependencyInjection
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(backgroundJobOptions.OfflineCheckerIntervalSeconds)
                 .RepeatForever()));
         });
-
-        services.AddQuartzHostedService(hostOptions
-            => hostOptions.WaitForJobsToComplete = true);
 
         return services;
     }

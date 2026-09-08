@@ -1,6 +1,5 @@
 using System.Data.Common;
 using BuildingBlocks.Domain.Abstractions;
-using BuildingBlocks.Domain.Constants;
 using BuildingBlocks.Domain.Results;
 using FluentAssertions;
 using MassTransit;

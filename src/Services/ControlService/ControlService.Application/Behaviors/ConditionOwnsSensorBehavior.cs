@@ -38,6 +38,6 @@ internal class ConditionOwnsSensorBehavior<TRequest, TResponse>(
                 "Sensor must belong to the same ecosystem as the rule"));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

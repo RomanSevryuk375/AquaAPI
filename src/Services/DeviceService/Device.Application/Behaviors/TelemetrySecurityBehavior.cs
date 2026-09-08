@@ -29,6 +29,6 @@ public sealed class TelemetrySecurityBehavior<TRequest, TResponse>(
                 ErrorMessages.AccessDenied, ErrorMessages.YouAreNotOwnerOfController));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

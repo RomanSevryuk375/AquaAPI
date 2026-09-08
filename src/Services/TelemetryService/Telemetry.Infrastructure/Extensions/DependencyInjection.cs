@@ -57,7 +57,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddQuartzJob(this IServiceCollection services)
     {
-        services.AddQuartz(options =>
+        services.AddQuartzWithHostedService(options =>
         {
             var sensorCheckKey = new JobKey(nameof(CheckSensorStateJob));
             options.AddJob<CheckSensorStateJob>(opts => opts.WithIdentity(sensorCheckKey));
@@ -94,9 +94,6 @@ public static class DependencyInjection
                 .WithIdentity("Cleanup-trigger")
                 .WithCronSchedule("0 0 3 * * ?"));
         });
-
-        services.AddQuartzHostedService(hostOptions
-            => hostOptions.WaitForJobsToComplete = true);
 
         return services;
     }

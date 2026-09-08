@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Device.Infrastrucrute\Device.Infrastructure.csproj" />
     <ProjectReference Include="..\Device.TestShared\Device.TestShared.csproj" />
     <ProjectReference Include="..\DeviceService\Device.API.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationTests\BuildingBlocks.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

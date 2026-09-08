@@ -28,7 +28,7 @@ public class OutboxMessageProcessorServiceTests(IntegrationTestWebAppFactory fac
             Content = JsonSerializer.Serialize(domainEvent)
         };
 
-        DbContext.Set<OutboxMessage>().Add(outboxMessage);
+        await DbContext.Set<OutboxMessage>().AddAsync(outboxMessage);
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
@@ -62,7 +62,7 @@ public class OutboxMessageProcessorServiceTests(IntegrationTestWebAppFactory fac
             Content = "{}"
         };
 
-        DbContext.Set<OutboxMessage>().Add(outboxMessage);
+        await DbContext.Set<OutboxMessage>().AddAsync(outboxMessage);
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
@@ -98,7 +98,7 @@ public class OutboxMessageProcessorServiceTests(IntegrationTestWebAppFactory fac
             Content = "[]"
         };
 
-        DbContext.Set<OutboxMessage>().Add(outboxMessage);
+        await DbContext.Set<OutboxMessage>().AddAsync(outboxMessage);
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 
@@ -132,7 +132,7 @@ public class OutboxMessageProcessorServiceTests(IntegrationTestWebAppFactory fac
             Content = "null"
         };
 
-        DbContext.Set<OutboxMessage>().Add(outboxMessage);
+        await DbContext.Set<OutboxMessage>().AddAsync(outboxMessage);
         await DbContext.SaveChangesAsync();
         DbContext.ChangeTracker.Clear();
 

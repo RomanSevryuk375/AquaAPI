@@ -31,7 +31,8 @@ public sealed class ScheduleSecurityBehavior<TRequest, TResponse>(
             LIMIT 1
             """;
 
-        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(SQL, new { request.ScheduleId });
+        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(
+            new CommandDefinition(SQL, new { request.ScheduleId }, cancellationToken: cancellationToken));
 
         if (ownerId is null)
         {
@@ -46,6 +47,6 @@ public sealed class ScheduleSecurityBehavior<TRequest, TResponse>(
                 ErrorMessages.Security.YouAreNotOwnerOfSchedule));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

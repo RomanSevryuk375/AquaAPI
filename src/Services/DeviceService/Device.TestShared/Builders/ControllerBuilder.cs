@@ -7,7 +7,9 @@ public class ControllerBuilder
     private Guid _id = TestConstants.ControllerId;
     private Guid _userId = TestConstants.UserId;
     private string _macAddress = TestConstants.ValidMacAddress;
+#pragma warning disable S6418 // Hard-coded secret is allowed in test builders
     private string _deviceTokenHash = TestConstants.ValidTokenHash;
+#pragma warning restore S6418 // Hard-coded secret is allowed in test builders
     private string _name = TestConstants.ValidDeviceName;
     private bool _isOnline = true;
 

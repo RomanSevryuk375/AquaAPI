@@ -29,7 +29,7 @@ RUN dotnet restore "src/Services/TelemetryService/TelemetryService/Telemetry.API
 
 COPY . .
 
-WORKDIR "src/Services/TelemetryService/TelemetryService"
+WORKDIR "/src/src/Services/TelemetryService/TelemetryService"
 RUN dotnet publish "Telemetry.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

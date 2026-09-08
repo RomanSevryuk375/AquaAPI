@@ -40,6 +40,6 @@ public sealed class AutomationRuleSecurityBehavior<TRequest, TResponse>(
                     ErrorMessages.Security.YouAreNotOwnerOfEcosystem));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

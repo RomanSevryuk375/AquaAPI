@@ -69,7 +69,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddQuartzJobs(this IServiceCollection services)
     {
-        services.AddQuartz(opts =>
+        services.AddQuartzWithHostedService(opts =>
         {
             var jobKey = new JobKey(nameof(ScheduleProcessJob));
             opts.AddJob<ScheduleProcessJob>(jobOpts => jobOpts.WithIdentity(jobKey));
@@ -78,9 +78,6 @@ public static class DependencyInjection
                 .WithIdentity($"{jobKey}-trigger")
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(60).RepeatForever()));
         });
-
-        services.AddQuartzHostedService(hostOptions
-            => hostOptions.WaitForJobsToComplete = true);
 
         return services;
     }

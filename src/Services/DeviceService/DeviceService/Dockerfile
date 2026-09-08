@@ -29,7 +29,7 @@ RUN dotnet restore "src/Services/DeviceService/DeviceService/Device.API.csproj"
 
 COPY . .
 
-WORKDIR "src/Services/DeviceService/DeviceService"
+WORKDIR "/src/src/Services/DeviceService/DeviceService"
 RUN dotnet publish "Device.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

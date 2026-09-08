@@ -16,13 +16,13 @@ public sealed class TransactionBehavior<TRequest, TResponse>(
     {
         if (request is not IBaseCommand)
         {
-            return await next();
+            return await next(cancellationToken);
         }
 
         await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            TResponse? response = await next();
+            TResponse? response = await next(cancellationToken);
 
             if (response is Result { IsFailure: true })
             {

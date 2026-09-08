@@ -38,7 +38,7 @@ public sealed class CacheBehavior<TRequest, TResponse>(
         }
 
         logger.LogInformation("Cache Miss for {CacheKey}. Executing database query...", request.CacheKey);
-        TResponse response = await next();
+        TResponse response = await next(cancellationToken);
 
         if (response is Result { IsFailure: true })
         {

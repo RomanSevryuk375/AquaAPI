@@ -30,6 +30,6 @@ public sealed class EcosystemSecurityBehavior<TRequest, TResponse>(
                     "You are not the owner of this ecosystem"));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

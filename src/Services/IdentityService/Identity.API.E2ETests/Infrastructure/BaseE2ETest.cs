@@ -1,5 +1,5 @@
 using System.Net.Http.Headers;
-using Identity.Infrastructure.IntegrationTests.Infrastructure;
+using BuildingBlocks.IntegrationTests;
 using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.Identity;
