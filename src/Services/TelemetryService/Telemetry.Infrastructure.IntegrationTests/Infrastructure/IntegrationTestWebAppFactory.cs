@@ -19,7 +19,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     private const string PostgresImage = "postgres:16-alpine";
     private const string DatabaseName = "telemetry_test_db";
     private const string Username = "postgres";
+#pragma warning disable S2068 // Hard-coded credentials are safe in tests for Testcontainers
     private const string Password = "postgres";
+#pragma warning restore S2068 // Hard-coded credentials are safe in tests for Testcontainers
 
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder(PostgresImage)
         .WithImage(PostgresImage)

@@ -24,7 +24,8 @@ public sealed class ReminderSecurityBehavior<TRequest, TResponse>(
 
         const string Sql = "SELECT user_id FROM reminders WHERE id = @ReminderId LIMIT 1";
 
-        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(Sql, new { request.ReminderId });
+        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(
+            new CommandDefinition(Sql, new { request.ReminderId }, cancellationToken: cancellationToken));
 
         if (ownerId is null)
         {
@@ -39,6 +40,6 @@ public sealed class ReminderSecurityBehavior<TRequest, TResponse>(
                     ErrorMessages.Security.YouAreNotOwnerOfReminder));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

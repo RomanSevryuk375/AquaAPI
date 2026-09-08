@@ -23,8 +23,8 @@ public class CleanIncorrectTokensHandlerTests(IntegrationTestWebAppFactory facto
             .WithSubscriptionId(subscription.Id)
             .Build();
 
-        DbContext.Subscriptions.Add(subscription);
-        DbContext.Users.Add(user);
+        await DbContext.Subscriptions.AddAsync(subscription);
+        await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 
         // Seed 4 Refresh Tokens
@@ -50,7 +50,7 @@ public class CleanIncorrectTokensHandlerTests(IntegrationTestWebAppFactory facto
             .WithTokenHash("hash-expired")
             .Build();
 
-        DbContext.RefreshTokens.AddRange(validToken, usedToken, revokedToken, expiredToken);
+        await DbContext.RefreshTokens.AddRangeAsync(validToken, usedToken, revokedToken, expiredToken);
 
         DbContext.Entry(expiredToken).Property(x => x.ExpiredAt).CurrentValue = DateTime.UtcNow.AddDays(-2);
 

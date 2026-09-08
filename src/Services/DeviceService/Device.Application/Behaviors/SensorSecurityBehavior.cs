@@ -30,6 +30,6 @@ public sealed class SensorSecurityBehavior<TRequest, TResponse>(
             return BehaviorHelpers.CreateFailedResult<TResponse>(ownership.Error);
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

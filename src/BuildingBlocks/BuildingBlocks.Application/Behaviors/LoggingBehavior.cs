@@ -19,7 +19,7 @@ public sealed class LoggingBehavior<TRequest, TResponse>(
 
         var stopwatch = Stopwatch.StartNew();
 
-        TResponse response = await next();
+        TResponse response = await next(cancellationToken);
 
         stopwatch.Stop();
 

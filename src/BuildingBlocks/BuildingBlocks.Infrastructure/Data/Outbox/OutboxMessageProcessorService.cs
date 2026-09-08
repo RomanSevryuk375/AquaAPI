@@ -45,9 +45,11 @@ public sealed class OutboxMessageProcessorService<TDbContext>(
             FOR UPDATE SKIP LOCKED
             """;
 
+#pragma warning disable S2077 // Dynamic SQL is safe here because tableName is retrieved from EF Core metadata
         var messages = (await connection.QueryAsync<OutboxMessage>(
             selectSql,
             transaction: dbTransaction)).ToList();
+#pragma warning restore S2077 // Dynamic SQL is safe here because tableName is retrieved from EF Core metadata
         if (messages.Count == 0)
         {
             return Result.Success();
@@ -92,10 +94,12 @@ public sealed class OutboxMessageProcessorService<TDbContext>(
             WHERE id = @Id
             """;
 
+#pragma warning disable S2077 // Dynamic SQL is safe here because tableName is retrieved from EF Core metadata
         await connection.ExecuteAsync(
             updateSql,
             messages.Select(m => new { m.ProcessedOnUtc, m.Error, m.Id }),
             transaction: dbTransaction);
+#pragma warning restore S2077 // Dynamic SQL is safe here because tableName is retrieved from EF Core metadata
 
         await transaction.CommitAsync(cancellationToken);
 

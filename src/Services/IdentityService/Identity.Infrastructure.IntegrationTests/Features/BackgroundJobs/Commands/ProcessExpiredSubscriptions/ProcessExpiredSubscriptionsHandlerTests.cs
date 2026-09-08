@@ -24,7 +24,7 @@ public class ProcessExpiredSubscriptionsHandlerTests(IntegrationTestWebAppFactor
             .WithName("Professional Plan")
             .Build();
 
-        DbContext.Subscriptions.AddRange(freeSubscription, proSubscription);
+        await DbContext.Subscriptions.AddRangeAsync(freeSubscription, proSubscription);
         await DbContext.SaveChangesAsync();
 
         User expiredUser = new UserBuilder()
@@ -43,7 +43,7 @@ public class ProcessExpiredSubscriptionsHandlerTests(IntegrationTestWebAppFactor
             .Build();
         validUser.SetSubscription(proSubscription.Id, 5);
 
-        DbContext.Users.AddRange(expiredUser, validUser);
+        await DbContext.Users.AddRangeAsync(expiredUser, validUser);
         await DbContext.SaveChangesAsync();
 
         ITestHarness harness = GetRequiredService<ITestHarness>();

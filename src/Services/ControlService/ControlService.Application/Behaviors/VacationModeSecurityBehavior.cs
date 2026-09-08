@@ -29,7 +29,8 @@ public sealed class VacationModeSecurityBehavior<TRequest, TResponse>(
             LIMIT 1
             """;
 
-        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(SQL, new { request.VacationModeId });
+        Guid? ownerId = await connection.QuerySingleOrDefaultAsync<Guid?>(
+            new CommandDefinition(SQL, new { request.VacationModeId }, cancellationToken: cancellationToken));
 
         if (ownerId is null)
         {
@@ -44,6 +45,6 @@ public sealed class VacationModeSecurityBehavior<TRequest, TResponse>(
                 ErrorMessages.Security.YouAreNotOwnerOfVacationMode));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

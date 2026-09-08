@@ -32,6 +32,6 @@ public sealed class EcosystemSecurityBehavior<TRequest, TResponse>(
                     ErrorMessages.Security.YouAreNotOwnerOfEcosystem));
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

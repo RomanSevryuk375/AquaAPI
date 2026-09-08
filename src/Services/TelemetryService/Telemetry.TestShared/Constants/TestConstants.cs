@@ -6,5 +6,7 @@ public static class TestConstants
     public static readonly Guid UserId = Guid.Parse("22222222-2222-2222-2222-222222222222");
 
     public const string ValidMacAddress = "00:1A:2B:3C:4D:5E";
+#pragma warning disable S6418 // Hard-coded secret is allowed in tests
     public const string ValidDeviceToken = "my_super_secret_token";
+#pragma warning restore S6418 // Hard-coded secret is allowed in tests
 }

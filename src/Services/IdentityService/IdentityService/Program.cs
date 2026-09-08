@@ -13,6 +13,7 @@ try
 {
     Log.Information("Starting {Name}", AppName);
 
+    DotNetEnvExtensions.LoadDotNetEnv();
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
     builder.AddGlobalElkLogging(AppName);

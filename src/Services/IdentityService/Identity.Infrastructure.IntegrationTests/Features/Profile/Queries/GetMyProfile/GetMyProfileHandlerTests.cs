@@ -25,8 +25,8 @@ public class GetMyProfileHandlerTests(IntegrationTestWebAppFactory factory)
             .WithSubscriptionId(subscription.Id)
             .Build();
 
-        DbContext.Subscriptions.Add(subscription);
-        DbContext.Users.Add(user);
+        await DbContext.Subscriptions.AddAsync(subscription);
+        await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 
         UserContext.UserId = user.Id;

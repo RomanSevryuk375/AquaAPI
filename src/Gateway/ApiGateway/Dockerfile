@@ -23,7 +23,7 @@ RUN dotnet restore "src/Gateway/ApiGateway/ApiGateway.csproj"
 
 COPY . .
 
-WORKDIR "src/Gateway/ApiGateway/"
+WORKDIR "/src/src/Gateway/ApiGateway/"
 RUN dotnet publish "ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

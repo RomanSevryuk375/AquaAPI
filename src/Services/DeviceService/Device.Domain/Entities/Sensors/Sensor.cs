@@ -128,10 +128,10 @@ public abstract class Sensor : AggregateRoot, IEntity
 
     public void MarkAsDeleted()
     {
-        RaiseEvent(new SensorDeletedDomainEvent 
-        { 
+        RaiseEvent(new SensorDeletedDomainEvent
+        {
             SensorId = Id,
-             UserId = UserId 
+             UserId = UserId
         });
     }
 }

@@ -10,6 +10,7 @@ Log.Logger = new LoggerConfiguration()
 const string AppName = "AquaSmart.ApiGateway";
 try
 {
+    DotNetEnvExtensions.LoadDotNetEnv();
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
     builder.AddGlobalElkLogging(AppName);
