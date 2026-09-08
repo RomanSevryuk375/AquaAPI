@@ -1,6 +1,5 @@
 using BuildingBlocks.Domain.Results;
 using BuildingBlocks.Infrastructure.Data.Outbox;
-using Identity.TestShared.Constants;
 using IdentityService.Application.Features.Profile.Commands.UpdateProfile;
 
 namespace Identity.Infrastructure.IntegrationTests.Features.Profile.Commands.UpdateProfile;
@@ -12,31 +11,12 @@ public class UpdateProfileHandlerTests(IntegrationTestWebAppFactory factory)
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_ShouldUpdateProfileAndCreateOutboxMessage_WhenCommandIsValid()
     {
-        // Arrange
-        Subscription subscription = new SubscriptionBuilder()
-            .WithId(IdentityTestConstants.SubscriptionId)
-            .Build();
-
-        User user = new UserBuilder()
-            .WithId(Guid.NewGuid())
-            .WithName("Old Name")
-            .WithEmail("alice@aquasmart.com")
-            .WithPhoneNumber("+375295554433")
-            .WithSubscriptionId(subscription.Id)
-            .Build();
-
-        await DbContext.Subscriptions.AddAsync(subscription);
-        await DbContext.Users.AddAsync(user);
-        await DbContext.SaveChangesAsync();
-
-        UserContext.UserId = user.Id;
-        UserContext.IsAuthenticated = true;
+        User user = await CreateUserWithSubscriptionAsync("Old Name", "alice@aquasmart.com", "+375295554433");
 
         var command = new UpdateProfileCommand
         {
-
-            UserId=UserContext.UserId
-,            Name = "New Name",
+            UserId = UserContext.UserId,
+            Name = "New Name",
             PhoneNumber = "+375296667788"
         };
 

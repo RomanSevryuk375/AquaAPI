@@ -8,6 +8,7 @@
     <ProjectReference Include="..\Notification.TestShared\Notification.TestShared.csproj" />
     <ProjectReference Include="..\Notification.Infrastructure\Notification.Infrastructure.csproj" />
     <ProjectReference Include="..\NotificationService\Notification.API.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.IntegrationTests\BuildingBlocks.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

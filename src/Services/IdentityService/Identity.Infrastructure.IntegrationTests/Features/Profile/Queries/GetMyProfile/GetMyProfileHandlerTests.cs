@@ -1,5 +1,4 @@
 using BuildingBlocks.Domain.Results;
-using Identity.TestShared.Constants;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Features.Profile.Queries.GetMyProfile;
 
@@ -12,29 +11,11 @@ public class GetMyProfileHandlerTests(IntegrationTestWebAppFactory factory)
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     public async Task Handle_ShouldReturnProfile_WhenUserExists()
     {
-        // Arrange
-        Subscription subscription = new SubscriptionBuilder()
-            .WithId(IdentityTestConstants.SubscriptionId)
-            .Build();
-
-        User user = new UserBuilder()
-            .WithId(Guid.NewGuid())
-            .WithName("Alice Smith")
-            .WithEmail("alice@aquasmart.com")
-            .WithPhoneNumber("+375295554433")
-            .WithSubscriptionId(subscription.Id)
-            .Build();
-
-        await DbContext.Subscriptions.AddAsync(subscription);
-        await DbContext.Users.AddAsync(user);
-        await DbContext.SaveChangesAsync();
-
-        UserContext.UserId = user.Id;
-        UserContext.IsAuthenticated = true;
+        User user = await CreateUserWithSubscriptionAsync("Alice Smith", "alice@aquasmart.com", "+375295554433");
 
         var query = new GetMyProfileQuery(){
-    UserId = UserContext.UserId
-};
+            UserId = UserContext.UserId
+        };
 
         // Act
         Result<UserProfileResponseDto> result = await Sender.Send(query);

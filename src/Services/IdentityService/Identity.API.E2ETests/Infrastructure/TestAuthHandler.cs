@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
+using BuildingBlocks.IntegrationTests;
 using BuildingBlocks.Presentation.Authorization;
-using Identity.Infrastructure.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

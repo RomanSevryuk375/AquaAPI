@@ -40,7 +40,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddQuartzJobs(this IServiceCollection services)
     {
-        services.AddQuartz(opts =>
+        services.AddQuartzWithHostedService(opts =>
         {
             var incorrectTokenCheckerJobKey = new JobKey(nameof(IncorrectTokenCheckerJob));
             opts.AddJob<IncorrectTokenCheckerJob>(jobOpts => jobOpts.WithIdentity(incorrectTokenCheckerJobKey));
@@ -56,9 +56,6 @@ public static class DependencyInjection
                 .WithIdentity($"{subscriptionExpiredCheckerJobKey}-trigger")
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(30).RepeatForever()));
         });
-
-        services.AddQuartzHostedService(hostOptions
-            => hostOptions.WaitForJobsToComplete = true);
 
         return services;
     }

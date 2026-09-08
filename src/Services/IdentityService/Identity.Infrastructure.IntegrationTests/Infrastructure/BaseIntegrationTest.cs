@@ -1,3 +1,4 @@
+using BuildingBlocks.IntegrationTests;
 using MediatR;
 using Npgsql;
 using Respawn;
@@ -50,5 +51,29 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     {
         _scope.Dispose();
         return Task.CompletedTask;
+    }
+
+    protected async Task<User> CreateUserWithSubscriptionAsync(string name, string email, string phoneNumber)
+    {
+        Subscription subscription = new SubscriptionBuilder()
+            .WithId(Identity.TestShared.Constants.IdentityTestConstants.SubscriptionId)
+            .Build();
+
+        User user = new UserBuilder()
+            .WithId(Guid.NewGuid())
+            .WithName(name)
+            .WithEmail(email)
+            .WithPhoneNumber(phoneNumber)
+            .WithSubscriptionId(subscription.Id)
+            .Build();
+
+        await DbContext.Subscriptions.AddAsync(subscription);
+        await DbContext.Users.AddAsync(user);
+        await DbContext.SaveChangesAsync();
+
+        UserContext.UserId = user.Id;
+        UserContext.IsAuthenticated = true;
+
+        return user;
     }
 }
