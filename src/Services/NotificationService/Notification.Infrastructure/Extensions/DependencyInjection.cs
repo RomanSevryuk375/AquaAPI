@@ -78,7 +78,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddQuartzJobs(this IServiceCollection services)
     {
-        services.AddQuartz(opts =>
+        services.AddQuartzWithHostedService(opts =>
         {
             var reminderJobKey = new JobKey(nameof(ReminderCheckerJob));
             opts.AddJob<ReminderCheckerJob>(jobOpts =>
@@ -96,9 +96,6 @@ public static class DependencyInjection
                 .WithIdentity($"{unpublishedNoticeJobKey}-trigger")
                 .WithSimpleSchedule(x => x.WithIntervalInSeconds(30).RepeatForever()));
         });
-
-        services.AddQuartzHostedService(hostOptions
-            => hostOptions.WaitForJobsToComplete = true);
 
         return services;
     }

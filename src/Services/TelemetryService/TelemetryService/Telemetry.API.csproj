@@ -8,6 +8,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.GrpcContracts\BuildingBlocks.GrpcContracts.csproj" />
         <ProjectReference Include="..\Telemetry.Application\Telemetry.Application.csproj" />
         <ProjectReference Include="..\Telemetry.Infrastructure\Telemetry.Infrastructure.csproj" />
     </ItemGroup>
